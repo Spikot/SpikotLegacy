@@ -12,15 +12,9 @@ open class Spikot: JavaPlugin(){
     lateinit var logger: KLogger
     override fun onEnable(){
         logger = KotlinLogging.logger(description.name)
-        println("Spikot Loading")
-        KPlayerListener.start(this)
-        initTaskChain(this)
-        ModuleManager.load()
-        ServerLifeCycle.init(this)
-        ModuleManager.addModuleLifeCycle(ServerScope::class,ServerLifeCycle)
+        ServerLifeCycle.registerPlugin(this)
     }
     override fun onDisable(){
-        ServerLifeCycle.destroy()
     }
 
     override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?): Boolean {
@@ -50,29 +44,38 @@ open class Spikot: JavaPlugin(){
     }
 }
 
-private object ServerLifeCycle: ModuleLifeCycle<Spikot>{
-    private val modules = HashSet<ModuleWrapper<Spikot>>()
-    private lateinit var spikot: Spikot
-    internal fun init(spikot: Spikot){
-        ServerLifeCycle.spikot = spikot
+internal object ServerLifeCycle : ModuleLifeCycle<Spikot, ServerScope> {
+    private val modules = HashMap<String, HashSet<ModuleWrapper<Spikot>>>()
+    private val plugins = HashMap<String, Spikot>()
+    internal fun registerPlugin(spikot: Spikot) {
+        plugins[spikot.description.name] = spikot
     }
-    override fun addModule(annotation: Annotation, module: ModuleWrapper<Spikot>) {
-        modules.add(module)
-        module.enable(spikot)
+
+    override fun addModule(annotation: ServerScope, module: ModuleWrapper<Spikot>) {
+        val sets = modules[annotation.value]
+        val plugin = plugins[annotation.value]
+        if (sets == null || plugin == null) {
+            logger.warn("Invalid plugin name for module(${module.module.simpleName}): ${(annotation.value)}")
+            return
+        }
+        sets.add(module)
+        module.enable(plugin)
     }
     override fun getAllModules(): Set<ModuleWrapper<Spikot>> {
-        return modules
+        val sets = mutableSetOf<ModuleWrapper<Spikot>>()
+        modules.forEach { _, v -> sets.addAll(v) }
+        return sets
     }
 
     override fun getAllLoadedModule(): Set<ModuleWrapper<Spikot>> {
-        return modules
+        return getAllModules()
     }
     internal fun destroy(){
-        modules.forEach{it.disable()}
+        modules.flatMap { (_, v) -> v }.forEach { it.disable() }
     }
 }
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Scope
-annotation class ServerScope
+annotation class ServerScope(val value: String)

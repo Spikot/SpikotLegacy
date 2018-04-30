@@ -11,7 +11,7 @@ annotation class TestScope
 class TestContext(val error: Boolean)
 
 @TestScope
-class TestModule(): Module<TestContext> {
+class TestModule : Module<TestContext> {
     override fun onModuleEnable(information: TestContext) {
         if(information.error)throw AssertionError()
         println("Enable")
@@ -22,11 +22,12 @@ class TestModule(): Module<TestContext> {
     }
 }
 
-object TestLifeCycle: ModuleLifeCycle<TestContext>{
-    private val map = HashSet<ModuleWrapper<TestContext>>()
-    override fun addModule(annotation: Annotation, module: ModuleWrapper<TestContext>) {
+object TestLifeCycle : ModuleLifeCycle<TestContext, TestScope> {
+    override fun addModule(annotation: TestScope, module: ModuleWrapper<TestContext>) {
         map.add(module)
     }
+
+    private val map = HashSet<ModuleWrapper<TestContext>>()
 
     override fun getAllModules(): Set<ModuleWrapper<TestContext>> {
         return map

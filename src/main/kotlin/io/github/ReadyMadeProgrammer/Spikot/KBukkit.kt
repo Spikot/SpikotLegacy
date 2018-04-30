@@ -1,7 +1,5 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import org.bukkit.Bukkit
-
 val version = findVersion()
 
 //TODO: Not implemented

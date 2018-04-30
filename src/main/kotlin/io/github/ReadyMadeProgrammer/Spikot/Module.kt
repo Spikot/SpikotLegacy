@@ -6,7 +6,7 @@ import kotlin.reflect.full.createInstance
 
 object ModuleManager {
     private val modules = HashMap<String, MutableSet<Pair<ModuleWrapper<*>, Annotation>>>()
-    private val lifeCycles = HashMap<String, ModuleLifeCycle<*>>()
+    private val lifeCycles = HashMap<String, ModuleLifeCycle<*, *>>()
     internal fun load() {
         println("Module Load Start")
         Reflections().getSubTypesOf(Module::class.java).iterator().asSequence().map { it.kotlin }
@@ -24,10 +24,10 @@ object ModuleManager {
                 }
     }
 
-    fun <T> addModuleLifeCycle(scope: KClass<out Annotation>, lifeCycle: ModuleLifeCycle<T>) {
+    fun <T, A : Annotation> addModuleLifeCycle(scope: KClass<A>, lifeCycle: ModuleLifeCycle<T, A>) {
         lifeCycles[scope.simpleName!!] = lifeCycle
         modules[scope.simpleName!!]?.forEach {
-            lifeCycle.addModule(it.second, it.first as ModuleWrapper<T>)
+            lifeCycle.addModule(it.second as A, it.first as ModuleWrapper<T>)
         }
     }
 }
@@ -58,8 +58,8 @@ interface Module<in T> {
     }
 }
 
-interface ModuleLifeCycle<T> {
-    fun addModule(annotation: Annotation, module: ModuleWrapper<T>)
+interface ModuleLifeCycle<T, A : Annotation> {
+    fun addModule(annotation: A, module: ModuleWrapper<T>)
     fun getAllModules(): Set<ModuleWrapper<T>>
     fun getAllLoadedModule(): Set<ModuleWrapper<T>>
 }

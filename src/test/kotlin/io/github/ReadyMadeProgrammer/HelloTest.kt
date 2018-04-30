@@ -16,4 +16,15 @@ class TestCase{
     @Test fun reflections(){
         Reflections().getSubTypesOf(DummyClass::class.java).forEach{println(it)}
     }
+
+    @Test
+    fun reflectinos() {
+        val a: (Foo) -> Unit = Foo::baz
+    }
+}
+
+class Foo {
+    fun baz() {
+        println("hello")
+    }
 }
