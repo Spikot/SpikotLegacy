@@ -1,4 +1,4 @@
-package io.github.ReadyMadeProgrammer.Spikot
+package io.github.ReadyMadeProgrammer.Spikot.utils
 
 private const val allowedTag = "abcdefghijlmnopqstuvwxyz0123456789"
 private const val allowedLength = allowedTag.length

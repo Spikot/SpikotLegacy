@@ -1,7 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.guiBuilder
 
-import io.github.ReadyMadeProgrammer.Spikot.attachInvisible
 import io.github.ReadyMadeProgrammer.Spikot.itemBuilder.ItemBuilder
+import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType

@@ -1,7 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.guiBuilder
 
-import io.github.ReadyMadeProgrammer.Spikot.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
+import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

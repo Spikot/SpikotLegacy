@@ -1,4 +1,4 @@
-package io.github.ReadyMadeProgrammer.Spikot
+package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import org.bukkit.Bukkit
 import org.bukkit.event.Event

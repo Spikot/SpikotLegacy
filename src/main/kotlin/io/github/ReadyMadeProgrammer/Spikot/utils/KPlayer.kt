@@ -1,4 +1,4 @@
-package io.github.ReadyMadeProgrammer.Spikot
+package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.common.collect.HashBiMap
 import org.bukkit.Bukkit
@@ -14,8 +14,9 @@ import java.util.*
 private val variableMap = mutableMapOf<UUID,MutableMap<String,Any>>()
 private val legacySupport = HashBiMap.create<String,UUID>()
 
-fun Player.get(key: String) = variableMap[id]?.get(key)
-fun Player.set(key: String, value: Any?) = if(value!=null)variableMap[id]?.set(key,value)else Unit
+operator fun <T> Player.get(key: String): T = variableMap[id]?.get(key) as T
+operator fun <T> Player.set(key: String, value: T) = if (value != null) variableMap[id]?.set(key, value as Any) else variableMap.remove(id)
+fun Player.remove(key: String) = variableMap.remove(id)
 
 object KPlayerListener: Listener {
     @EventHandler(priority= EventPriority.LOWEST) fun onJoin(e: PlayerJoinEvent){
@@ -25,7 +26,7 @@ object KPlayerListener: Listener {
         variableMap.remove(e.player.id)
     }
     fun start(plugin: Plugin){
-        Bukkit.getOnlinePlayers().forEach{variableMap[it.id] = mutableMapOf()}
+        Bukkit.getOnlinePlayers().forEach { variableMap[it.id] = mutableMapOf() }
         plugin.subscribe(this)
     }
 }
