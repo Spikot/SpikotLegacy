@@ -4,9 +4,9 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 
 abstract class Menu{
-    lateinit var menu: MenuBuilder
+    internal lateinit var menu: MenuBuilder
     protected fun config(build: MenuBuilder.()->Unit){
-        menu = MenuBuilder(this::class)
+        menu = MenuBuilder(this)
         menu.build()
     }
 

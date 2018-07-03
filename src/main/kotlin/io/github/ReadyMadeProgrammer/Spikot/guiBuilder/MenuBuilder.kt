@@ -7,9 +7,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import kotlin.reflect.KClass
 
-typealias MenuEvent = (Menu, Player, Slot, ClickType) -> Unit
+typealias MenuReciever = (Menu, MenuEvent) -> Boolean
+
+data class MenuEvent(val player: Player, val slot: Slot, val clickType: ClickType)
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
@@ -18,10 +19,10 @@ annotation class MenuDslMarker
 
 class Coordinate(val x: Int, val y: Int)
 
-data class Slot(val item: ItemStack, internal val events: MutableSet<MenuEvent>)
+data class Slot(val item: ItemStack, internal val events: MutableSet<MenuReciever>)
 
 @MenuDslMarker
-class MenuBuilder(internal val menuClass: KClass<out Menu>) {
+class MenuBuilder(internal val menuClass: Menu) {
     var title = ""
     var size = 54
     internal var isClosable = false
@@ -36,7 +37,11 @@ class MenuBuilder(internal val menuClass: KClass<out Menu>) {
         if ((size < 9 && x >= size) || x < 0 || x >= 9 || y < 0 || y >= size / 9) throw IndexOutOfBoundsException("Slot location out of bound")
         val slotBuilder = SlotBuilder()
         slotBuilder.build()
-        slots[Coordinate(x, y)] = slotBuilder.toSlot(Coordinate(x, y))
+        slot(x, y, slotBuilder)
+    }
+
+    fun slot(x: Int, y: Int, slot: SlotBuilder) {
+        slots[Coordinate(x, y)] = slot.toSlot(Coordinate(x, y))
     }
 
     internal val inventory: Inventory
@@ -51,12 +56,18 @@ class MenuBuilder(internal val menuClass: KClass<out Menu>) {
     val update: () -> Unit = {}
 }
 
+fun slot(build: SlotBuilder.() -> Unit): SlotBuilder {
+    val builder = SlotBuilder()
+    builder.build()
+    return builder
+}
+
 @MenuDslMarker
 class SlotBuilder{
     var item: ItemBuilder? = null
-    val events = mutableSetOf<MenuEvent>()
-    fun events(build: Inputs<MenuEvent>.()->Unit){
-        val builder = Inputs<MenuEvent>()
+    val events = mutableSetOf<MenuReciever>()
+    fun events(build: Inputs<MenuReciever>.() -> Unit) {
+        val builder = Inputs<MenuReciever>()
         builder.build()
         events.addAll(builder.set)
     }

@@ -53,7 +53,7 @@ object MenuEventReciever : Listener {
             val code = e.inventory.getCode()
             val m = menus[code] ?: return
             val slot = m.menu[e.slot] ?: return // Find exact number
-            slot.events.forEach { it(m, e.whoClicked as Player, slot, e.click) }
+            slot.events.forEach { it(m, MenuEvent(e.whoClicked as Player, slot, e.click)) }
             e.isCancelled = true
         } catch (e: Exception) {
             //Do Nothing
