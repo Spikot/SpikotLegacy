@@ -51,10 +51,10 @@ data class Version(val first: Int, val second: Int, val third: Int, val variatio
  * @author ReadyMadeProgrammer
  * @since 2.0.0
  */
-data class ServerVersion(val platform: String, val version: Version) {
+data class ServerVersion(val platform: Platform, val version: Version) {
     override fun toString() = "$platform-$version"
-    fun match(platform: Array<String>, version: Array<String>): Result {
-        if (!platform.any { this.platform.toLowerCase().equals(it, ignoreCase = true) }) {
+    fun match(platform: Array<Platform>, version: Array<String>): Result {
+        if (!platform.any { this.platform == it }) {
             return Result.PLATFORM_ERROR
         }
         if (version.any { this.version.match(Version(it)) }) {
@@ -65,5 +65,9 @@ data class ServerVersion(val platform: String, val version: Version) {
 
     enum class Result {
         PLATFORM_ERROR, VERSION_ERROR, COMPACT
+    }
+
+    enum class Platform {
+        GLOWSTONE, PAPER, SPIGOT, CRAFT, UNKNOWN
     }
 }

@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin
 /**
  * Internal logger used in spikot framework
  */
+@Suppress("unused")
 internal val logger = KotlinLogging.logger("Spikot")
 
 /**
