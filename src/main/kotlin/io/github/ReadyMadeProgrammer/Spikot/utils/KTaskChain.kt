@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import co.aikar.taskchain.BukkitTaskChainFactory
@@ -12,9 +13,9 @@ internal fun initTaskChain(plugin: Plugin){
 }
 
 fun <T> chain() = taskChainFactory!!.newChain<T>()!!
-fun <T> sharedChain(name: String) = taskChainFactory!!.newSharedChain<T>(name)
+fun <T> sharedChain(name: String) = taskChainFactory!!.newSharedChain<T>(name)!!
 
-fun <T> sync(body: () -> T) = chain<T>().syncFirst(body)
-fun <T> async(body: () -> T) = chain<T>().asyncFirst(body)
-fun <T> current(body: () -> T) = chain<T>().currentFirst(body)
+fun <T> sync(body: () -> T) = chain<T>().syncFirst(body)!!
+fun <T> async(body: () -> T) = chain<T>().asyncFirst(body)!!
+fun <T> current(body: () -> T) = chain<T>().currentFirst(body)!!
 operator fun TaskChain<*>.invoke() = this.execute()

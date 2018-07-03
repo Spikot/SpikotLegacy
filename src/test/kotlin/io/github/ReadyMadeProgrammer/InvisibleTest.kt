@@ -1,12 +1,13 @@
 package io.github.ReadyMadeProgrammer
 
-import io.github.ReadyMadeProgrammer.Spikot.attachInvisible
-import io.github.ReadyMadeProgrammer.Spikot.decryptInvisible
-import io.github.ReadyMadeProgrammer.Spikot.encryptInvisible
-import io.github.ReadyMadeProgrammer.Spikot.findInvisible
+import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
+import io.github.ReadyMadeProgrammer.Spikot.utils.decryptInvisible
+import io.github.ReadyMadeProgrammer.Spikot.utils.encryptInvisible
+import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class InvisibleTest {
     @Test
@@ -15,6 +16,9 @@ class InvisibleTest {
         for (i in 1..100000) {
             check(random.nextInt(Int.MAX_VALUE))
         }
+        assertFailsWith(IllegalArgumentException::class) { "Hello".findInvisible() }
+        assertFailsWith(IllegalArgumentException::class) { "Hello§r".findInvisible() }
+        assertFailsWith(IllegalArgumentException::class) { "FLASD".decryptInvisible() }
     }
 
     private fun check(code: Int) {
