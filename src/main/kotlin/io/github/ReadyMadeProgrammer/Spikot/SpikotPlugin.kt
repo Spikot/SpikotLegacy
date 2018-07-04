@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot
 import io.github.ReadyMadeProgrammer.Spikot.modules.DIResolver
 import io.github.ReadyMadeProgrammer.Spikot.utils.KPlayerListener
 import io.github.ReadyMadeProgrammer.Spikot.utils.initTaskChain
+import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import mu.KotlinLogging
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -39,6 +40,7 @@ class SpikotPlugin: JavaPlugin(){
             val instance = it.createInstance()
             instance.onStart()
             DIResolver.moduleInstances.add(instance)
+            this.subscribe(instance)
         }
         spikotLogger.info { "End loading spikot" }
     }
