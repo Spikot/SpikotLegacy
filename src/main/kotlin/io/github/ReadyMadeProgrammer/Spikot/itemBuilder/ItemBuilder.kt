@@ -1,3 +1,4 @@
+@file:Suppress("unused", "PropertyName")
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Material
@@ -133,8 +134,8 @@ open class ItemBuilder(material: Material){
         val builder = EnchantmentBuilder(item)
         builder.build()
     }
-    fun toItemStack()
-        =item
+
+    fun toItemStack() =item
 }
 
 @ItemDslMarker

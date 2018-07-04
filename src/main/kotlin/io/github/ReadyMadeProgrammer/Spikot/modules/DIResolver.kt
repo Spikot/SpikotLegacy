@@ -1,6 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.modules
 
 import io.github.ReadyMadeProgrammer.Spikot.ServerVersion
+import io.github.ReadyMadeProgrammer.Spikot.Version
 import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.utils.version
 import org.koin.dsl.module.Module
@@ -47,11 +48,45 @@ object DIResolver {
         }.forEach { k ->
             val singleton = k.findAnnotation<Singleton>() != null
             val name = k.findAnnotation<Service>()!!.name
-            val service = contracts.find { it.isSuperclassOf(k) }
-            if (service != null && services[service.jvmName] == null) {
-                services[service.jvmName] = ServiceWrapper(k, name, singleton)
+            val contract = contracts.find { it.isSuperclassOf(k) }
+            val serviceWrapper = ServiceWrapper(k, name, singleton)
+            if (contract != null) {
+                val registered = services[contract.jvmName]
+                if (registered != null) {
+                    val registeredAdapter = registered.klass.findAnnotation<Adapter>()
+                    val adapter = k.findAnnotation<Adapter>()
+                    if (adapter == null) {
+                        standalone.add(serviceWrapper)
+                    } else {
+                        if (registeredAdapter == null) {
+                            standalone.add(registered)
+                            services[contract.jvmName] = serviceWrapper
+                        } else {
+                            var registeredBest = Version(registeredAdapter.version[0])
+                            registeredAdapter.version.map { Version(it) }.forEach {
+                                if (version.version.closer(registeredBest, it) < 0) {
+                                    registeredBest = it
+                                }
+                            }
+                            var best = Version(adapter.version[0])
+                            adapter.version.map { Version(it) }.forEach {
+                                if (version.version.closer(best, it) < 0) {
+                                    best = it
+                                }
+                            }
+                            if (version.version.closer(best, registeredBest) > 0) {
+                                standalone.add(registered)
+                                services[contract.jvmName] = serviceWrapper
+                            } else {
+                                standalone.add(serviceWrapper)
+                            }
+                        }
+                    }
+                } else {
+                    services[contract.jvmName] = serviceWrapper
+                }
             } else {
-                standalone.add(ServiceWrapper(k, name, singleton))
+                standalone.add(serviceWrapper)
             }
         }
         modules.addAll(reflections.getSubTypesOf(io.github.ReadyMadeProgrammer.Spikot.modules.Module::class.java).map { it.kotlin })

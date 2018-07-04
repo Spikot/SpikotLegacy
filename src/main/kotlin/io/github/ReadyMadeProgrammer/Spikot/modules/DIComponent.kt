@@ -30,7 +30,6 @@ annotation class Service(val name: String = "")
  * Annotate Service which will only use when server version is compact.
  * Class annotated with Adapter must annotated with Service too.
  */
-@Repeatable
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Adapter(val platform: Array<ServerVersion.Platform> = [UNKNOWN, SPIGOT, PAPER, GLOWSTONE, CRAFT], val version: Array<String> = ["0.0.0+"])
