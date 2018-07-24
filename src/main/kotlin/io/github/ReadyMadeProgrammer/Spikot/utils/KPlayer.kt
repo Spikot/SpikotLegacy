@@ -50,3 +50,8 @@ val Player.id: UUID
     } else {
         this.uniqueId
     }
+
+object KPlayer {
+    operator fun get(name: String): Player? = Bukkit.getPlayer(name)
+    operator fun get(uuid: UUID): Player? = Bukkit.getPlayer(uuid)
+}
