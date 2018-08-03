@@ -1,12 +1,14 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import io.github.ReadyMadeProgrammer.KommandFramework.KommandException
-import io.github.ReadyMadeProgrammer.Spikot.command.SpigotCommandExecutor
+import io.github.ReadyMadeProgrammer.Spikot.command.CastException
+import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
+import io.github.ReadyMadeProgrammer.Spikot.command.VerifyException
 import mu.KLogger
 import mu.KotlinLogging
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 /**
  * Entry point of plugin which use Spikot Framework.
@@ -14,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * Developer should define their plugin main class like this.
  * class PluginMain: Spikot()
  */
-open class Spikot: JavaPlugin(){
+abstract class Spikot : JavaPlugin() {
     private lateinit var logger: KLogger
 
     final override fun onEnable() {
@@ -24,25 +26,30 @@ open class Spikot: JavaPlugin(){
     final override fun onDisable() {
     }
 
-    final override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?): Boolean {
+    final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         try {
-            SpigotCommandExecutor.onCommand(label!!, args!!, sender!!)
-        } catch(e: KommandException){
-            //Ignore
-        } catch(e: Exception){
-            e.printStackTrace()
+            CommandManager.invoke(sender, command, label, args)
+        } catch (exception: Exception) {
+            onCommandException(sender, command, label, args, exception)
         }
         return true
     }
 
-    final override fun onTabComplete(sender: CommandSender?, command: Command?, alias: String?, args: Array<String>?): MutableList<String> {
-        try {
-            return SpigotCommandExecutor.onComplete(alias!!, args!!, sender!!).toMutableList()
-        } catch(e: KommandException){
-            //Ignore
-        } catch(e: Exception){
-            e.printStackTrace()
+    open fun onCommandException(sender: CommandSender, command: Command, label: String, args: Array<String>, exception: Exception) = when (exception) {
+        is CastException -> sender.sendMessage(exception.message)
+        is VerifyException -> sender.sendMessage(exception.message)
+        else -> {
+            sender.sendMessage(exception.message)
+            logger.warn(exception) { "Exception occur while running command \"$label\"" }
         }
-        return mutableListOf()
+    }
+
+    final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
+        try {
+            return CommandManager.complete(sender, command, label, args).toMutableList()
+        } catch (exception: Exception) {
+            onCommandException(sender, command, label, args, exception)
+        }
+        return Collections.emptyList()
     }
 }

@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
+import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
 import io.github.ReadyMadeProgrammer.Spikot.modules.DIResolver
 import io.github.ReadyMadeProgrammer.Spikot.utils.KPlayerListener
 import io.github.ReadyMadeProgrammer.Spikot.utils.initTaskChain
@@ -40,6 +41,7 @@ class SpikotPlugin: JavaPlugin(){
             instance.onStart()
             DIResolver.moduleInstances.add(instance)
         }
+        CommandManager.loadCommand()
         spikotLogger.info { "End loading spikot" }
     }
 
