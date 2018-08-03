@@ -18,7 +18,7 @@ class CommandGraph<T : CommandHandler>(
             val instance = klass(CommandContext(HashMultimap.create(), LinkedList(), DummyCommandSender))
             val info = instance.info
             val child = mutableMapOf<String, CommandGraph<*>>()
-            info.child.childs.map { CommandGraph(it) }.forEach { k ->
+            info.child.childs.map { CommandGraph.invoke(it) }.forEach { k ->
                 k.info.name.forEach {
                     child[it] = k
                 }
