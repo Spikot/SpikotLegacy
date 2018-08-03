@@ -1,81 +1,55 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import io.github.ReadyMadeProgrammer.KommandFramework.KommandException
-import io.github.ReadyMadeProgrammer.Spikot.command.SpigotCommandExecutor
+import io.github.ReadyMadeProgrammer.Spikot.command.CastException
+import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
+import io.github.ReadyMadeProgrammer.Spikot.command.VerifyException
 import mu.KLogger
 import mu.KotlinLogging
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
-open class Spikot: JavaPlugin(){
-    lateinit var logger: KLogger
-    override fun onEnable(){
+/**
+ * Entry point of plugin which use Spikot Framework.
+ * Plugin lifecycle is managed by spikot so developer should not override any of method in JavaPlugin
+ * Developer should define their plugin main class like this.
+ * class PluginMain: Spikot()
+ */
+abstract class Spikot : JavaPlugin() {
+    private lateinit var logger: KLogger
+
+    final override fun onEnable() {
         logger = KotlinLogging.logger(description.name)
-        ServerLifeCycle.registerPlugin(this)
-    }
-    override fun onDisable(){
     }
 
-    override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<String>?): Boolean {
+    final override fun onDisable() {
+    }
+
+    final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         try {
-            SpigotCommandExecutor.onCommand(label!!, args!!, sender!!)
-        }
-        catch(e: KommandException){
-            //Ignore
-        }
-        catch(e: Exception){
-            e.printStackTrace()
+            CommandManager.invoke(sender, command, label, args)
+        } catch (exception: Exception) {
+            onCommandException(sender, command, label, args, exception)
         }
         return true
     }
 
-    override fun onTabComplete(sender: CommandSender?, command: Command?, alias: String?, args: Array<String>?): MutableList<String> {
+    open fun onCommandException(sender: CommandSender, command: Command, label: String, args: Array<String>, exception: Exception) = when (exception) {
+        is CastException -> sender.sendMessage(exception.message)
+        is VerifyException -> sender.sendMessage(exception.message)
+        else -> {
+            sender.sendMessage(exception.message)
+            logger.warn(exception) { "Exception occur while running command \"$label\"" }
+        }
+    }
+
+    final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
         try {
-            return SpigotCommandExecutor.onComplete(alias!!, args!!, sender!!).toMutableList()
+            return CommandManager.complete(sender, command, label, args).toMutableList()
+        } catch (exception: Exception) {
+            onCommandException(sender, command, label, args, exception)
         }
-        catch(e: KommandException){
-            //Ignore
-        }
-        catch(e: Exception){
-            e.printStackTrace()
-        }
-        return mutableListOf()
+        return Collections.emptyList()
     }
 }
-
-internal object ServerLifeCycle : ModuleLifeCycle<Spikot, ServerScope> {
-    private val modules = HashMap<String, HashSet<ModuleWrapper<Spikot>>>()
-    private val plugins = HashMap<String, Spikot>()
-    internal fun registerPlugin(spikot: Spikot) {
-        plugins[spikot.description.name] = spikot
-    }
-
-    override fun addModule(annotation: ServerScope, module: ModuleWrapper<Spikot>) {
-        val sets = modules[annotation.value]
-        val plugin = plugins[annotation.value]
-        if (sets == null || plugin == null) {
-            logger.warn("Invalid plugin name for module(${module.module.simpleName}): ${(annotation.value)}")
-            return
-        }
-        sets.add(module)
-        module.enable(plugin)
-    }
-    override fun getAllModules(): Set<ModuleWrapper<Spikot>> {
-        val sets = mutableSetOf<ModuleWrapper<Spikot>>()
-        modules.forEach { _, v -> sets.addAll(v) }
-        return sets
-    }
-
-    override fun getAllLoadedModule(): Set<ModuleWrapper<Spikot>> {
-        return getAllModules()
-    }
-    internal fun destroy(){
-        modules.flatMap { (_, v) -> v }.forEach { it.disable() }
-    }
-}
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-@Scope
-annotation class ServerScope(val value: String)

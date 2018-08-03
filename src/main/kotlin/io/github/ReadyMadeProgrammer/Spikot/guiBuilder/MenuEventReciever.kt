@@ -1,7 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.guiBuilder
 
-import io.github.ReadyMadeProgrammer.Spikot.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
+import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -53,7 +53,7 @@ object MenuEventReciever : Listener {
             val code = e.inventory.getCode()
             val m = menus[code] ?: return
             val slot = m.menu[e.slot] ?: return // Find exact number
-            slot.events.forEach { it(m, e.whoClicked as Player, slot, e.click) }
+            slot.events.forEach { it(m, MenuEvent(e.whoClicked as Player, slot, e.click)) }
             e.isCancelled = true
         } catch (e: Exception) {
             //Do Nothing
