@@ -9,5 +9,8 @@
         <module name="Spikot" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Spikot" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
