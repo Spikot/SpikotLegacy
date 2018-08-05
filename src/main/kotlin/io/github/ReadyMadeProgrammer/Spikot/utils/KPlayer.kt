@@ -22,6 +22,8 @@ operator fun <T> Player.get(key: String): T = variableMap[id]?.get(key) as T
 @Suppress("IMPLICIT_CAST_TO_ANY")
 operator fun <T> Player.set(key: String, value: T) = if (value != null) variableMap[id]?.set(key, value as Any) else variableMap.remove(id)
 
+fun Player.has(key: String) = variableMap[id]!!.containsKey(key)
+
 fun Player.remove(key: String) = variableMap[id]!!.remove(key)
 
 object KPlayerListener: Listener {

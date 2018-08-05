@@ -26,6 +26,11 @@ annotation class Contract
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Service(val name: String = "")
 
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ExternalModule(val name: String = "")
+
 /**
  * Annotate Service which will only use when server version is compact.
  * Class annotated with Adapter must annotated with Service too.
@@ -54,7 +59,7 @@ annotation class Feature(val feature: String, val enable: Boolean = true)
 /**
  * Class implements Module will load when server start and that class is entry point of spikot plugin
  */
-interface Module : KoinComponent, Listener {
+interface Module : Component, Listener {
     fun onStart()
     fun onStop()
 }

@@ -5,14 +5,14 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>2.0.0-Beta1</version>
+    <version>2.0.0-Beta4</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>1.2.51</kotlin.version>
+        <kotlin.version>1.2.60</kotlin.version>
         <junit.version>4.12</junit.version>
     </properties>
 
@@ -115,6 +115,11 @@
             <artifactId>kotlin-logging</artifactId>
             <version>1.5.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -128,6 +133,29 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
+                        <id>kapt</id>
+                        <goals>
+                            <goal>kapt</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                            <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>org.spigotmc</groupId>
+                                    <artifactId>plugin-annotations</artifactId>
+                                    <version>1.1.0-SNAPSHOT</version>
+                                </annotationProcessorPath>
+                                <annotationProcessorPath>
+                                    <groupId>io.github.ReadyMadeProgrammer</groupId>
+                                    <artifactId>SpikotClassLocator</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </annotationProcessorPath>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals>
@@ -139,6 +167,45 @@
                         <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-shaded.jar
+                    </outputFile>
+                    <minimizeJar>false</minimizeJar>
+                    <artifactSet>
+                        <includes>
+                            <include>org.slf4j:slf4j-simple</include>
+                            <include>org.javassist:javassist</include>
+                            <include>co.aikar:taskchain-bukkit</include>
+                            <include>co.aikar:taskchain-core</include>
+                            <include>com.google.code.gson:gson</include>
+                            <include>com.google.guava:guava</include>
+                            <include>com.googlecode.json-simple:json-simple</include>
+                            <include>commons-lang:commons-lang</include>
+                            <include>io.github.microutils:kotlin-logging</include>
+                            <include>org.jetbrains.kotlin:kotlin-reflect</include>
+                            <include>org.jetbrains.kotlin:kotlin-stdlib</include>
+                            <include>org.jetbrains.kotlin:kotlin-stdlib-common</include>
+                            <include>org.jetbrains:annotations</include>
+                            <include>org.koin:koin-core</include>
+                            <include>org.reflections:reflections</include>
+                            <include>org.slf4j:slf4j-api</include>
+                            <include>org.spigotmc:plugin-annotations</include>
+                        </includes>
+                    </artifactSet>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
