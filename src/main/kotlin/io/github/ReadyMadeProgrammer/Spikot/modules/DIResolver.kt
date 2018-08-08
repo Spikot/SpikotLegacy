@@ -6,8 +6,9 @@ import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.version
 import org.koin.dsl.module.Module
-import org.koin.dsl.module.applicationContext
+import org.koin.log.EmptyLogger
 import org.koin.standalone.StandAloneContext.startKoin
+import org.koin.standalone.inject
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -71,7 +72,7 @@ object DIResolver {
         }
         externalModule.addAll(rawModuleConfig.map { it.kotlin.createInstance().module })
         logger.info { "Load ${contracts.size} contracts, ${services.size + standalone.size} services, ${modules.size} modules, ${externalModule.size} module configs" }
-        module = applicationContext {
+        module = org.koin.dsl.module.module {
             contracts.forEach { k ->
                 val service = services[k.jvmName]
                 if (service == null) {
@@ -79,25 +80,25 @@ object DIResolver {
                     return@forEach
                 }
                 if (service.singleton) {
-                    bean(name = service.name) { k.createInstance() } bind k
+                    single(name = service.name) { k.createInstance() } bind k
                 } else {
                     factory(name = service.name) { k.createInstance() } bind k
                 }
             }
             standalone.forEach { s ->
                 if (s.singleton) {
-                    bean(name = s.name) { s.klass.createInstance() }
+                    single(name = s.name) { s.klass.createInstance() }
                 } else {
                     factory(name = s.name) { s.klass.createInstance() }
                 }
             }
             modules.forEach { s ->
-                factory(name = s.simpleName!!) { moduleInstances.find { ins -> s.isInstance(ins) }!! }
+                factory(name = s.java.simpleName) { moduleInstances.find { ins -> s.isInstance(ins) }!! }
             }
         }
         val all = mutableListOf(module!!)
         all.addAll(externalModule)
-        startKoin(all)
+        startKoin(all, logger = EmptyLogger())
     }
 
     private fun loadClasses() {
@@ -128,6 +129,7 @@ object DIResolver {
                         //Nothing
                     }
                 }
-
     }
 }
+
+inline fun <reified T : io.github.ReadyMadeProgrammer.Spikot.modules.Module> Component.injectModule(): Lazy<T> = lazy { inject<io.github.ReadyMadeProgrammer.Spikot.modules.Module>(T::class.java.simpleName).value as T }

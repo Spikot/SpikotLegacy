@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import co.aikar.taskchain.BukkitTaskChainFactory
@@ -8,7 +9,7 @@ import org.bukkit.plugin.Plugin
 
 internal var taskChainFactory: TaskChainFactory? = null
 
-internal fun initTaskChain(plugin: Plugin){
+internal fun initTaskChain(plugin: Plugin) {
     taskChainFactory = BukkitTaskChainFactory.create(plugin)
 }
 

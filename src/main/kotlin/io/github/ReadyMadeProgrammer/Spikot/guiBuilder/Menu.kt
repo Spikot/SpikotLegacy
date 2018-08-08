@@ -3,9 +3,9 @@ package io.github.ReadyMadeProgrammer.Spikot.guiBuilder
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 
-abstract class Menu{
+abstract class Menu {
     internal lateinit var menu: MenuBuilder
-    protected fun config(build: MenuBuilder.()->Unit){
+    protected fun config(build: MenuBuilder.() -> Unit) {
         menu = MenuBuilder(this)
         menu.build()
     }

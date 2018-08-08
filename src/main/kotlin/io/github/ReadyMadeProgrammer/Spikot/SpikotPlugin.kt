@@ -4,6 +4,7 @@ import io.github.ReadyMadeProgrammer.Spikot.modules.DIResolver
 import io.github.ReadyMadeProgrammer.Spikot.utils.KPlayerListener
 import io.github.ReadyMadeProgrammer.Spikot.utils.initTaskChain
 import mu.KotlinLogging
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.plugin.java.annotation.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
@@ -29,9 +30,9 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @author ReadyMadeProgrammer
  */
 @Plugin(name = "Spikot", version = "2.0.0-Beta1")
-class SpikotPlugin: JavaPlugin(){
+class SpikotPlugin : JavaPlugin() {
     private val featureFile = File(dataFolder.parent, "feature.txt")
-    override fun onEnable(){
+    override fun onEnable() {
         object : BukkitRunnable() {
             override fun run() {
                 spikotLogger.info { "Start loading spikot" }
@@ -42,6 +43,7 @@ class SpikotPlugin: JavaPlugin(){
                 DIResolver.load()
                 DIResolver.modules.forEach {
                     val instance = it.createInstance()
+                    Bukkit.getPluginManager().registerEvents(instance, this@SpikotPlugin)
                     instance.onStart()
                     DIResolver.moduleInstances.add(instance)
                 }

@@ -60,8 +60,13 @@ annotation class Feature(val feature: String, val enable: Boolean = true)
  * Class implements Module will load when server start and that class is entry point of spikot plugin
  */
 interface Module : Component, Listener {
-    fun onStart()
-    fun onStop()
+    fun onStart() {
+
+    }
+
+    fun onStop() {
+
+    }
 }
 
 /**

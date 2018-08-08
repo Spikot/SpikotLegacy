@@ -2,6 +2,7 @@ package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.modules.Component
 import org.bukkit.command.CommandSender
+import kotlin.math.min
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
@@ -28,8 +29,8 @@ abstract class CommandHandler(private val context: CommandContext) : Component {
 
     protected fun args(range: IntRange): NullableCommandReadOnlyProperty<List<String>> {
         return NullableCommandReadOnlyProperty {
-            if (range.start >= 0 && range.start <= range.endInclusive && range.endInclusive < context.argument.size)
-                context.argument.subList(range.start, range.endInclusive + 1)
+            if (range.start >= 0 && range.start <= range.endInclusive)
+                context.argument.subList(range.start, min(range.endInclusive + 1, context.argument.size))
             else listOf<String>()
         }
     }
