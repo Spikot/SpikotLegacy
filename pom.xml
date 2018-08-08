@@ -176,8 +176,7 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <outputFile>
-                        /media/hong/Data/Development/servers/1.12/plugins/${project.artifactId}-${project.version}-shaded.jar
+                    <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-shaded.jar
                     </outputFile>
                     <minimizeJar>false</minimizeJar>
                     <artifactSet>
