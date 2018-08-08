@@ -3,7 +3,6 @@ package io.github.ReadyMadeProgrammer.Spikot.command
 import com.google.common.collect.HashMultimap
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
-import org.reflections.Reflections
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.jvm.kotlinFunction
@@ -13,12 +12,8 @@ object CommandManager {
     private val rootCommands: ConcurrentHashMap<String, CommandGraph<*>> = ConcurrentHashMap()
 
     @Suppress("UNCHECKED_CAST")
-    internal fun loadCommand() {
-        val reflections = Reflections()
-        reflections.getTypesAnnotatedWith(RootCommand::class.java)
-                .map { it.getConstructor(CommandContext::class.java).kotlinFunction as (CommandContext) -> Any }
-                .map { CommandGraph(it) }
-                .forEach(CommandManager::addCommand)
+    internal fun addCommand(clazz: Class<*>) {
+        addCommand(CommandGraph.invoke(clazz.getConstructor(CommandContext::class.java).kotlinFunction as (CommandContext) -> CommandHandler))
     }
 
     internal fun addCommand(graph: CommandGraph<*>) {

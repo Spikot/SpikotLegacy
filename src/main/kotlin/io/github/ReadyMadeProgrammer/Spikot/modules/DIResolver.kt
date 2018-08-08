@@ -1,16 +1,18 @@
 package io.github.ReadyMadeProgrammer.Spikot.modules
 
 import io.github.ReadyMadeProgrammer.Spikot.ServerVersion
+import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
 import io.github.ReadyMadeProgrammer.Spikot.logger
+import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.version
 import org.koin.dsl.module.Module
-import org.koin.dsl.module.applicationContext
+import org.koin.log.EmptyLogger
 import org.koin.standalone.StandAloneContext.startKoin
-import org.reflections.Reflections
+import org.koin.standalone.inject
+import java.util.jar.JarFile
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSuperclassOf
 import kotlin.reflect.jvm.jvmName
 
@@ -21,6 +23,11 @@ import kotlin.reflect.jvm.jvmName
 object DIResolver {
     private data class ServiceWrapper(val klass: KClass<*>, val name: String, val singleton: Boolean)
 
+    private val rawContracts = mutableSetOf<Class<*>>()
+    private val rawServices = mutableSetOf<Class<*>>()
+    private val rawModuleConfig = mutableSetOf<Class<out ModuleConfig>>()
+    private val rawCommands = mutableSetOf<Class<*>>()
+
     private var module: Module? = null
     private val externalModule = mutableSetOf<Module>()
     internal val moduleInstances = mutableSetOf<io.github.ReadyMadeProgrammer.Spikot.modules.Module>()
@@ -28,12 +35,15 @@ object DIResolver {
     internal val feature = mutableSetOf<String>()
     internal fun load() {
         logger.info { "DI loading start" }
-        val reflections = Reflections()
-        val contracts = Reflections().getTypesAnnotatedWith(Contract::class.java).map { it.kotlin }
+        loadClasses()
+        val contracts = rawContracts.map { it.kotlin }
         val services = mutableMapOf<String, ServiceWrapper>()
         val standalone = mutableSetOf<ServiceWrapper>()
-        reflections.getTypesAnnotatedWith(Service::class.java).map { it.kotlin }.filter {
-            it.isSubclassOf(Component::class)
+        rawCommands.forEach {
+            CommandManager.addCommand(it)
+        }
+        rawServices.map { it.kotlin }.filter {
+            Component::class.isSuperclassOf(it)
         }.filter {
             val feature = it.findAnnotation<Feature>()
             if (feature != null) {
@@ -41,24 +51,28 @@ object DIResolver {
             } else {
                 true
             }
-        }.filter {
-            it.annotations.filter { it is Adapter }
+        }.filter { clz ->
+            if (clz.findAnnotation<Adapter>() == null) true
+            else clz.annotations.filter { it is Adapter }
                     .any { version.match((it as Adapter).platform, it.version) == ServerVersion.Result.COMPACT }
         }.forEach { k ->
             val singleton = k.findAnnotation<Singleton>() != null
             val name = k.findAnnotation<Service>()!!.name
             val service = contracts.find { it.isSuperclassOf(k) }
-            if (service != null && services[service.jvmName] == null) {
-                services[service.jvmName] = ServiceWrapper(k, name, singleton)
+            if (io.github.ReadyMadeProgrammer.Spikot.modules.Module::class.isSuperclassOf(k)) {
+                @Suppress("UNCHECKED_CAST")
+                modules.add(k as KClass<out io.github.ReadyMadeProgrammer.Spikot.modules.Module>)
             } else {
-                standalone.add(ServiceWrapper(k, name, singleton))
+                if (service != null && services[service.jvmName] == null) {
+                    services[service.jvmName] = ServiceWrapper(k, name, singleton)
+                } else {
+                    standalone.add(ServiceWrapper(k, name, singleton))
+                }
             }
         }
-        modules.addAll(reflections.getSubTypesOf(io.github.ReadyMadeProgrammer.Spikot.modules.Module::class.java).map { it.kotlin })
-        externalModule.addAll(reflections.getSubTypesOf(ModuleConfig::class.java)
-                .map { it.kotlin.createInstance().module })
+        externalModule.addAll(rawModuleConfig.map { it.kotlin.createInstance().module })
         logger.info { "Load ${contracts.size} contracts, ${services.size + standalone.size} services, ${modules.size} modules, ${externalModule.size} module configs" }
-        module = applicationContext {
+        module = org.koin.dsl.module.module {
             contracts.forEach { k ->
                 val service = services[k.jvmName]
                 if (service == null) {
@@ -66,21 +80,56 @@ object DIResolver {
                     return@forEach
                 }
                 if (service.singleton) {
-                    bean(name = name) { k.createInstance() } bind k
+                    single(name = service.name) { k.createInstance() } bind k
                 } else {
-                    factory(name = name) { k.createInstance() } bind k
+                    factory(name = service.name) { k.createInstance() } bind k
                 }
             }
             standalone.forEach { s ->
                 if (s.singleton) {
-                    bean(name = s.name) { s.klass.createInstance() }
+                    single(name = s.name) { s.klass.createInstance() }
                 } else {
-                    factory(name = name) { s.klass.createInstance() }
+                    factory(name = s.name) { s.klass.createInstance() }
                 }
+            }
+            modules.forEach { s ->
+                factory(name = s.java.simpleName) { moduleInstances.find { ins -> s.isInstance(ins) }!! }
             }
         }
         val all = mutableListOf(module!!)
         all.addAll(externalModule)
-        startKoin(all)
+        startKoin(all, logger = EmptyLogger())
+    }
+
+    private fun loadClasses() {
+        spikotPlugin.dataFolder.parentFile.listFiles()
+                .filter { it.name.endsWith(".jar") }
+                .map { JarFile(it) }
+                .forEach {
+                    try {
+                        it.getInputStream(it.getJarEntry("contracts")).bufferedReader().lines().forEach { name ->
+                            val clazz = Class.forName(name)
+                            rawContracts.add(clazz)
+                        }
+                        it.getInputStream(it.getJarEntry("services")).bufferedReader().lines().forEach { name ->
+                            val clazz = Class.forName(name)
+                            rawServices.add(clazz)
+                        }
+                        it.getInputStream(it.getJarEntry("modules")).bufferedReader().lines().forEach { name ->
+                            val clazz = Class.forName(name)
+                            @Suppress("UNCHECKED_CAST")
+                            rawModuleConfig.add(clazz as Class<out ModuleConfig>)
+                        }
+                        it.getInputStream(it.getJarEntry("commands")).bufferedReader().lines().forEach { name ->
+                            val clazz = Class.forName(name)
+                            rawCommands.add(clazz)
+                        }
+                        logger.info { "Load ${it.name}" }
+                    } catch (e: Throwable) {
+                        //Nothing
+                    }
+                }
     }
 }
+
+inline fun <reified T : io.github.ReadyMadeProgrammer.Spikot.modules.Module> Component.injectModule(): Lazy<T> = lazy { inject<io.github.ReadyMadeProgrammer.Spikot.modules.Module>(T::class.java.simpleName).value as T }
