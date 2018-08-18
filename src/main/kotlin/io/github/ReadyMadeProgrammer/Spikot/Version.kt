@@ -1,5 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
+import io.github.ReadyMadeProgrammer.Spikot.Version.Variation.*
+import kotlin.math.abs
 import kotlin.math.sign
 
 /**
@@ -8,7 +10,7 @@ import kotlin.math.sign
  * @since 1.4.0
  */
 
-data class Version(val first: Int, val second: Int, val third: Int, val variation: Variation = Variation.NONE) {
+data class Version(val first: Int, val second: Int, val third: Int, val variation: Variation = NONE) {
     companion object {
         private val pattern = Regex("([0-9]+)\\.([0-9]+)\\.([0-9]+)([+|\\-])?")
         operator fun invoke(version: String): Version {
@@ -18,9 +20,9 @@ data class Version(val first: Int, val second: Int, val third: Int, val variatio
             val second = result.groupValues[2].toInt()
             val third = result.groupValues[3].toInt()
             val variation = when (result.groupValues[4]) {
-                "+" -> Variation.UPPER
-                "-" -> Variation.LOWER
-                else -> Variation.NONE
+                "+" -> UPPER
+                "-" -> LOWER
+                else -> NONE
             }
             return Version(first, second, third, variation)
         }
@@ -35,9 +37,26 @@ data class Version(val first: Int, val second: Int, val third: Int, val variatio
 
     fun match(version: Version): Boolean {
         return when (this.compareTo(version).sign) {
-            -1 -> version.variation == Variation.LOWER || this.variation == Variation.UPPER
-            1 -> version.variation == Variation.UPPER || this.variation == Variation.LOWER
+            -1 -> version.variation == LOWER || this.variation == UPPER
+            1 -> version.variation == UPPER || this.variation == LOWER
             else -> true
+        }
+    }
+
+    fun closer(v1: Version, v2: Version): Int {
+        val v1M = this.match(v1)
+        val v2M = this.match(v2)
+        return if (v1M && !v2M) -1
+        else if (!v1M && v2M) 1
+        else if (!v1M && !v2M) 0
+        else when (this.variation) {
+            NONE -> {
+                (abs(v2.first - first) - abs(v1.first - first)).sign * 100
+                +(abs(v2.second - second) - abs(v1.second - second)).sign * 10
+                +(abs(v2.third - third) - abs(v1.third - third)).sign
+            }
+            UPPER -> v1.compareTo(v2)
+            LOWER -> v2.compareTo(v1)
         }
     }
 

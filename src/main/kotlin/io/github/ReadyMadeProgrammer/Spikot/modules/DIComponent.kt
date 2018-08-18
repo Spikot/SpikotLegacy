@@ -35,7 +35,6 @@ annotation class ExternalModule(val name: String = "")
  * Annotate Service which will only use when server version is compact.
  * Class annotated with Adapter must annotated with Service too.
  */
-@Repeatable
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Adapter(val platform: Array<ServerVersion.Platform> = [UNKNOWN, SPIGOT, PAPER, GLOWSTONE, CRAFT], val version: Array<String> = ["0.0.0+"])
@@ -60,8 +59,13 @@ annotation class Feature(val feature: String, val enable: Boolean = true)
  * Class implements Module will load when server start and that class is entry point of spikot plugin
  */
 interface Module : Component, Listener {
-    fun onStart()
-    fun onStop()
+    fun onStart() {
+
+    }
+
+    fun onStop() {
+
+    }
 }
 
 /**

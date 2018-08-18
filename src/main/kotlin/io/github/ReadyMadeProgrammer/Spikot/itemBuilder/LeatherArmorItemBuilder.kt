@@ -4,11 +4,11 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.inventory.meta.LeatherArmorMeta
 
-class LeatherArmorItemBuilder(material: Material): ItemBuilder(material){
+class LeatherArmorItemBuilder(material: Material) : ItemBuilder(material) {
     private val colorMeta = item.itemMeta as LeatherArmorMeta
     var color: Color
-        get()= colorMeta.color
-        set(value){
+        get() = colorMeta.color
+        set(value) {
             colorMeta.color = value
         }
 }

@@ -6,31 +6,32 @@ import org.bukkit.Material
 import org.bukkit.inventory.meta.FireworkEffectMeta
 import org.bukkit.inventory.meta.FireworkMeta
 
-class FireworkChargeItemBuilder: ItemBuilder(Material.FIREWORK_CHARGE){
+class FireworkChargeItemBuilder : ItemBuilder(Material.FIREWORK_CHARGE) {
     private val fireworkMeta = meta as FireworkEffectMeta
-    fun effect(build: EffectBuilder.()->Unit){
+    fun effect(build: EffectBuilder.() -> Unit) {
         val builder = EffectBuilder()
         builder.build()
         fireworkMeta.effect = builder.effect.build()
     }
 }
 
-class FireworkItemBuilder: ItemBuilder(Material.FIREWORK){
+class FireworkItemBuilder : ItemBuilder(Material.FIREWORK) {
     private val fireworkMeta = meta as FireworkMeta
     var power: Int
-        get()=fireworkMeta.power
-        set(value){
+        get() = fireworkMeta.power
+        set(value) {
             fireworkMeta.power = value
         }
-    fun effects(build: FireworkBuilder.()->Unit){
+
+    fun effects(build: FireworkBuilder.() -> Unit) {
         val builder = FireworkBuilder(fireworkMeta)
         builder.build()
     }
 }
 
 @ItemDslMarker
-class FireworkBuilder(private val meta: FireworkMeta){
-    fun effect(build: EffectBuilder.()->Unit){
+class FireworkBuilder(private val meta: FireworkMeta) {
+    fun effect(build: EffectBuilder.() -> Unit) {
         val builder = EffectBuilder()
         builder.build()
         meta.addEffect(builder.effect.build())
@@ -38,27 +39,29 @@ class FireworkBuilder(private val meta: FireworkMeta){
 }
 
 @ItemDslMarker
-class EffectBuilder{
+class EffectBuilder {
     internal val effect = FireworkEffect.builder()
     var type: FireworkEffect.Type
-        get()=FireworkEffect.Type.BALL
-        set(value){
-            effect.with(type)
+        get() = FireworkEffect.Type.BALL
+        set(value) {
+            effect.with(value)
         }
     val Trail: Unit
-        get(){
+        get() {
             effect.withTrail()
         }
     val Flicker: Unit
-        get(){
+        get() {
             effect.withFlicker()
         }
-    fun colors(build: ColorsBuilder.()->Unit){
+
+    fun colors(build: ColorsBuilder.() -> Unit) {
         val builder = ColorsBuilder()
         builder.build()
         effect.withColor(builder.list)
     }
-    fun fadeColors(build: ColorsBuilder.()->Unit){
+
+    fun fadeColors(build: ColorsBuilder.() -> Unit) {
         val builder = ColorsBuilder()
         builder.build()
         effect.withFade(builder.list)
@@ -66,9 +69,9 @@ class EffectBuilder{
 }
 
 @ItemDslMarker
-class ColorsBuilder{
+class ColorsBuilder {
     internal val list = mutableListOf<Color>()
-    operator fun Color.unaryPlus(){
+    operator fun Color.unaryPlus() {
         list.add(this)
     }
 }

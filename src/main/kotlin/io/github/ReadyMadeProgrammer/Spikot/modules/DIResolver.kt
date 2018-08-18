@@ -1,13 +1,15 @@
 package io.github.ReadyMadeProgrammer.Spikot.modules
 
 import io.github.ReadyMadeProgrammer.Spikot.ServerVersion
+import io.github.ReadyMadeProgrammer.Spikot.Version
 import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
 import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.version
 import org.koin.dsl.module.Module
-import org.koin.dsl.module.applicationContext
+import org.koin.log.EmptyLogger
 import org.koin.standalone.StandAloneContext.startKoin
+import org.koin.standalone.inject
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -35,7 +37,14 @@ object DIResolver {
     internal fun load() {
         logger.info { "DI loading start" }
         loadClasses()
-        val contracts = rawContracts.map { it.kotlin }
+        val contracts = rawContracts.filter {
+            if (it.isInterface) {
+                true
+            } else {
+                logger.warn { "Contract ${it.simpleName} is not interface" }
+                false
+            }
+        }.map { it.kotlin }
         val services = mutableMapOf<String, ServiceWrapper>()
         val standalone = mutableSetOf<ServiceWrapper>()
         rawCommands.forEach {
@@ -57,21 +66,54 @@ object DIResolver {
         }.forEach { k ->
             val singleton = k.findAnnotation<Singleton>() != null
             val name = k.findAnnotation<Service>()!!.name
-            val service = contracts.find { it.isSuperclassOf(k) }
+            val contract = contracts.find { it.isSuperclassOf(k) }
+            val serviceWrapper = ServiceWrapper(k, name, singleton)
+            if (contract != null) {
+                val registered = services[contract.jvmName]
+                if (registered != null) {
+                    val registeredAdapter = registered.klass.findAnnotation<Adapter>()
+                    val adapter = k.findAnnotation<Adapter>()
+                    if (adapter == null) {
+                        standalone.add(serviceWrapper)
+                    } else {
+                        if (registeredAdapter == null) {
+                            standalone.add(registered)
+                            services[contract.jvmName] = serviceWrapper
+                        } else {
+                            var registeredBest = Version(registeredAdapter.version[0])
+                            registeredAdapter.version.map { Version(it) }.forEach {
+                                if (version.version.closer(registeredBest, it) < 0) {
+                                    registeredBest = it
+                                }
+                            }
+                            var best = Version(adapter.version[0])
+                            adapter.version.map { Version(it) }.forEach {
+                                if (version.version.closer(best, it) < 0) {
+                                    best = it
+                                }
+                            }
+                            if (version.version.closer(best, registeredBest) > 0) {
+                                standalone.add(registered)
+                                services[contract.jvmName] = serviceWrapper
+                            } else {
+                                standalone.add(serviceWrapper)
+                            }
+                        }
+                    }
+                } else {
+                    services[contract.jvmName] = serviceWrapper
+                }
+            } else {
+                standalone.add(serviceWrapper)
+            }
             if (io.github.ReadyMadeProgrammer.Spikot.modules.Module::class.isSuperclassOf(k)) {
                 @Suppress("UNCHECKED_CAST")
                 modules.add(k as KClass<out io.github.ReadyMadeProgrammer.Spikot.modules.Module>)
-            } else {
-                if (service != null && services[service.jvmName] == null) {
-                    services[service.jvmName] = ServiceWrapper(k, name, singleton)
-                } else {
-                    standalone.add(ServiceWrapper(k, name, singleton))
-                }
             }
         }
         externalModule.addAll(rawModuleConfig.map { it.kotlin.createInstance().module })
         logger.info { "Load ${contracts.size} contracts, ${services.size + standalone.size} services, ${modules.size} modules, ${externalModule.size} module configs" }
-        module = applicationContext {
+        module = org.koin.dsl.module.module {
             contracts.forEach { k ->
                 val service = services[k.jvmName]
                 if (service == null) {
@@ -79,25 +121,25 @@ object DIResolver {
                     return@forEach
                 }
                 if (service.singleton) {
-                    bean(name = service.name) { k.createInstance() } bind k
+                    single(name = service.name) { service.klass.createInstance() } bind k
                 } else {
-                    factory(name = service.name) { k.createInstance() } bind k
+                    factory(name = service.name) { service.klass.createInstance() } bind k
                 }
             }
             standalone.forEach { s ->
                 if (s.singleton) {
-                    bean(name = s.name) { s.klass.createInstance() }
+                    single(name = s.name) { s.klass.createInstance() }
                 } else {
                     factory(name = s.name) { s.klass.createInstance() }
                 }
             }
             modules.forEach { s ->
-                factory(name = s.simpleName!!) { moduleInstances.find { ins -> s.isInstance(ins) }!! }
+                factory(name = s.java.simpleName) { moduleInstances.find { ins -> s.isInstance(ins) }!! }
             }
         }
         val all = mutableListOf(module!!)
         all.addAll(externalModule)
-        startKoin(all)
+        startKoin(all, logger = EmptyLogger())
     }
 
     private fun loadClasses() {
@@ -128,6 +170,7 @@ object DIResolver {
                         //Nothing
                     }
                 }
-
     }
 }
+
+inline fun <reified T : io.github.ReadyMadeProgrammer.Spikot.modules.Module> Component.injectModule(): Lazy<T> = lazy { inject<io.github.ReadyMadeProgrammer.Spikot.modules.Module>(T::class.java.simpleName).value as T }
