@@ -49,10 +49,10 @@ fun <E> paginate(body: PaginatorBuilder<E>.() -> Unit): Paginator<E> {
     return paginate(body) {}
 }
 
-private fun <E> paginate(body: PaginatorBuilder<E>.() -> Unit, invokationObserver: Observer<List<String>>): Paginator<E> {
+private fun <E> paginate(body: PaginatorBuilder<E>.() -> Unit, observer: Observer<List<String>>): Paginator<E> {
     val builder = PaginatorBuilder<E>()
     builder.body()
-    return Paginator(builder.header, builder.footer, builder.format, builder.length, builder.data, invokationObserver)
+    return Paginator(builder.header, builder.footer, builder.format, builder.length, builder.data, observer)
 }
 
 @Suppress("unused")

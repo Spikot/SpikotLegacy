@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.mojangapi
 
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache
@@ -43,6 +45,7 @@ internal val uuidPlayerProfileCache: AsyncLoadingCache<UUID, PlayerProfile> = Ca
         .refreshAfterWrite(Duration.ofHours(1L))
         .buildAsync { key -> resolve(key.toString()) }
 
+@Suppress("SpellCheckingInspection")
 fun resolve(key: String): PlayerProfile? {
     try {
         val url = URL("https://api.ashcon.app/mojang/v1/user/$key")

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.persistence
 
 import io.github.ReadyMadeProgrammer.Spikot.gson.gson
@@ -59,7 +61,7 @@ internal object PlayerDataManager : Listener {
     private fun load(player: Player) {
         dataClass.forEach {
             try {
-                val text = pather(player, it).readText()
+                val text = createFile(player, it).readText()
                 player["pd$${it.java.name}"] = if (text.isBlank()) {
                     it.createInstance()
                 } else {
@@ -75,7 +77,7 @@ internal object PlayerDataManager : Listener {
         dataClass.forEach {
             try {
                 if (player.has("pd$${it.java.name}")) {
-                    pather(player, it).writeText(gson.toJson(player["pd$${it.java.name}"]))
+                    createFile(player, it).writeText(gson.toJson(player["pd$${it.java.name}"]))
                 }
             } catch (e: Exception) {
                 logger.warn(e) { "Exception while saving player data: ${it.simpleName}" }
@@ -83,7 +85,7 @@ internal object PlayerDataManager : Listener {
         }
     }
 
-    private fun pather(player: Player, type: KClass<*>): File {
+    private fun createFile(player: Player, type: KClass<*>): File {
         val middle = File(path, player.uniqueId.toString())
         if (!middle.exists()) middle.mkdir()
         val final = File(middle, "${type.qualifiedName}.json")

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.persistence
 
 import io.github.ReadyMadeProgrammer.Spikot.gson.gson

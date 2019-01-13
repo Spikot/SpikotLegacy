@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Material

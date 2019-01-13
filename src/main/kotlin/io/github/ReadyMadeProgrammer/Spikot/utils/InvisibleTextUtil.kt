@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
+@Suppress("SpellCheckingInspection")
 private const val allowedTag = "abcdefghijlmnopqstuvwxyz0123456789"
 private const val allowedLength = allowedTag.length
 private const val special = '§'

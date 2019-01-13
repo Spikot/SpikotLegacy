@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.misc
 
 interface Value<T> {
@@ -31,6 +33,7 @@ class ObservableValue<T>(value: T, private val observer: (T) -> Unit) : SimpleVa
         }
 }
 
+@Suppress("SpellCheckingInspection")
 class VetoableValue<T>(value: T, private val observer: (T) -> Boolean) : SimpleValue<T>(value) {
     override var value: T
         get() = super.value

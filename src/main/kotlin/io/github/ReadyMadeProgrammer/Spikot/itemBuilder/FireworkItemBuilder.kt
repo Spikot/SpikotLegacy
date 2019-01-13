@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Color
@@ -46,10 +48,12 @@ class EffectBuilder {
         set(value) {
             effect.with(value)
         }
+    @Suppress("PropertyName")
     val Trail: Unit
         get() {
             effect.withTrail()
         }
+    @Suppress("PropertyName")
     val Flicker: Unit
         get() {
             effect.withFlicker()

@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 //package io.github.ReadyMadeProgrammer.Spikot.nbt
 //
 //import io.github.ReadyMadeProgrammer.Spikot.reflections.ReflectionUtils

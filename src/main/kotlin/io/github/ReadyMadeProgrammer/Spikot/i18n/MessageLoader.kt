@@ -8,7 +8,7 @@ import java.io.File
 import java.util.*
 import kotlin.reflect.KClass
 
-val gson = GsonBuilder().setPrettyPrinting().create()
+val gson = GsonBuilder().setPrettyPrinting().create()!!
 
 internal fun loadKey(enum: KClass<*>) {
     val values = enum.java.enumConstants

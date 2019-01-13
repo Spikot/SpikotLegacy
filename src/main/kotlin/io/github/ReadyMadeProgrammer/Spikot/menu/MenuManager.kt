@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
 import io.github.ReadyMadeProgrammer.Spikot.thread.sync
@@ -31,12 +33,12 @@ fun Player.openInventory(menuProvider: MenuProvider) {
 }
 
 object MenuManager : Listener {
-    private var _id = 0
-    internal val id: Int
+    internal var id: Int = 0
         get() {
-            _id++
-            return _id
+            field++
+            return field
         }
+        private set
 
     internal val openedInventory = mutableMapOf<Int, MenuProvider>()
 
@@ -46,6 +48,7 @@ object MenuManager : Listener {
             return
         }
         event.isCancelled = true
+        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (event.action) {
             NOTHING,
             DROP_ALL_CURSOR,
@@ -58,6 +61,7 @@ object MenuManager : Listener {
             COLLECT_TO_CURSOR,
             InventoryAction.UNKNOWN -> return
         }
+        @Suppress("NON_EXHAUSTIVE_WHEN")
         when (event.click) {
             WINDOW_BORDER_LEFT,
             WINDOW_BORDER_RIGHT,

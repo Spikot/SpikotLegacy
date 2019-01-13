@@ -6,10 +6,13 @@ import io.github.ReadyMadeProgrammer.Spikot.utils.encryptInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import org.junit.Test
 import java.util.*
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+@Ignore
 class InvisibleTest {
+    @Suppress("SpellCheckingInspection")
     @Test
     fun test() {
         val random = Random()

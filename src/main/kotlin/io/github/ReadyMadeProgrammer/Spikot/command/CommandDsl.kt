@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.command
 
 import kotlin.reflect.KClass
@@ -17,11 +19,11 @@ open class CommandInfo(build: CommandInfo.() -> Unit) {
     var usage: String = ""
     var help: String = ""
     internal var completer: TabCompleter.() -> List<String> = { emptyList() }
-    internal var _childs: Set<KClass<out CommandHandler>> = emptySet()
+    internal var childs: Set<KClass<out CommandHandler>> = emptySet()
     fun childs(build: ChildsBuilder.() -> Unit) {
         val childBuilder = ChildsBuilder()
         childBuilder.build()
-        _childs = childBuilder.childs
+        childs = childBuilder.childs
     }
 
     fun complete(completer: TabCompleter.() -> List<String>) {

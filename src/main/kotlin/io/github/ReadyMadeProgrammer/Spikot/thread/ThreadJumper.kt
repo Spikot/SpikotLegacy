@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.thread
 
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
@@ -27,23 +29,26 @@ fun delay(tick: Int): ThreadChain<Unit, Unit> {
     return sync {}.delay(tick)
 }
 
+@Suppress("MemberVisibilityCanBePrivate")
 data class ThreadChain<T : Any, R : Any>(val type: ThreadType, val runnable: ThreadWork<T, R>) {
     private var value: R? = null
     private var runned = false
     private var next: ThreadChain<R, *>? = null
     fun <N : Any> sync(runnable: ThreadWork<R, N>): ThreadChain<R, N> {
-        next = ThreadChain<R, N>(type = ThreadType.SYNC, runnable = runnable)
+        next = ThreadChain(type = ThreadType.SYNC, runnable = runnable)
         if (runned) {
             next!!.execute(value!!)
         }
+        @Suppress("UNCHECKED_CAST")
         return next as ThreadChain<R, N>
     }
 
     fun <N : Any> async(runnable: ThreadWork<R, N>): ThreadChain<R, N> {
-        next = ThreadChain<R, N>(type = ThreadType.ASYNC, runnable = runnable)
+        next = ThreadChain(type = ThreadType.ASYNC, runnable = runnable)
         if (runned) {
             next!!.execute(value!!)
         }
+        @Suppress("UNCHECKED_CAST")
         return next as ThreadChain<R, N>
     }
 

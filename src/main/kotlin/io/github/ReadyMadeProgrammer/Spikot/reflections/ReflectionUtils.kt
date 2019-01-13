@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot.reflections
 import org.bukkit.Bukkit
 
 object ReflectionUtils {
+    @Suppress("MemberVisibilityCanBePrivate")
     val version = Bukkit.getServer().javaClass.`package`.name
             .replace(".", ",").split(",")[3]
 

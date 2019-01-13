@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
@@ -5,8 +7,9 @@ import org.bukkit.command.CommandSender
 import kotlin.math.min
 
 abstract class CommandHandler {
-    lateinit var context: CommandContext
-    lateinit var plugin: Spikot
+    @Suppress("MemberVisibilityCanBePrivate")
+    protected lateinit var context: CommandContext
+    protected lateinit var plugin: Spikot
     private var depth: Int = 0
     private val delegates = HashSet<VerboseProperty>()
 
@@ -29,11 +32,11 @@ abstract class CommandHandler {
 
     fun arg(index: Int): NullableVerboseProperty<String> {
         val delegate = NullableVerboseProperty({ context.commandSender }) {
-            val _index = index + depth
-            if (context.args.size <= _index) {
+            val realIndex = index + depth
+            if (context.args.size <= realIndex) {
                 null
             } else {
-                context.args[_index]
+                context.args[realIndex]
             }
         }
         delegates += delegate
@@ -42,11 +45,11 @@ abstract class CommandHandler {
 
     fun args(range: IntRange): NotNullVerboseProperty<List<String>> {
         val delegate = NotNullVerboseProperty({ context.commandSender }) {
-            val _range = IntRange(range.start + depth, range.endInclusive + depth)
+            val realRange = IntRange(range.start + depth, range.endInclusive + depth)
             if (context.args.size <= range.first) {
                 emptyList()
             } else {
-                context.args.subList(_range.first, min(_range.last + 1, context.args.size))
+                context.args.subList(realRange.first, min(realRange.last + 1, context.args.size))
             }
         }
         delegates += delegate

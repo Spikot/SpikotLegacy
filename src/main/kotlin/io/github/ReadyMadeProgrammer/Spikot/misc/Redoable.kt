@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.misc
 
 /**
@@ -5,7 +7,7 @@ package io.github.ReadyMadeProgrammer.Spikot.misc
  */
 interface Redoable : Undoable {
     /**
-     * Whether this work is redoable. Single work can redo only once.
+     * Whether this work is redoable.
      */
     val isRedoable: Boolean
 

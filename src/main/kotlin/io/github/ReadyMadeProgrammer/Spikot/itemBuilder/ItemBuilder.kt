@@ -76,13 +76,13 @@ fun enchantBook(itemStack: ItemStack, build: EnchantBookItemBuilder.() -> Unit):
     return builder.toItemStack()
 }
 
-fun leatherHelment(build: LeatherArmorItemBuilder.() -> Unit): ItemStack {
+fun leatherHelmet(build: LeatherArmorItemBuilder.() -> Unit): ItemStack {
     val builder = LeatherArmorItemBuilder(Material.LEATHER_HELMET)
     builder.build()
     return builder.toItemStack()
 }
 
-fun leatherHelment(itemStack: ItemStack, build: LeatherArmorItemBuilder.() -> Unit): ItemStack {
+fun leatherHelmet(itemStack: ItemStack, build: LeatherArmorItemBuilder.() -> Unit): ItemStack {
     val builder = LeatherArmorItemBuilder(itemStack)
     builder.build()
     return builder.toItemStack()
@@ -223,7 +223,7 @@ abstract class ItemBuilder<T : ItemMetaBuilder<*>>(protected val item: ItemStack
 }
 
 @ItemDslMarker
-class ItemFlagBuilder(val itemMeta: ItemMeta) {
+class ItemFlagBuilder(private val itemMeta: ItemMeta) {
     val HIDE_ENCHANT: Unit
         get() {
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS)

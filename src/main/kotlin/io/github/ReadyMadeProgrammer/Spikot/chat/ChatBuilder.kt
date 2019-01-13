@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.chat
 
 import com.github.salomonbrys.kotson.set
@@ -188,6 +190,7 @@ class ChatBuilder {
         return component
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun toJson(): JsonObject {
         val json = JsonObject()
         if (_keybind) {

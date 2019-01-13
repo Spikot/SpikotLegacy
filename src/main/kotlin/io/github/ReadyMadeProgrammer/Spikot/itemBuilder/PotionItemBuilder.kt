@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Color
@@ -40,6 +42,7 @@ class PotionItemMetaBuilder(itemMeta: PotionMeta) : ItemMetaBuilder<PotionMeta>(
 }
 
 @ItemDslMarker
+@Suppress("PropertyName")
 class PotionDataBuilder {
     var type: PotionType? = null
     private var isExtended: Boolean = false
@@ -56,6 +59,7 @@ class PotionDataBuilder {
     fun toPotionData(): PotionData = PotionData(type, isExtended, isUpgraded)
 }
 
+@Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 @ItemDslMarker
 class PotionEffectBuilder {
     var type: PotionEffectType? = null

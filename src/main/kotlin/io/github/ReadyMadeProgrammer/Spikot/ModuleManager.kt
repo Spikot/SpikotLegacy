@@ -17,6 +17,7 @@ import kotlin.reflect.full.createInstance
 
 internal object ModuleManager {
     private val modules: MutableMap<String, Set<IModule>> = mutableMapOf()
+    @Suppress("SpellCheckingInspection")
     fun load() {
         spikotPlugin.dataFolder.parentFile.listFiles().asSequence()
                 .filter { it.name.endsWith(".jar") }
@@ -77,7 +78,10 @@ internal object ModuleManager {
                 it.onLoad(sPlugin)
             }
             m.forEach {
-                safe { it.onEnable(sPlugin) } //Legacy
+                safe {
+                    @Suppress("DEPRECATION")
+                    it.onEnable(sPlugin)
+                } //Legacy
                 safe { it.onEnable() }
                 Bukkit.getPluginManager().registerEvents(it, sPlugin)
             }

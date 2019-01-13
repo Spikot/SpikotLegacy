@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import io.github.ReadyMadeProgrammer.Spikot.mojangapi.PlayerProfile
@@ -19,10 +21,10 @@ class SkullItemBuilder(itemStack: ItemStack) : ItemBuilder<SkullItemMetaBuilder>
 }
 
 class SkullItemMetaBuilder(itemMeta: SkullMeta) : ItemMetaBuilder<SkullMeta>(itemMeta) {
-    var owner: String
-        get() = itemMeta.owner
+    var owner: OfflinePlayer
+        get() = itemMeta.owningPlayer
         set(value) {
-            itemMeta.owner = value
+            itemMeta.owningPlayer = value
         }
 
     var owingPlayer: OfflinePlayer
@@ -36,6 +38,7 @@ class SkullItemMetaBuilder(itemMeta: SkullMeta) : ItemMetaBuilder<SkullMeta>(ite
 private fun createSkull0(base64: String): ItemStack {
     val hashed = UUID(base64.hashCode().toLong(), base64.hashCode().toLong())
     val itemStack = ItemStack(Material.SKULL_ITEM, 1, 3.toShort())
+    @Suppress("DEPRECATION")
     return Bukkit.getUnsafe().modifyItemStack(itemStack,
             "{SkullOwner:{Id:\"$hashed\",Properties:{textures:[{Value:\"$base64\"}]}}}")
 }

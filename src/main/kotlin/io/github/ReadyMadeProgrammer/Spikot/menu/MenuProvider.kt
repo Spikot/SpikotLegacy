@@ -11,9 +11,11 @@ import kotlin.properties.Delegates
 
 abstract class MenuProvider {
     var id by Delegates.notNull<Int>()
+    @Suppress("MemberVisibilityCanBePrivate")
     protected lateinit var player: Player
     internal lateinit var menu: MenuBuilder
     private var opened = false
+    @Suppress("unused")
     private val isOpen
         get() = opened
 
@@ -41,6 +43,7 @@ abstract class MenuProvider {
         this.menu = menu
     }
 
+    @Suppress("unused")
     protected fun update(build: MenuBuilder.() -> Unit) {
         menu.build()
         if (opened) {

@@ -20,7 +20,7 @@ private val legacySupport = HashBiMap.create<String, UUID>()
 operator fun <T> Player.get(key: String): T = variableMap[id]?.get(key) as T
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-operator fun <T> Player.set(key: String, value: T): Unit {
+operator fun <T> Player.set(key: String, value: T) {
     if (value != null)
         variableMap[id]?.set(key, value as Any)
     else

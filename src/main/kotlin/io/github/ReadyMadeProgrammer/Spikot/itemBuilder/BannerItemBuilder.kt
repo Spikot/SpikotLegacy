@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.DyeColor
@@ -8,12 +9,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 
 class BannerItemMetaBuilder(itemMeta: BannerMeta) : ItemMetaBuilder<BannerMeta>(itemMeta) {
-    var baseColor: DyeColor
-        get() = itemMeta.baseColor
-        set(value) {
-            itemMeta.baseColor = value
-        }
-
     operator fun PatternType.invoke(color: DyeColor) {
         itemMeta.addPattern(Pattern(color, this))
     }

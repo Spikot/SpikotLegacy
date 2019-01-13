@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.gson.*
@@ -20,7 +22,7 @@ class NBTItemSerializer : JsonSerializer<ItemStack> {
     override fun serialize(item: ItemStack, type: Type?, ctx: JsonSerializationContext?): JsonElement {
         val nbt = item.toNmsCopy().tag
         val byteArrayOutputStream = ByteArrayOutputStream()
-        val bytes = methodToByte.invoke(null, nbt.handle, byteArrayOutputStream) as ByteArray
+        methodToByte.invoke(null, nbt.handle, byteArrayOutputStream)
         val string = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray())
         return JsonPrimitive(string)
     }

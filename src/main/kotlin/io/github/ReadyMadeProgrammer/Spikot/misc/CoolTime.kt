@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.misc
 
 import kotlin.math.max
@@ -5,6 +7,7 @@ import kotlin.math.max
 /**
  * Cool time calculator
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class CoolTime(val period: Long, var lastUse: Long = 0) {
     val remain: Long
         get() = max(lastUse + period - System.currentTimeMillis(), 0)
@@ -26,7 +29,7 @@ class CoolTime(val period: Long, var lastUse: Long = 0) {
     }
 }
 
-class FailureHandler(val isFailed: Boolean) {
+class FailureHandler(private val isFailed: Boolean) {
     fun onFail(handler: () -> Unit) {
         if (isFailed) {
             handler()

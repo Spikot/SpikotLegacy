@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.command
 
 import org.bukkit.command.CommandSender
@@ -45,11 +47,13 @@ class NotNullVerboseProperty<T : Any>(val commandSender: () -> CommandSender, va
                 throw CastException(message, commandSender(), e)
             }
         }
+        @Suppress("UNCHECKED_CAST")
         return next as NotNullVerboseProperty<R>
     }
 
     fun nullable(): NullableVerboseProperty<T> {
         next = NullableVerboseProperty(commandSender, value)
+        @Suppress("UNCHECKED_CAST")
         return next as NullableVerboseProperty<T>
     }
 }
@@ -97,6 +101,7 @@ class NullableVerboseProperty<T : Any>(val commandSender: () -> CommandSender, v
                 throw CastException(message, commandSender(), e)
             }
         }
+        @Suppress("UNCHECKED_CAST")
         return next as NullableVerboseProperty<R>
     }
 
@@ -108,6 +113,7 @@ class NullableVerboseProperty<T : Any>(val commandSender: () -> CommandSender, v
                 get()!!
             }
         }
+        @Suppress("UNCHECKED_CAST")
         return next as NotNullVerboseProperty<T>
     }
 }

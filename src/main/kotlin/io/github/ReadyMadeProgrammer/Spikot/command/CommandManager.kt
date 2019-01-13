@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
@@ -20,7 +22,7 @@ object CommandManager {
     }
 
     internal fun invoke(plugin: Spikot, commandSender: CommandSender, command: Command, label: String, args: Array<String>) {
-        val root = commandHolders.find { it.name.any { it.equals(label, true) } }
+        val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } }
         if (root == null) {
             plugin.onCommandException(commandSender, command, label, args.asList(), NoSuchCommandException())
         } else {
@@ -29,7 +31,7 @@ object CommandManager {
     }
 
     internal fun complete(plugin: Spikot, commandSender: CommandSender, command: Command, label: String, args: Array<String>): List<String> {
-        val root = commandHolders.find { it.name.any { it.equals(label, true) } }
+        val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } }
         return root?.complete(plugin, CommandContext(commandSender, command, label, args.asList()), 0) ?: commandNames
     }
 }
@@ -50,7 +52,7 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
         name = commandInfo.name.map { it.toLowerCase() }.toSet()
         help = commandInfo.help
         usage = commandInfo.usage
-        child = commandInfo._childs.asSequence().map { CommandHolder(it) }.toSet()
+        child = commandInfo.childs.asSequence().map { CommandHolder(it) }.toSet()
         completer = try {
             commandInfo.completer
         } catch (e: Exception) {
@@ -106,6 +108,7 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     internal fun usage(commandContext: CommandContext, depth: Int) {
         val subCommand = child.find { it.name.contains(commandContext.args[depth]) }
         if (subCommand == null) {
