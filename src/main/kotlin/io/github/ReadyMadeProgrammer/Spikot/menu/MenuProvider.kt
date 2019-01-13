@@ -6,6 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryInteractEvent
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import kotlin.properties.Delegates
 
@@ -14,6 +15,7 @@ abstract class MenuProvider {
     @Suppress("MemberVisibilityCanBePrivate")
     protected lateinit var player: Player
     internal lateinit var menu: MenuBuilder
+    protected lateinit var inventory: Inventory
     private var opened = false
     @Suppress("unused")
     private val isOpen
@@ -27,7 +29,7 @@ abstract class MenuProvider {
     }
 
     internal fun openInventory() {
-        val inventory = Bukkit.createInventory(null, menu.size, menu.title.attachInvisible(id))
+        inventory = Bukkit.createInventory(null, menu.size, menu.title.attachInvisible(id))
         val contents = Array(menu.size) { ItemStack(Material.AIR) }
         menu.slot.forEach { (point, item) ->
             contents[point.x + point.y * 9] = item.itemStack
