@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.common.collect.HashBiMap
