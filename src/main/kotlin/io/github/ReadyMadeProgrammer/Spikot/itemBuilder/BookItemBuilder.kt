@@ -4,30 +4,38 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BookMeta
 
+class BookItemBuilder(itemStack: ItemStack) : ItemBuilder<BookItemMetaBuilder>(itemStack) {
+    constructor() : this(ItemStack(Material.BOOK))
 
-class BookItemBuilder : ItemBuilder(Material.BOOK) {
-    val bookMeta = item.itemMeta as BookMeta
+    override fun meta(build: BookItemMetaBuilder.() -> Unit) {
+        val builder = BookItemMetaBuilder(item.itemMeta as BookMeta)
+        builder.build()
+        item.itemMeta = builder.itemMeta
+    }
+
+}
+
+class BookItemMetaBuilder(itemMeta: BookMeta) : ItemMetaBuilder<BookMeta>(itemMeta) {
     var author: String
-        get() = bookMeta.author
+        get() = itemMeta.author
         set(value) {
-            bookMeta.author = value
+            itemMeta.author = value
         }
     var title: String
-        get() = bookMeta.title
+        get() = itemMeta.title
         set(value) {
-            bookMeta.title = value
+            itemMeta.title = value
         }
 
     fun pages(build: PageBuilder.() -> Unit) {
-        val builder = PageBuilder(item)
+        val builder = PageBuilder(itemMeta)
         builder.build()
     }
 }
 
 @ItemDslMarker
-class PageBuilder(book: ItemStack) {
-    private val meta = book.itemMeta as BookMeta
+class PageBuilder(private val itemMeta: BookMeta) {
     operator fun String.unaryPlus() {
-        meta.addPage(this)
+        itemMeta.addPage(this)
     }
 }

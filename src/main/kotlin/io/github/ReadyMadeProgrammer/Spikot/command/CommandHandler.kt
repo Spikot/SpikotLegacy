@@ -1,53 +1,71 @@
 package io.github.ReadyMadeProgrammer.Spikot.command
 
-import io.github.ReadyMadeProgrammer.Spikot.modules.Component
+import io.github.ReadyMadeProgrammer.Spikot.Spikot
 import org.bukkit.command.CommandSender
 import kotlin.math.min
 
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-annotation class RootCommand
+abstract class CommandHandler {
+    lateinit var context: CommandContext
+    lateinit var plugin: Spikot
+    private var depth: Int = 0
+    private val delegates = HashSet<VerboseProperty>()
 
-@Suppress("UNUSED_PARAMETER", "unused")
-abstract class CommandHandler(private val context: CommandContext) : Component {
-    abstract val info: CommandInfoBuilder
-    protected fun info(build: CommandInfoBuilder.() -> Unit): CommandInfoBuilder {
-        val builder = CommandInfoBuilder()
-        builder.build()
-        return builder
+    internal fun initialize(context: CommandContext, plugin: Spikot, depth: Int) {
+        this.context = context
+        this.plugin = plugin
+        this.depth = depth
+        delegates.forEach { p ->
+            var property = p
+            while (property.next != null) {
+                property = property.next!!
+            }
+            if (property is NullableVerboseProperty<*>) {
+                property.get()
+            } else if (property is NotNullVerboseProperty<*>) {
+                property.get()
+            }
+        }
     }
 
-    abstract fun execute()
-    protected fun arg(i: Int): NullableCommandReadOnlyProperty<String> {
-        return NullableCommandReadOnlyProperty {
-            if (context.argument.size <= i)
+    fun arg(index: Int): NullableVerboseProperty<String> {
+        val delegate = NullableVerboseProperty({ context.commandSender }) {
+            val _index = index + depth
+            if (context.args.size <= _index) {
                 null
-            else
-                context.argument[i]
+            } else {
+                context.args[_index]
+            }
         }
+        delegates += delegate
+        return delegate
     }
 
-    protected fun args(range: IntRange): NullableCommandReadOnlyProperty<List<String>> {
-        return NullableCommandReadOnlyProperty {
-            if (range.start >= 0 && range.start <= range.endInclusive)
-                context.argument.subList(range.start, min(range.endInclusive + 1, context.argument.size))
-            else listOf<String>()
+    fun args(range: IntRange): NotNullVerboseProperty<List<String>> {
+        val delegate = NotNullVerboseProperty({ context.commandSender }) {
+            val _range = IntRange(range.start + depth, range.endInclusive + depth)
+            if (context.args.size <= range.first) {
+                emptyList()
+            } else {
+                context.args.subList(_range.first, min(_range.last + 1, context.args.size))
+            }
         }
+        delegates += delegate
+        return delegate
     }
 
-    protected fun flag(vararg s: String): NullableCommandReadOnlyProperty<String> {
-        TODO("Implement later")
+    fun sender(): NotNullVerboseProperty<CommandSender> {
+        val delegate = NotNullVerboseProperty({ context.commandSender }) { context.commandSender }
+        delegates += delegate
+        return delegate
     }
 
-    protected fun option(vararg s: String): NullableCommandReadOnlyProperty<Boolean> {
-        TODO("Implement later")
+    open fun execute() {
+        throw NoSuchCommandException()
     }
 
-    protected fun list(vararg s: String): NullableCommandReadOnlyProperty<List<String>> {
-        TODO("Implement later")
-    }
-
-    protected fun sender(): NotNullCommandReadOnlyProperty<CommandSender> {
-        return NotNullCommandReadOnlyProperty { context.sender }
+    open fun onException(e: Exception) {
+        plugin.onCommandException(context.commandSender, context.command, context.label, context.args, e)
     }
 }
+
+class NoSuchCommandException : RuntimeException()

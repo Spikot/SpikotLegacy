@@ -3,28 +3,28 @@ package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 import org.bukkit.Color
 import org.bukkit.FireworkEffect
 import org.bukkit.Material
-import org.bukkit.inventory.meta.FireworkEffectMeta
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.FireworkMeta
 
-class FireworkChargeItemBuilder : ItemBuilder(Material.FIREWORK_CHARGE) {
-    private val fireworkMeta = meta as FireworkEffectMeta
-    fun effect(build: EffectBuilder.() -> Unit) {
-        val builder = EffectBuilder()
+class FireworkItemBuilder(itemStack: ItemStack) : ItemBuilder<FireworkItemMetaBuilder>(itemStack) {
+    constructor() : this(ItemStack(Material.FIREWORK_CHARGE))
+
+    override fun meta(build: FireworkItemMetaBuilder.() -> Unit) {
+        val builder = FireworkItemMetaBuilder(item.itemMeta as FireworkMeta)
         builder.build()
-        fireworkMeta.effect = builder.effect.build()
+        item.itemMeta = builder.itemMeta
     }
 }
 
-class FireworkItemBuilder : ItemBuilder(Material.FIREWORK) {
-    private val fireworkMeta = meta as FireworkMeta
+class FireworkItemMetaBuilder(itemMeta: FireworkMeta) : ItemMetaBuilder<FireworkMeta>(itemMeta) {
     var power: Int
-        get() = fireworkMeta.power
+        get() = itemMeta.power
         set(value) {
-            fireworkMeta.power = value
+            itemMeta.power = value
         }
 
     fun effects(build: FireworkBuilder.() -> Unit) {
-        val builder = FireworkBuilder(fireworkMeta)
+        val builder = FireworkBuilder(itemMeta)
         builder.build()
     }
 }

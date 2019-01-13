@@ -1,14 +1,12 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import io.github.ReadyMadeProgrammer.Spikot.command.CastException
 import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
-import io.github.ReadyMadeProgrammer.Spikot.command.VerifyException
-import mu.KLogger
-import mu.KotlinLogging
+import io.github.ReadyMadeProgrammer.Spikot.persistence.DataManager
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.*
 
 /**
  * Entry point of plugin which use Spikot Framework.
@@ -17,39 +15,34 @@ import java.util.*
  * class PluginMain: Spikot()
  */
 abstract class Spikot : JavaPlugin() {
-    private lateinit var logger: KLogger
+    companion object {
+        fun getPlugin(name: String): Plugin {
+            return Bukkit.getPluginManager().getPlugin(name)
+        }
 
-    final override fun onEnable() {
-        logger = KotlinLogging.logger(description.name)
+        inline fun <reified T> getPlugin(): T {
+            return Bukkit.getPluginManager().plugins.find { it is T } as T
+        }
+
+        inline fun <reified T> getData(): T {
+            return DataManager.dataClass[T::class] as T
+        }
     }
 
-    final override fun onDisable() {
-    }
+    final override fun onEnable() {}
+
+    final override fun onDisable() {}
 
     final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        try {
-            CommandManager.invoke(sender, command, label, args)
-        } catch (exception: Exception) {
-            onCommandException(sender, command, label, args, exception)
-        }
+        CommandManager.invoke(this, sender, command, label, args)
         return true
     }
 
-    open fun onCommandException(sender: CommandSender, command: Command, label: String, args: Array<String>, exception: Exception) = when (exception) {
-        is CastException -> sender.sendMessage(exception.message)
-        is VerifyException -> sender.sendMessage(exception.message)
-        else -> {
-            sender.sendMessage(exception.message)
-            logger.warn(exception) { "Exception occur while running command \"$label\"" }
-        }
+    final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
+        return CommandManager.complete(this, sender, command, label, args).toMutableList()
     }
 
-    final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
-        try {
-            return CommandManager.complete(sender, command, label, args).toMutableList()
-        } catch (exception: Exception) {
-            onCommandException(sender, command, label, args, exception)
-        }
-        return Collections.emptyList()
+    open fun onCommandException(commandSender: CommandSender, command: Command, label: String, args: List<String>, exception: Exception) {
+        exception.printStackTrace()
     }
 }

@@ -47,3 +47,12 @@ fun String.findInvisible(): Int {
     i--
     return this.substring(i).decryptInvisible()
 }
+
+fun String.hasInvisible(): Boolean {
+    try {
+        this.findInvisible()
+    } catch (e: Exception) {
+        return false
+    }
+    return true
+}

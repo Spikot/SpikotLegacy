@@ -1,9 +1,7 @@
 @file:Suppress("unused")
-
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.common.collect.HashBiMap
-import io.github.ReadyMadeProgrammer.Spikot.Version
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -21,9 +19,14 @@ private val legacySupport = HashBiMap.create<String, UUID>()
 operator fun <T> Player.get(key: String): T = variableMap[id]?.get(key) as T
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
-operator fun <T> Player.set(key: String, value: T) = if (value != null) variableMap[id]?.set(key, value as Any) else variableMap.remove(id)
+operator fun <T> Player.set(key: String, value: T): Unit {
+    if (value != null)
+        variableMap[id]?.set(key, value as Any)
+    else
+        variableMap.remove(id)
+}
 
-fun Player.has(key: String) = variableMap[id]!!.containsKey(key)
+fun Player.has(key: String): Boolean = variableMap[id]?.get(key) != null
 
 fun Player.remove(key: String) = variableMap[id]!!.remove(key)
 
@@ -45,18 +48,4 @@ object KPlayerListener : Listener {
 }
 
 val Player.id: UUID
-    get()
-    = if (version.version < Version(1, 8, 0)) {
-        legacySupport[this.name] ?: let {
-            val uuid = UUID.randomUUID()
-            legacySupport[this.name] = uuid
-            return uuid
-        }
-    } else {
-        this.uniqueId
-    }
-
-object KPlayer {
-    operator fun get(name: String): Player? = Bukkit.getPlayer(name)
-    operator fun get(uuid: UUID): Player? = Bukkit.getPlayer(uuid)
-}
+    get() = this.uniqueId

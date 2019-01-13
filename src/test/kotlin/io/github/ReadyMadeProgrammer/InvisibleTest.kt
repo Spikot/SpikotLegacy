@@ -13,7 +13,7 @@ class InvisibleTest {
     @Test
     fun test() {
         val random = Random()
-        for (i in 1..100000) {
+        for (i in 1..100) {
             check(random.nextInt(Int.MAX_VALUE))
         }
         assertFailsWith(IllegalArgumentException::class) { "Hello".findInvisible() }

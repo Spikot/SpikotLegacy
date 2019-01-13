@@ -2,30 +2,40 @@ package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionData
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.potion.PotionType
 
-class PotionItemBuilder(material: Material) : ItemBuilder(material) {
-    private val potionMeta = meta as PotionMeta
+class PotionItemBuilder(itemStack: ItemStack) : ItemBuilder<PotionItemMetaBuilder>(itemStack) {
+    constructor(material: Material) : this(ItemStack(material))
+
+    override fun meta(build: PotionItemMetaBuilder.() -> Unit) {
+        val builder = PotionItemMetaBuilder(item.itemMeta as PotionMeta)
+        builder.build()
+        item.itemMeta = builder.itemMeta
+    }
+}
+
+class PotionItemMetaBuilder(itemMeta: PotionMeta) : ItemMetaBuilder<PotionMeta>(itemMeta) {
     var color: Color
-        get() = potionMeta.color
+        get() = itemMeta.color
         set(value) {
-            potionMeta.color = value
+            itemMeta.color = value
         }
 
     fun potionData(build: PotionDataBuilder.() -> Unit) {
         val builder = PotionDataBuilder()
         builder.build()
-        potionMeta.basePotionData = builder.toPotionData()
+        itemMeta.basePotionData = builder.toPotionData()
     }
 
     fun customEffects(build: PotionEffectBuilder.() -> Unit) {
         val builder = PotionEffectBuilder()
         builder.build()
-        potionMeta.addCustomEffect(builder.toPotionEffect(), true)
+        itemMeta.addCustomEffect(builder.toPotionEffect(), true)
     }
 }
 

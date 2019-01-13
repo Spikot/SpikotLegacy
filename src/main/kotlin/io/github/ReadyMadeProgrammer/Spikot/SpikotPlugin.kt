@@ -1,15 +1,12 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import io.github.ReadyMadeProgrammer.Spikot.modules.DIResolver
+import io.github.ReadyMadeProgrammer.Spikot.menu.MenuManager
 import io.github.ReadyMadeProgrammer.Spikot.utils.KPlayerListener
-import io.github.ReadyMadeProgrammer.Spikot.utils.initTaskChain
 import mu.KotlinLogging
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.plugin.java.annotation.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
-import java.io.File
-import kotlin.reflect.full.createInstance
 
 /**
  * Internal logger used in spikot framework
@@ -29,34 +26,26 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "2.0.0-Beta1")
+@Plugin(name = "Spikot", version = "2.1.2")
 class SpikotPlugin : JavaPlugin() {
-    private val featureFile = File(dataFolder.parent, "feature.txt")
     override fun onEnable() {
+        println(Thread.currentThread().contextClassLoader)
+        spikotLogger.info { "Start loading spikot" }
+        spikotPlugin = this
+        KPlayerListener.start(this)
+        Bukkit.getPluginManager().registerEvents(MenuManager, this)
+        ModuleManager.load()
         object : BukkitRunnable() {
             override fun run() {
-                spikotLogger.info { "Start loading spikot" }
-                spikotPlugin = this@SpikotPlugin
-                KPlayerListener.start(this@SpikotPlugin)
-                initTaskChain(this@SpikotPlugin)
-                featureFile.readLines().forEach { DIResolver.feature.add(it) }
-                DIResolver.load()
-                DIResolver.modules.forEach {
-                    val instance = it.createInstance()
-                    Bukkit.getPluginManager().registerEvents(instance, this@SpikotPlugin)
-                    instance.onStart()
-                    DIResolver.moduleInstances.add(instance)
-                }
-                spikotLogger.info { "End loading spikot" }
+                ModuleManager.start()
             }
-        }.runTaskLater(this, 1)
+        }.runTask(this)
+        spikotLogger.info { "End loading spikot" }
     }
 
     override fun onDisable() {
         spikotLogger.info { "Start disable spikot" }
-        DIResolver.moduleInstances.forEach {
-            it.onStop()
-        }
+        ModuleManager.end()
         spikotLogger.info("End disable spikot")
     }
 }

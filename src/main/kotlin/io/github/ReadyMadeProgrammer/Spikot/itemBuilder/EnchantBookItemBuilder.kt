@@ -2,19 +2,22 @@ package io.github.ReadyMadeProgrammer.Spikot.itemBuilder
 
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.EnchantmentStorageMeta
 
-class EnchantBookItemBuilder : ItemBuilder(Material.ENCHANTED_BOOK) {
-    val enchantMeta = item.itemMeta as EnchantmentStorageMeta
-    fun enchantmentStorages(build: EnchantmentStorageBuilder.() -> Unit) {
-        val builder = EnchantmentStorageBuilder(enchantMeta)
+class EnchantBookItemBuilder(itemStack: ItemStack) : ItemBuilder<EnchantBookItemMetaBuilder>(itemStack) {
+    constructor() : this(ItemStack(Material.ENCHANTED_BOOK))
+
+    override fun meta(build: EnchantBookItemMetaBuilder.() -> Unit) {
+        val builder = EnchantBookItemMetaBuilder(item.itemMeta as EnchantmentStorageMeta)
         builder.build()
+        item.itemMeta = builder.itemMeta
     }
 }
 
 @ItemDslMarker
-class EnchantmentStorageBuilder(private val meta: EnchantmentStorageMeta) {
+class EnchantBookItemMetaBuilder(itemMeta: EnchantmentStorageMeta) : ItemMetaBuilder<EnchantmentStorageMeta>(itemMeta) {
     operator fun Enchantment.invoke(level: Int) {
-        meta.addStoredEnchant(this, level, true)
+        itemMeta.addEnchant(this, level, true)
     }
 }

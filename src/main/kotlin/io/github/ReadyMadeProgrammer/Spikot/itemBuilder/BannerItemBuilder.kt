@@ -7,16 +7,7 @@ import org.bukkit.block.banner.PatternType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 
-class BannerItemBuilder : ItemBuilder(Material.BANNER) {
-    fun pattern(build: PatternBuilder.() -> Unit) {
-        val builder = PatternBuilder(item)
-        builder.build()
-    }
-}
-
-@ItemDslMarker
-class PatternBuilder(itemStack: ItemStack) {
-    private val itemMeta = itemStack.itemMeta as BannerMeta
+class BannerItemMetaBuilder(itemMeta: BannerMeta) : ItemMetaBuilder<BannerMeta>(itemMeta) {
     var baseColor: DyeColor
         get() = itemMeta.baseColor
         set(value) {
@@ -25,5 +16,15 @@ class PatternBuilder(itemStack: ItemStack) {
 
     operator fun PatternType.invoke(color: DyeColor) {
         itemMeta.addPattern(Pattern(color, this))
+    }
+}
+
+class BannerItemBuilder(item: ItemStack) : ItemBuilder<BannerItemMetaBuilder>(item) {
+    constructor() : this(ItemStack(Material.BANNER))
+
+    override fun meta(build: BannerItemMetaBuilder.() -> Unit) {
+        val builder = BannerItemMetaBuilder(item.itemMeta as BannerMeta)
+        builder.build()
+        item.itemMeta = builder.itemMeta
     }
 }
