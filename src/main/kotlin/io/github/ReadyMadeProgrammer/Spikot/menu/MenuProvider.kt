@@ -5,7 +5,7 @@ import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryInteractEvent
 import org.bukkit.inventory.ItemStack
 import kotlin.properties.Delegates
 
@@ -51,11 +51,12 @@ abstract class MenuProvider {
     }
 
     abstract fun onOpen()
+
     open fun onClose(): Boolean {
         return true
     }
 
-    open fun onEvent(event: InventoryClickEvent) {
-
+    open fun onInteract(event: InventoryInteractEvent) {
+        event.isCancelled = true
     }
 }

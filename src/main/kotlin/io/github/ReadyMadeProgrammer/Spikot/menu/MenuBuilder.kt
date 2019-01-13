@@ -10,7 +10,9 @@ typealias EventHandler = (Point, ClickType) -> Unit
 @Target(AnnotationTarget.CLASS)
 annotation class MenuDsl
 
-data class Point(val x: Int, val y: Int)
+data class Point(val x: Int, val y: Int) {
+    constructor(index: Int) : this(index % 9, index / 9)
+}
 
 @MenuDsl
 class MenuBuilder {

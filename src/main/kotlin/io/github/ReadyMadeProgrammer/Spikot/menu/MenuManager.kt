@@ -68,7 +68,7 @@ object MenuManager : Listener {
         }
         val inventoryId = event.clickedInventory.title.findInvisible()
         val provider = openedInventory[inventoryId] ?: return
-        event.isCancelled = true
+        provider.onInteract(event)
         if (event.clickedInventory === event.whoClicked.openInventory.topInventory) {
             val slotId = event.slot
             val x = slotId % 9
