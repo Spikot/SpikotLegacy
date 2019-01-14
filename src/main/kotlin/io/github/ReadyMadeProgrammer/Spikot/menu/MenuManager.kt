@@ -47,7 +47,6 @@ object MenuManager : Listener {
         if (event.clickedInventory == null || event.clickedInventory.title == null || !event.clickedInventory.title.hasInvisible()) {
             return
         }
-        event.isCancelled = true
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (event.action) {
             NOTHING,
@@ -88,7 +87,9 @@ object MenuManager : Listener {
     @EventHandler
     fun onDrag(event: InventoryDragEvent) {
         if (event.inventory.title.hasInvisible()) {
-            event.isCancelled = true
+            val inventoryId = event.inventory.title.findInvisible()
+            val provider = openedInventory[inventoryId] ?: return
+            provider.onInteract(event)
         }
     }
 
