@@ -86,9 +86,9 @@ internal object PlayerDataManager : Listener {
     }
 
     private fun createFile(player: Player, type: KClass<*>): File {
-        val middle = File(path, player.uniqueId.toString())
+        val middle = File(path, type.qualifiedName)
         if (!middle.exists()) middle.mkdir()
-        val final = File(middle, "${type.qualifiedName}.json")
+        val final = File(middle, "${player.uniqueId}.json")
         if (!final.exists()) final.createNewFile()
         return final
     }
