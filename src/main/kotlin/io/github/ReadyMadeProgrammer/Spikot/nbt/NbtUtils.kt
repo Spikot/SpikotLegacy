@@ -10,6 +10,10 @@ val craftItemStackNmsCopyMethod = craftItemStackClass.getDeclaredMethod("asNMSCo
 val nmsItemStackClass = ReflectionUtils.getNmsClass("ItemStack")
 val nmsItemStackSaveMethod = nmsItemStackClass.getDeclaredMethod("save", nbtTagCompoundClass)!!
 
+fun ItemStack.getHandle(): Any {
+    return craftItemStackNmsCopyMethod(null, this)
+}
+
 fun ItemStack.getJson(): String {
     val nbtTagCompound = nbtTagCompoundConstructor.newInstance()
     val nmsItemStack = craftItemStackNmsCopyMethod.invoke(null, this)
