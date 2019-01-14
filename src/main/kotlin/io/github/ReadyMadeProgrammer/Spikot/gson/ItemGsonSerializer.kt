@@ -4,6 +4,7 @@ import com.github.salomonbrys.kotson.toJson
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
+import io.github.ReadyMadeProgrammer.Spikot.nbt.nbtTagCompoundClass
 import io.github.ReadyMadeProgrammer.Spikot.nbt.nmsItemStackSaveMethod
 import io.github.ReadyMadeProgrammer.Spikot.reflections.*
 import org.bukkit.Material
@@ -25,7 +26,7 @@ class ItemGsonSerializer : GsonSerializer<ItemStack> {
 
     override fun serialize(itemStack: ItemStack, type: Type?, ctx: JsonSerializationContext?): JsonElement {
         val nms = methodAsNMSCopy(null, itemStack)
-        val nbt = nmsItemStackSaveMethod(nms)
+        val nbt = nmsItemStackSaveMethod(nms, nbtTagCompoundClass.newInstance())
         val outputStream = ByteArrayOutputStream()
         methodNmsNBTCompressedStreamToolsWrite(null, nbt, outputStream)
         val string = Base64.getEncoder().encodeToString(outputStream.toByteArray())
