@@ -21,7 +21,6 @@ class ItemGsonSerializer : GsonSerializer<ItemStack> {
         private val methodNmsNBTCompressedStreamToolsWrite = classNmsNBTCompressedStreamTools.getDeclaredMethod("a", classNbtTagCompound, OutputStream::class.java)
         private val methodNmsNBTCompressedStreamToolsRead = classNmsNBTCompressedStreamTools.getDeclaredMethod("a", InputStream::class.java)
         private val constructorNmsItemStackFromNBT = classNmsItemStack.getDeclaredConstructor(classNbtTagCompound)
-        private val constructorNmsItemStack = classNmsItemStack.getDeclaredConstructor()
     }
 
     override fun serialize(itemStack: ItemStack, type: Type?, ctx: JsonSerializationContext?): JsonElement {
