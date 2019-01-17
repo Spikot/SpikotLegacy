@@ -37,7 +37,7 @@ object KPlayerListener : Listener {
         variableMap[e.player.id] = mutableMapOf()
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     fun onQuit(e: PlayerQuitEvent) {
         variableMap.remove(e.player.id)
     }

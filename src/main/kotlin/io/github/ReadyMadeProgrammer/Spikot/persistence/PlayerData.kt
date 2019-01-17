@@ -77,7 +77,7 @@ internal object PlayerDataManager : Listener {
         dataClass.forEach {
             try {
                 if (player.has("pd$${it.java.name}")) {
-                    createFile(player, it).writeText(gson.toJson(player["pd$${it.java.name}"]))
+                    createFile(player, it).writeText(gson.toJson(player.get<Any>("pd$${it.java.name}")))
                 }
             } catch (e: Exception) {
                 logger.warn(e) { "Exception while saving player data: ${it.simpleName}" }
