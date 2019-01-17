@@ -44,7 +44,8 @@ object MenuManager : Listener {
 
     @EventHandler
     fun onSlotClick(event: InventoryClickEvent) {
-        if (event.clickedInventory == null || event.clickedInventory.title == null || !event.clickedInventory.title.hasInvisible()) {
+        val topInventory = event.whoClicked.openInventory.topInventory ?: return
+        if (topInventory.title == null || !topInventory.title.hasInvisible()) {
             return
         }
         @Suppress("NON_EXHAUSTIVE_WHEN")
@@ -69,7 +70,7 @@ object MenuManager : Listener {
             CREATIVE,
             ClickType.UNKNOWN -> return
         }
-        val inventoryId = event.clickedInventory.title.findInvisible()
+        val inventoryId = topInventory.title.findInvisible()
         val provider = openedInventory[inventoryId] ?: return
         provider.onInteract(event)
         if (event.clickedInventory === event.whoClicked.openInventory.topInventory) {
