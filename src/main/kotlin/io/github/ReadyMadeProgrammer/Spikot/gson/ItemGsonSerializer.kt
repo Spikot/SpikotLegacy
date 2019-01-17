@@ -36,7 +36,7 @@ class ItemGsonSerializer : GsonSerializer<ItemStack> {
     override fun deserialize(element: JsonElement, type: Type?, ctx: JsonDeserializationContext?): ItemStack {
         val byteArray = Base64.getDecoder().decode(element.asString)
         val nbt = methodNmsNBTCompressedStreamToolsRead(null, ByteArrayInputStream(byteArray))
-        return methodAsBukkitCopy(constructorNmsItemStackFromNBT.newInstance(nbt)) as ItemStack
+        return methodAsBukkitCopy(null, constructorNmsItemStackFromNBT.newInstance(nbt)) as ItemStack
     }
 
     override fun createInstance(type: Type?): ItemStack {

@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.gson
 
+import com.fatboyindustrial.gsonjavatime.Converters
 import com.github.salomonbrys.kotson.registerTypeHierarchyAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -14,7 +15,7 @@ val gson: Gson
 object GsonManager {
     internal lateinit var gson: Gson
     fun initialize(serializers: Set<KClass<out GsonSerializer<*>>>) {
-        val gsonBuilder = GsonBuilder()
+        val gsonBuilder = Converters.registerAll(GsonBuilder())
                 .setPrettyPrinting()
                 .registerTypeHierarchyAdapter<ItemStack>(ItemGsonSerializer())
         serializers.forEach {
