@@ -8,7 +8,9 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Inherited
-annotation class Serializer
+annotation class Serializer(
+        val hierarchy: Boolean = true
+)
 
 @Serializer
 interface GsonSerializer<T> : JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>

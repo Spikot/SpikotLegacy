@@ -8,6 +8,7 @@ import io.github.ReadyMadeProgrammer.Spikot.logger
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
 
 val gson: Gson
     get() = GsonManager.gson
@@ -21,7 +22,11 @@ object GsonManager {
         serializers.forEach {
             try {
                 val instance = it.createInstance()
-                gsonBuilder.registerTypeHierarchyAdapter(it.java, instance)
+                if (it.findAnnotation<Serializer>()?.hierarchy == true) {
+                    gsonBuilder.registerTypeHierarchyAdapter(it.java, instance)
+                } else {
+                    gsonBuilder.registerTypeAdapter(it.java, instance)
+                }
             } catch (e: Exception) {
                 logger.warn(e) { "Exception while register type adapter: ${it.simpleName}" }
             }
