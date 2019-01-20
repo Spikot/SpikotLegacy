@@ -8,7 +8,7 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @Inherited
-annotation class GsonSerializerAnnotation
+annotation class Serializer
 
-@GsonSerializerAnnotation
+@Serializer
 interface GsonSerializer<T> : JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>

@@ -32,6 +32,7 @@ interface IModule : Listener {
     }
 }
 
+@Module
 abstract class AbstractModule : IModule {
     private lateinit var _plugin: Spikot
     private lateinit var _logger: KLogger
