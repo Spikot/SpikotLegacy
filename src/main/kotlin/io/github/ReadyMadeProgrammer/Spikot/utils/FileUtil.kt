@@ -4,6 +4,14 @@ import org.bukkit.plugin.Plugin
 import java.io.File
 
 fun Plugin.getFile(path: String, file: String): File {
+    return File(File(dataFolder, path), file)
+}
+
+fun Plugin.getFile(file: String): File {
+    return File(dataFolder, file)
+}
+
+fun Plugin.createFile(path: String, file: String): File {
     val dir = File(dataFolder, path)
     if (!dir.exists()) {
         dir.mkdirs()
@@ -13,7 +21,7 @@ fun Plugin.getFile(path: String, file: String): File {
     return final
 }
 
-fun Plugin.getFile(file: String): File {
+fun Plugin.createFile(file: String): File {
     if (!dataFolder.exists()) {
         dataFolder.mkdirs()
     }
