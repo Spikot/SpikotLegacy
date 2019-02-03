@@ -1,4 +1,4 @@
-package io.github.ReadyMadeProgrammer.Spikot.misc
+package io.github.ReadyMadeProgrammer.Spikot.misc.works
 
 interface Undoable {
     val isUndoable: Boolean

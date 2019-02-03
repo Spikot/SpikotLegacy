@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package io.github.ReadyMadeProgrammer.Spikot.misc
+package io.github.ReadyMadeProgrammer.Spikot.misc.works
 
 /**
  * Represent redoable work
