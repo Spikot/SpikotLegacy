@@ -11,7 +11,7 @@ annotation class CommandDsl
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class RootCommand
+annotation class RootCommand(val prefix: String)
 
 @CommandDsl
 open class CommandInfo(build: CommandInfo.() -> Unit) {

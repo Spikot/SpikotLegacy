@@ -3,36 +3,58 @@
 package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
-import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
+import io.github.ReadyMadeProgrammer.Spikot.module.*
+import org.bukkit.Bukkit
+import org.bukkit.command.*
+import org.bukkit.plugin.Plugin
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
 
-object CommandManager {
+@Module(loadOrder = LoadOrder.API)
+@Feature(SYSTEM_FEATURE)
+object CommandManager : AbstractModule(), TabExecutor {
     private val commandHolders: MutableSet<CommandHolder> = mutableSetOf()
     private val commandNames = LinkedList<String>()
-    internal fun add(rootCommand: KClass<out CommandHandler>) {
-        val commandHolder = CommandHolder(rootCommand)
-        commandHolders += commandHolder
-        commandHolder.name.forEach {
-            commandNames.add(it)
+    private val constructor = PluginCommand::class.java.getDeclaredConstructor(String::class.java, Plugin::class.java)
+    private fun create(name: String, owner: Plugin): PluginCommand {
+        return constructor.newInstance(name, owner)
+    }
+
+    override fun onEnable() {
+        val field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
+        field.isAccessible = true
+        val value = field[Bukkit.getServer()] as CommandMap
+        field.isAccessible = false
+        SpikotPluginManager.spikotPlugins.forEach { holder ->
+            holder.command.filter { it.canLoad() }.forEach {
+                @Suppress("UNCHECKED_CAST")
+                val commandHolder = CommandHolder(it as KClass<out CommandHandler>)
+                val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
+                val command = create(commandHolder.name.first(), holder.plugin)
+                command.executor = CommandManager
+                command.tabCompleter = CommandManager
+                command.aliases = names.toMutableList()
+                value.register(commandHolder.name.first(), command)
+                commandHolders += commandHolder
+                commandHolder.name.forEach { name ->
+                    commandNames.add(name)
+                }
+            }
         }
     }
 
-    internal fun invoke(plugin: Spikot, commandSender: CommandSender, command: Command, label: String, args: Array<String>) {
-        val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } }
-        if (root == null) {
-            plugin.onCommandException(commandSender, command, label, args.asList(), NoSuchCommandException())
-        } else {
-            root.invoke(plugin, CommandContext(commandSender, command, label, args.asList()), 0)
-        }
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+        val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } } ?: return false
+        root.invoke((command as PluginCommand).plugin as Spikot, CommandContext(sender, command, label, args.asList()), 0)
+        return true
     }
 
-    internal fun complete(plugin: Spikot, commandSender: CommandSender, command: Command, label: String, args: Array<String>): List<String> {
+    override fun onTabComplete(commandSender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } }
-        return root?.complete(plugin, CommandContext(commandSender, command, label, args.asList()), 0) ?: commandNames
+        return root?.complete(plugin, CommandContext(commandSender, command, label, args.asList()), 0)?.toMutableList()
+                ?: commandNames
     }
 }
 
@@ -76,18 +98,22 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
             child.find { it.name.contains(commandContext.args[depth].toLowerCase()) }
         }
         if (subCommand == null) {
+            val handler = commandHandler.createInstance()
             try {
-                val handler = commandHandler.createInstance()
                 try {
                     handler.initialize(commandContext, plugin, depth)
                     handler.execute()
                 } catch (exception: NoSuchCommandException) {
                     usage(commandContext, depth)
+                } catch (exception: VerifyException) {
+                    commandContext.commandSender.sendMessage(exception.message)
+                } catch (exception: CastException) {
+                    commandContext.commandSender.sendMessage(exception.message)
                 } catch (exception: Exception) {
                     handler.onException(exception)
                 }
-            } catch (exception: Exception) {
-                plugin.onCommandException(commandContext.commandSender, commandContext.command, commandContext.label, commandContext.args, exception)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         } else {
             subCommand.invoke(plugin, commandContext, depth + 1)

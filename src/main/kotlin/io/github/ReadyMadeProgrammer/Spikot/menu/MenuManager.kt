@@ -2,12 +2,12 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
+import io.github.ReadyMadeProgrammer.Spikot.module.*
 import io.github.ReadyMadeProgrammer.Spikot.thread.sync
 import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.hasInvisible
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.inventory.*
 import org.bukkit.event.inventory.ClickType.*
 import org.bukkit.event.inventory.InventoryAction.*
@@ -32,7 +32,9 @@ fun Player.openInventory(menuProvider: MenuProvider) {
     menuProvider.openInventory()
 }
 
-object MenuManager : Listener {
+@Module(loadOrder = LoadOrder.API)
+@Feature(SYSTEM_FEATURE)
+object MenuManager : AbstractModule() {
     internal var id: Int = 0
         get() {
             field++

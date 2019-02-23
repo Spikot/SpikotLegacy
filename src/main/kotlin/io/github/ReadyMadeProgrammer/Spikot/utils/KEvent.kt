@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin
 inline fun <reified T : Event> Plugin.subscribe(
         priority: EventPriority = EventPriority.NORMAL,
         ignoreCancelled: Boolean = true,
-        crossinline executable: (T) -> Unit) = Bukkit.getPluginManager()
+        noinline executable: (T) -> Unit) = Bukkit.getPluginManager()
         .registerEvent(
                 T::class.java,
                 object : Listener {},

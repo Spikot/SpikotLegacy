@@ -67,7 +67,12 @@ abstract class CommandHandler {
     }
 
     open fun onException(e: Exception) {
-        plugin.onCommandException(context.commandSender, context.command, context.label, context.args, e)
+        if (e is CastException || e is VerifyException) {
+            context.commandSender.sendMessage(e.message)
+        } else {
+            context.commandSender.sendMessage("알 수 없는 오류로 커맨드를 실행하지 못하였습니다")
+            e.printStackTrace()
+        }
     }
 }
 

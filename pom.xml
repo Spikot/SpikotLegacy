@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>2.5.18</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -86,10 +86,9 @@
         </dependency>
         <!--Spigot API-->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>io.github.readymadeprogrammer</groupId>
+            <artifactId>bloodbukkit-server</artifactId>
+            <version>1.12.2-b190118-01</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

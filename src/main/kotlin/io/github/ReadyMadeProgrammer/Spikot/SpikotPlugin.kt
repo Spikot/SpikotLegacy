@@ -1,10 +1,8 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
-import io.github.ReadyMadeProgrammer.Spikot.menu.MenuManager
-import io.github.ReadyMadeProgrammer.Spikot.utils.KPlayerListener
+import io.github.ReadyMadeProgrammer.Spikot.module.ModuleManager
+import io.github.ReadyMadeProgrammer.Spikot.module.SpikotPluginManager
 import mu.KotlinLogging
-import org.bukkit.Bukkit
-import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.plugin.java.annotation.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -27,14 +25,13 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @author ReadyMadeProgrammer
  */
 @Plugin(name = "Spikot", version = "2.1.2")
-class SpikotPlugin : JavaPlugin() {
+class SpikotPlugin : Spikot() {
     override fun onEnable() {
         println(Thread.currentThread().contextClassLoader)
         spikotLogger.info { "Start loading spikot" }
         spikotPlugin = this
-        KPlayerListener.start(this)
-        Bukkit.getPluginManager().registerEvents(MenuManager, this)
         ModuleManager.load()
+        SpikotPluginManager.load()
         object : BukkitRunnable() {
             override fun run() {
                 ModuleManager.start()

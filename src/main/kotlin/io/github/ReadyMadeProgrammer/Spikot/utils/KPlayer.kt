@@ -3,14 +3,13 @@
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.common.collect.HashBiMap
+import io.github.ReadyMadeProgrammer.Spikot.module.*
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.plugin.Plugin
 import java.util.*
 
 private val variableMap = mutableMapOf<UUID, MutableMap<String, Any>>()
@@ -31,7 +30,9 @@ fun Player.has(key: String): Boolean = variableMap[id]?.get(key) != null
 
 fun Player.remove(key: String) = variableMap[id]!!.remove(key)
 
-object KPlayerListener : Listener {
+@Module(loadOrder = LoadOrder.API)
+@Feature(SYSTEM_FEATURE)
+object KPlayerListener : AbstractModule() {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onJoin(e: PlayerJoinEvent) {
         variableMap[e.player.id] = mutableMapOf()
@@ -42,9 +43,8 @@ object KPlayerListener : Listener {
         variableMap.remove(e.player.id)
     }
 
-    fun start(plugin: Plugin) {
+    override fun onEnable() {
         Bukkit.getOnlinePlayers().forEach { variableMap[it.id] = mutableMapOf() }
-        plugin.subscribe(this)
     }
 }
 

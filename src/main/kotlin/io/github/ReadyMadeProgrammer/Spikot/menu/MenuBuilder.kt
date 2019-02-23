@@ -2,9 +2,8 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
-import org.bukkit.Material
 import org.bukkit.event.inventory.ClickType
-import org.bukkit.inventory.ItemStack
+import io.github.ReadyMadeProgrammer.Spikot.item.item as itemBuilderMethod
 
 typealias EventHandler = (Point, ClickType) -> Unit
 
@@ -32,19 +31,10 @@ class MenuBuilder {
         builder.build()
         slot[Point(i % 9, i / 9)] = Slot(builder.item, builder.eventHandlers)
     }
-}
 
-@MenuDsl
-class SlotBuilder {
-    var item: ItemStack = ItemStack(Material.AIR)
-    internal val eventHandlers = HashSet<EventHandler>()
-    operator fun EventHandler.unaryPlus() {
-        eventHandlers += this
-    }
-
-    operator fun (() -> Unit).unaryPlus() {
-        eventHandlers += { _: Point, _: ClickType -> this() }
+    fun slot(point: Point, build: SlotBuilder.() -> Unit) {
+        val builder = SlotBuilder()
+        builder.build()
+        slot[point] = Slot(builder.item, builder.eventHandlers)
     }
 }
-
-internal data class Slot(val itemStack: ItemStack, val eventHandler: MutableSet<EventHandler>)
