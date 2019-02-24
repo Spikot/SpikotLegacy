@@ -7,7 +7,7 @@ import java.io.FileWriter
 import java.util.*
 import kotlin.reflect.KClass
 
-open class SIngletonDataController<V : Any> : DataController<Unit, V> {
+open class SingletonDataController<V : Any> : DataController<Unit, V> {
     private lateinit var value: V
     private lateinit var file: File
     private lateinit var valueType: KClass<*>

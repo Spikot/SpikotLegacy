@@ -5,25 +5,23 @@ import org.bukkit.Material
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
+class ClickEvent(val point: Point, val type: ClickType)
+
 @MenuDsl
 class SlotBuilder {
     var item: ItemStack = ItemStack(Material.AIR)
-    internal val eventHandlers = HashSet<EventHandler>()
+    internal val eventHandlers = HashSet<ClickHandler>()
 
-    fun handle(handler: EventHandler) {
-        eventHandlers += handler
-    }
-
-    fun handle(handler: () -> Unit) {
-        eventHandlers += { _: Point, _: ClickType -> handler() }
+    fun handler(handler: ClickEvent.() -> Unit) {
+        eventHandlers += { point: Point, type: ClickType -> ClickEvent(point, type).handler() }
     }
 
     fun item(material: Material, itemBuilder: DefaultItemBuilder.() -> Unit) {
         item = io.github.ReadyMadeProgrammer.Spikot.item.item(material, itemBuilder)
     }
 
-    @Deprecated("Too complex structure", ReplaceWith("handler(EventHandler)"))
-    operator fun EventHandler.unaryPlus() {
+    @Deprecated("Too complex structure", ReplaceWith("handler(ClickHandler)"))
+    operator fun ClickHandler.unaryPlus() {
         eventHandlers += this
     }
 
@@ -33,4 +31,4 @@ class SlotBuilder {
     }
 }
 
-internal data class Slot(val itemStack: ItemStack, val eventHandler: MutableSet<EventHandler>)
+internal data class Slot(val itemStack: ItemStack, val clickHandler: MutableSet<ClickHandler>)

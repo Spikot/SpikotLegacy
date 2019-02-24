@@ -81,7 +81,7 @@ object MenuManager : AbstractModule() {
             val y = slotId / 9
             val point = Point(x, y)
             val slot = provider.menu.slot[point] ?: return
-            slot.eventHandler.forEach {
+            slot.clickHandler.forEach {
                 it(point, event.click)
             }
         }

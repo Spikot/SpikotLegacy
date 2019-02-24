@@ -5,7 +5,7 @@ package io.github.ReadyMadeProgrammer.Spikot.menu
 import org.bukkit.event.inventory.ClickType
 import io.github.ReadyMadeProgrammer.Spikot.item.item as itemBuilderMethod
 
-typealias EventHandler = (Point, ClickType) -> Unit
+typealias ClickHandler = (Point, ClickType) -> Unit
 
 @DslMarker
 @Target(AnnotationTarget.CLASS)
