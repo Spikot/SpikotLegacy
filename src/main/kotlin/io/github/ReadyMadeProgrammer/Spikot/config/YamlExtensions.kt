@@ -21,9 +21,9 @@ internal fun YamlConfiguration.getByType(key: String, type: KClass<*>): Any? {
     }
 }
 
-internal fun YamlConfiguration.getListByType(key: String, type: KClass<*>): MutableList<*> {
+internal fun YamlConfiguration.getListByType(key: String, type: KClass<*>): MutableList<*>? {
     if (!this.contains(key)) {
-        return mutableListOf<Any>()
+        return null
     }
     return when (type) {
         Byte::class -> getByteList(key)

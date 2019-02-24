@@ -1,6 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
-import io.github.ReadyMadeProgrammer.Spikot.misc.ConvertingMutableList
+import io.github.ReadyMadeProgrammer.Spikot.misc.MutableConvertingList
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -101,7 +101,7 @@ abstract class NbtAccessor {
                 if (!thisRef.nbtTagCompound.hasKeyOfType(property.name, TagType.LIST.id)) {
                     thisRef.nbtTagCompound.set(property.name, list)
                 }
-                return ConvertingMutableList(
+                return MutableConvertingList(
                         list.list,
                         converter
                 )
@@ -109,19 +109,19 @@ abstract class NbtAccessor {
 
             override fun setValue(thisRef: NbtAccessor, property: KProperty<*>, value: MutableList<T>) {
                 val list = NBTTagList()
-                if (value is ConvertingMutableList) {
+                if (value is NBTTagConvertingList<*>) {
                     list.list = value.backingList
                 } else {
-                    list.list = value.map(converter::read)
+                    list.list = value.map(converter::write)
                 }
                 thisRef.nbtTagCompound.set(property.name, list)
             }
         }
     }
 
-    private class ConvertingNBTTagList<T : Any>(list: MutableList<NBTBase>, converter: TagConverter<T>) :
-            ConvertingList<NBTBase, T>(
+    private class NBTTagConvertingList<T : Any>(list: MutableList<NBTBase>, converter: TagConverter<T>) :
+            MutableConvertingList<NBTBase, T>(
                     list,
-                    Converter(converter::write, converter::read)
+                    converter
             )
 }

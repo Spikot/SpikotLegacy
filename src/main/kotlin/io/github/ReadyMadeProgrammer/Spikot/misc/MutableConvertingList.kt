@@ -1,6 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.misc
 
-open class ConvertingMutableList<B, F>(
+open class MutableConvertingList<B, F>(
         override val backingList: MutableList<B>,
         converter: Converter<F, B>
 ) : ConvertingList<B, F>(backingList, converter), MutableList<F> {
@@ -145,6 +145,6 @@ open class ConvertingMutableList<B, F>(
     }
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<F> {
-        return ConvertingMutableList(backingList.subList(fromIndex, toIndex), converter)
+        return MutableConvertingList(backingList.subList(fromIndex, toIndex), converter)
     }
 }

@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta
 @DslMarker
 annotation class ItemDslMarker
 
-class DefaultItemBuilder(item: ItemStack) : ItemBuilder<ItemMetaBuilder<ItemMeta>>(item) {
+open class DefaultItemBuilder(item: ItemStack) : ItemBuilder<ItemMetaBuilder<ItemMeta>>(item) {
     constructor(material: Material) : this(ItemStack(material))
 
     override fun meta(build: ItemMetaBuilder<ItemMeta>.() -> Unit) {

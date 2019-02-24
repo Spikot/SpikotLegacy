@@ -2,7 +2,7 @@ package io.github.ReadyMadeProgrammer.Spikot.nbt
 
 import io.github.ReadyMadeProgrammer.Spikot.misc.Converter
 
-interface TagConverter<T : Any> : Converter<NBTBase, T> {
+interface TagConverter<T : Any> : Converter<T, NBTBase> {
     companion object {
         val BOOLEAN =
                 create<Boolean>(
@@ -57,8 +57,6 @@ interface TagConverter<T : Any> : Converter<NBTBase, T> {
     }
 
     val target: TagType
-    override fun write(converted: NBTBase): T
-    override fun read(raw: T): NBTBase
 }
 
 private fun <T : Any> create(
@@ -74,11 +72,11 @@ class SimpleTagConverter<T : Any>(
         private val fromTagLambda: (NBTBase) -> T,
         private val toTagLambda: (T) -> NBTBase
 ) : TagConverter<T> {
-    override fun write(raw: NBTBase): T {
+    override fun read(raw: NBTBase): T {
         return fromTagLambda(raw)
     }
 
-    override fun read(converted: T): NBTBase {
+    override fun write(converted: T): NBTBase {
         return toTagLambda(converted)
     }
 }

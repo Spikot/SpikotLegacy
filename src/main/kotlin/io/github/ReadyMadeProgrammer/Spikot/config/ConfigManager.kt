@@ -30,7 +30,7 @@ object ConfigManager : AbstractModule() {
         }
     }
 
-    private fun load(type: KClass<*>, root: String, source: YamlConfiguration) {
+    private override fun load(type: KClass<*>, root: String, source: YamlConfiguration) {
         val obj = type.objectInstance as? ConfigSpec
         if (obj == null) {
             logger.warn("Cannot load config: ${type.qualifiedName}")

@@ -75,7 +75,7 @@ object MenuManager : AbstractModule() {
         val inventoryId = topInventory.title.findInvisible()
         val provider = openedInventory[inventoryId] ?: return
         provider.onInteract(event)
-        if (event.clickedInventory === event.whoClicked.openInventory.topInventory) {
+        if (event.clickedInventory === topInventory) {
             val slotId = event.slot
             val x = slotId % 9
             val y = slotId / 9
