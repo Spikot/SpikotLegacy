@@ -4,10 +4,12 @@ package io.github.ReadyMadeProgrammer.Spikot.chat
 
 import com.github.salomonbrys.kotson.set
 import com.google.gson.JsonObject
+import io.github.ReadyMadeProgrammer.Spikot.NBTCompressedStreamTools
 import io.github.ReadyMadeProgrammer.Spikot.chat.HoverEventType.*
-import io.github.ReadyMadeProgrammer.Spikot.nbt.getJson
+import io.github.ReadyMadeProgrammer.Spikot.nbt.toCraftItemStack
 import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
+import java.io.ByteArrayOutputStream
 
 fun ChatBuilder.showText(hoverBuilder: ChatBuilder, builder: Builder) {
     hover(SHOW_TEXT, hoverBuilder, builder)
@@ -42,19 +44,19 @@ fun showText(hoverText: String, text: String): ChatBuilder {
 }
 
 fun ChatBuilder.showItem(item: ItemStack, builder: Builder) {
-    hover(SHOW_ITEM, chat(item.getJson()), builder)
+    hover(SHOW_ITEM, chat(item.toJson()), builder)
 }
 
 fun ChatBuilder.showItem(item: ItemStack, text: String) {
-    hover(SHOW_ITEM, chat(item.getJson()), text)
+    hover(SHOW_ITEM, chat(item.toJson()), text)
 }
 
 fun showItem(item: ItemStack, builder: Builder): ChatBuilder {
-    return hover(SHOW_ITEM, chat(item.getJson()), builder)
+    return hover(SHOW_ITEM, chat(item.toJson()), builder)
 }
 
 fun showItem(item: ItemStack, text: String): ChatBuilder {
-    return hover(SHOW_ITEM, chat(item.getJson()), text)
+    return hover(SHOW_ITEM, chat(item.toJson()), text)
 }
 
 fun ChatBuilder.showEntity(entity: Entity, builder: Builder) {
@@ -81,4 +83,10 @@ private fun Entity.toJson(): String {
         json["name"] = customName
     }
     return json.toString()
+}
+
+private fun ItemStack.toJson(): String {
+    val outputStream = ByteArrayOutputStream()
+    NBTCompressedStreamTools.a(toCraftItemStack().tag, outputStream)
+    return outputStream.toString()
 }

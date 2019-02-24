@@ -1,4 +1,4 @@
-package io.github.ReadyMadeProgrammer.Spikot.nbt
+package io.github.ReadyMadeProgrammer.Spikot
 
 typealias NBTBase = net.minecraft.server.NBTBase
 typealias NBTTagByte = net.minecraft.server.NBTTagByte
@@ -14,3 +14,4 @@ typealias NBTTagCompound = net.minecraft.server.NBTTagCompound
 typealias NBTTagIntArray = net.minecraft.server.NBTTagIntArray
 typealias NBTTagLongArray = net.minecraft.server.NBTTagLongArray
 typealias CraftItemStack = org.bukkit.craftbukkit.inventory.CraftItemStack
+typealias NBTCompressedStreamTools = net.minecraft.server.NBTCompressedStreamTools

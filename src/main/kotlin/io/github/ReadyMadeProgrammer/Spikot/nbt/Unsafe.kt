@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
+import io.github.ReadyMadeProgrammer.Spikot.CraftItemStack
 import io.github.ReadyMadeProgrammer.Spikot.misc.Value
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KClass

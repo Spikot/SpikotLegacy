@@ -2,7 +2,6 @@ package io.github.ReadyMadeProgrammer.Spikot.persistence
 
 import io.github.ReadyMadeProgrammer.Spikot.module.*
 import io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller.DataController
-import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import org.bukkit.event.Listener
 import java.io.File
@@ -13,8 +12,9 @@ import kotlin.reflect.full.companionObjectInstance
 class DataManager : AbstractModule() {
     private val registered = HashSet<DataController<*, *>>()
     override fun onEnable() {
-        val directory = File(spikotPlugin.dataFolder, "data")
         SpikotPluginManager.spikotPlugins.forEach { plugin ->
+            val directory = File(plugin.plugin.dataFolder, "data")
+            directory.mkdirs()
             plugin.data.filter { it.canLoad() }.forEach { type ->
                 try {
                     val companion = type.companionObjectInstance as? DataController<*, *>?

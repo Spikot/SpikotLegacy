@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
+import io.github.ReadyMadeProgrammer.Spikot.*
 import io.github.ReadyMadeProgrammer.Spikot.misc.Converter
 
 interface TagConverter<T : Any> : Converter<T, NBTBase> {

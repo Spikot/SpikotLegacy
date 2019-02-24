@@ -11,9 +11,9 @@ import kotlin.reflect.full.findAnnotation
 object ConfigManager : AbstractModule() {
     private lateinit var root: File
     override fun onEnable() {
-        root = File(plugin.dataFolder, "config")
-        root.mkdirs()
         SpikotPluginManager.spikotPlugins.forEach { plugin ->
+            root = File(plugin.plugin.dataFolder, "config")
+            root.mkdirs()
             plugin.config.filter { it.canLoad() }.forEach { type ->
                 val obj = type.objectInstance as? ConfigSpec
                 val annotation = type.findAnnotation<Config>()
@@ -30,7 +30,20 @@ object ConfigManager : AbstractModule() {
         }
     }
 
-    private override fun load(type: KClass<*>, root: String, source: YamlConfiguration) {
+    override fun onDisable() {
+        SpikotPluginManager.spikotPlugins.forEach { plugin ->
+            root = File(plugin.plugin.dataFolder, "config")
+            root.mkdirs()
+            plugin.config.filter { it.canLoad() }.forEach { type ->
+                val obj = type.objectInstance as? ConfigSpec
+                if (obj != null) {
+                    obj.yaml.save(File(root, "${obj.name ?: type.simpleName}.yml"))
+                }
+            }
+        }
+    }
+
+    fun load(type: KClass<*>, root: String, source: YamlConfiguration) {
         val obj = type.objectInstance as? ConfigSpec
         if (obj == null) {
             logger.warn("Cannot load config: ${type.qualifiedName}")

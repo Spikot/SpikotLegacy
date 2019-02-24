@@ -1,5 +1,8 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
+import io.github.ReadyMadeProgrammer.Spikot.NBTBase
+import io.github.ReadyMadeProgrammer.Spikot.NBTTagCompound
+import io.github.ReadyMadeProgrammer.Spikot.NBTTagList
 import io.github.ReadyMadeProgrammer.Spikot.misc.MutableConvertingList
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass

@@ -1,5 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
+import io.github.ReadyMadeProgrammer.Spikot.NBTTagCompound
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
