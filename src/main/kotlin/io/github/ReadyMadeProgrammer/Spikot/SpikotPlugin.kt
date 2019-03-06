@@ -24,7 +24,7 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "2.1.2")
+@Plugin(name = "Spikot", version = "3.0.0-b6")
 class SpikotPlugin : Spikot() {
     override fun onEnable() {
         println(Thread.currentThread().contextClassLoader)
