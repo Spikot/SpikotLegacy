@@ -30,6 +30,9 @@ cmake-build-release/
 
 # IntelliJ
 out/
+target/
+.idea/
+Spikot.iml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
