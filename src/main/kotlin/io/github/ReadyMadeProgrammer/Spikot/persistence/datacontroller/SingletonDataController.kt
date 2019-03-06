@@ -6,18 +6,22 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
-open class SingletonDataController<V : Any> : DataController<Unit, V> {
+open class SingletonDataController<V : Any>(private val constructor: () -> V) : DataController<Unit, V> {
     private lateinit var value: V
     private lateinit var file: File
     private lateinit var valueType: KClass<*>
+
+    constructor(type: KClass<V>) : this({ type.createInstance() })
 
     final override fun initialize(directory: File, valueType: KClass<*>) {
         file = File(directory, valueType.qualifiedName)
         try {
             file.createNewFile()
             val reader = FileReader(file)
-            value = gson.fromJson(reader, valueType.java) as V
+            @Suppress("UNCHECKED_CAST")
+            value = gson.fromJson(reader, valueType.java) as V? ?: constructor()
             reader.close()
             this.valueType = valueType
         } catch (e: Exception) {

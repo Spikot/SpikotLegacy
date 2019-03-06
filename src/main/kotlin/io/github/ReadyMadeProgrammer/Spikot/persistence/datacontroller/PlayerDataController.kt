@@ -12,11 +12,15 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V) : DataController<UUID, V>, Listener {
     private lateinit var root: File
     private lateinit var valueType: KClass<*>
     private val value: HashMap<UUID, V> = HashMap()
+
+    constructor(type: KClass<V>) : this({ type.createInstance() })
+
     final override fun initialize(directory: File, valueType: KClass<*>) {
         root = File(directory, valueType.qualifiedName)
         if (!root.exists()) {
@@ -41,6 +45,7 @@ open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V)
         } else {
             try {
                 val reader = FileReader(file)
+                @Suppress("UNCHECKED_CAST")
                 val r = gson.fromJson(reader, valueType.java) as V
                 reader.close()
                 r
