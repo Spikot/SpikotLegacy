@@ -1,13 +1,13 @@
 package io.github.ReadyMadeProgrammer.Spikot.config
 
 import io.github.ReadyMadeProgrammer.Spikot.module.*
+import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 @Module(loadOrder = LoadOrder.API - 1000)
-@Feature(SYSTEM_FEATURE)
 object ConfigManager : AbstractModule() {
     private lateinit var root: File
     override fun onEnable() {
@@ -15,15 +15,17 @@ object ConfigManager : AbstractModule() {
             root = File(plugin.plugin.dataFolder, "config")
             root.mkdirs()
             plugin.config.filter { it.canLoad() }.forEach { type ->
-                val obj = type.objectInstance as? ConfigSpec
-                val annotation = type.findAnnotation<Config>()
-                when {
-                    annotation == null -> logger.warn("Cannot load config: ${type.qualifiedName}")
-                    obj == null -> logger.warn("Cannot load config: ${type.qualifiedName}")
-                    else -> {
-                        val file = File(root, "${obj.name ?: type.simpleName}.yml")
-                        file.createNewFile()
-                        load(type, "", YamlConfiguration.loadConfiguration(file))
+                catchAll {
+                    val obj = type.objectInstance as? ConfigSpec
+                    val annotation = type.findAnnotation<Config>()
+                    when {
+                        annotation == null -> logger.warn("Cannot load config: ${type.qualifiedName}")
+                        obj == null -> logger.warn("Cannot load config: ${type.qualifiedName}")
+                        else -> {
+                            val file = File(root, "${obj.name ?: type.simpleName}.yml")
+                            file.createNewFile()
+                            load(type, "", YamlConfiguration.loadConfiguration(file))
+                        }
                     }
                 }
             }
@@ -36,9 +38,7 @@ object ConfigManager : AbstractModule() {
             root.mkdirs()
             plugin.config.filter { it.canLoad() }.forEach { type ->
                 val obj = type.objectInstance as? ConfigSpec
-                if (obj != null) {
-                    obj.yaml.save(File(root, "${obj.name ?: type.simpleName}.yml"))
-                }
+                obj?.yaml?.save(File(root, "${obj.name ?: type.simpleName}.yml"))
             }
         }
     }
@@ -51,6 +51,7 @@ object ConfigManager : AbstractModule() {
         }
         obj.path = root
         obj.yaml = source
+        obj.initialize()
         type.nestedClasses.forEach { inner ->
             load(inner, root + ((inner.objectInstance as? ConfigSpec?)?.name ?: inner.simpleName), source)
         }

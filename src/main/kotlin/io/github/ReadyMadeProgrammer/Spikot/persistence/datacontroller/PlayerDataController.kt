@@ -14,10 +14,10 @@ import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V) : DataController<UUID, V>, Listener {
-    private lateinit var root: File
-    private lateinit var valueType: KClass<*>
-    private val value: HashMap<UUID, V> = HashMap()
+open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V) : DataController<UUID, V>, Map<UUID, V>, Listener {
+    protected lateinit var root: File
+    protected lateinit var valueType: KClass<*>
+    protected val value: HashMap<UUID, V> = HashMap()
 
     constructor(type: KClass<V>) : this({ type.createInstance() })
 

@@ -2,6 +2,7 @@ package io.github.ReadyMadeProgrammer.Spikot.config
 
 import org.bukkit.configuration.file.YamlConfiguration
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.full.declaredMemberProperties
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -12,6 +13,9 @@ abstract class ConfigSpec(
 ) {
     internal lateinit var path: String
     internal lateinit var yaml: YamlConfiguration
+    internal fun initialize() {
+        this.javaClass.kotlin.declaredMemberProperties.stream().forEach { it.get(this) }
+    }
     protected fun <T : Any> require(name: String, default: T): ReadWriteProperty<ConfigSpec, T> {
         return ConfigProperty(default, name)
     }

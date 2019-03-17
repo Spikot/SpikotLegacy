@@ -1,23 +1,18 @@
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
-import io.github.ReadyMadeProgrammer.Spikot.item.DefaultItemBuilder
 import org.bukkit.Material
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
-class ClickEvent(val point: Point, val type: ClickType)
+class ClickEvent(val point: SlotPosition, val type: ClickType)
 
 @MenuDsl
-class SlotBuilder {
+class SlotBuilder(val slot: SlotPosition) {
     var item: ItemStack = ItemStack(Material.AIR)
     internal val eventHandlers = HashSet<ClickHandler>()
 
     fun handler(handler: ClickEvent.() -> Unit) {
-        eventHandlers += { point: Point, type: ClickType -> ClickEvent(point, type).handler() }
-    }
-
-    fun item(material: Material, itemBuilder: DefaultItemBuilder.() -> Unit) {
-        item = io.github.ReadyMadeProgrammer.Spikot.item.item(material, itemBuilder)
+        eventHandlers += { point: SlotPosition, type: ClickType -> ClickEvent(point, type).handler() }
     }
 
     @Deprecated("Too complex structure", ReplaceWith("handler(ClickHandler)"))
@@ -27,7 +22,7 @@ class SlotBuilder {
 
     @Deprecated("Too complex structure", ReplaceWith("handler(()->Unit)"))
     operator fun (() -> Unit).unaryPlus() {
-        eventHandlers += { _: Point, _: ClickType -> this() }
+        eventHandlers += { _: SlotPosition, _: ClickType -> this() }
     }
 }
 

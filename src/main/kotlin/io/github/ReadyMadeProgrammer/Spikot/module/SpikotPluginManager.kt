@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot.module
 import com.github.salomonbrys.kotson.contains
 import com.google.gson.JsonParser
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
+import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -32,6 +33,7 @@ internal object SpikotPluginManager {
                         val jarFile = JarFile(file)
                         val entry = jarFile.getJarEntry("spikot.json")
                         if (entry != null) {
+                            logger.info("Find plugin: ${p.name}")
                             val json = JsonParser().parse(jarFile.getInputStream(entry).bufferedReader()).asJsonObject
                             val holder = SpikotPluginHolder(p as Spikot)
                             loading.forEach { key, value ->

@@ -13,10 +13,10 @@ import java.io.FileWriter
 import java.util.*
 import kotlin.reflect.KClass
 
-open class NullablePlayerDataController<V : Any> : DataController<UUID, V>, Listener {
-    private lateinit var root: File
-    private lateinit var valueType: KClass<*>
-    private val value: HashMap<UUID, V> = HashMap()
+open class NullablePlayerDataController<V : Any> : DataController<UUID, V>, MutableMap<UUID, V>, Listener {
+    protected lateinit var root: File
+    protected lateinit var valueType: KClass<*>
+    protected val value: HashMap<UUID, V> = HashMap()
     final override fun initialize(directory: File, valueType: KClass<*>) {
         root = File(directory, valueType.qualifiedName)
         if (!root.exists()) {
@@ -112,7 +112,22 @@ open class NullablePlayerDataController<V : Any> : DataController<UUID, V>, List
         return value.isEmpty()
     }
 
-    final override val entries: Set<MutableMap.MutableEntry<UUID, V>> = value.entries
-    final override val keys: Set<UUID> = value.keys
-    final override val values: Collection<V> = value.values
+    final override val entries: MutableSet<MutableMap.MutableEntry<UUID, V>> = value.entries
+    final override val keys: MutableSet<UUID> = value.keys
+    final override val values: MutableCollection<V> = value.values
+    override fun clear() {
+        value.clear()
+    }
+
+    override fun put(key: UUID, value: V): V? {
+        return this.value.put(key, value)
+    }
+
+    override fun putAll(from: Map<out UUID, V>) {
+        this.value.putAll(from)
+    }
+
+    override fun remove(key: UUID): V? {
+        return this.value.remove(key)
+    }
 }

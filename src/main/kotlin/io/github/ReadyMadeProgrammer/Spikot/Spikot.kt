@@ -3,7 +3,9 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
 import io.github.ReadyMadeProgrammer.Spikot.command.CommandManager
+import io.github.ReadyMadeProgrammer.Spikot.utils.plus
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.Plugin
@@ -32,5 +34,10 @@ abstract class Spikot : JavaPlugin() {
 
     final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
         return CommandManager.onTabComplete(sender, command, label, args)
+    }
+
+    open fun onCommandException(sender: CommandSender, command: Command, label: String, args: Array<String>, exception: Exception) {
+        sender.sendMessage(ChatColor.RED + "커맨드 실행 중 알 수 없는 오류가 발생하였습니다")
+        exception.printStackTrace()
     }
 }

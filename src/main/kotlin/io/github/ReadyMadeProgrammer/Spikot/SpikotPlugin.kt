@@ -27,16 +27,15 @@ internal lateinit var spikotPlugin: SpikotPlugin
 @Plugin(name = "Spikot", version = "3.0.0-b6")
 class SpikotPlugin : Spikot() {
     override fun onEnable() {
-        println(Thread.currentThread().contextClassLoader)
         spikotLogger.info { "Start loading spikot" }
         spikotPlugin = this
-        ModuleManager.load()
-        SpikotPluginManager.load()
         object : BukkitRunnable() {
             override fun run() {
+                SpikotPluginManager.load()
+                ModuleManager.load()
                 ModuleManager.start()
             }
-        }.runTask(this)
+        }.runTaskLater(this, 1L)
         spikotLogger.info { "End loading spikot" }
     }
 

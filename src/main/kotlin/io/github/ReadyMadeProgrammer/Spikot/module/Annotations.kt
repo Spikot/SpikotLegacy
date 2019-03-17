@@ -9,7 +9,6 @@ object LoadOrder {
     const val LATEST = 20_000
 }
 
-const val SYSTEM_FEATURE = "SYSTEM"
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

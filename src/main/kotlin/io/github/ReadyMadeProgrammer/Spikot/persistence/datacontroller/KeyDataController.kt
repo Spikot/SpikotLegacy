@@ -14,10 +14,10 @@ open class StringKeyDataController<V : Any> : KeyDataController<String, V>(Strin
 
 open class UUIDKeyDataController<V : Any> : KeyDataController<UUID, V>(StringConverter.UUID)
 
-open class KeyDataController<K : Any, V : Any>(private val keySerializer: StringConverter<K>) : DataController<K, V> {
-    private lateinit var root: File
-    private lateinit var valueType: KClass<*>
-    private val value = HashMap<K, V>()
+open class KeyDataController<K : Any, V : Any>(protected val keySerializer: StringConverter<K>) : DataController<K, V>, MutableMap<K, V> {
+    protected lateinit var root: File
+    protected lateinit var valueType: KClass<*>
+    protected val value = HashMap<K, V>()
     override fun initialize(directory: File, valueType: KClass<*>) {
         root = File(directory, valueType.qualifiedName)
         if (!root.exists()) {
@@ -39,6 +39,7 @@ open class KeyDataController<K : Any, V : Any>(private val keySerializer: String
     }
 
     override fun destroy() {
+        root.listFiles().forEach { it.deleteRecursively() }
         value.forEach { (key, value) ->
             val file = File(root, "${keySerializer.write(key)}.json")
             try {
@@ -63,14 +64,34 @@ open class KeyDataController<K : Any, V : Any>(private val keySerializer: String
         }
     }
 
-    override val entries: Set<Map.Entry<K, V>> = value.entries
-    override val keys: Set<K> = value.keys
-    override val size: Int = value.size
-    override val values: Collection<V> = value.values
-
     override fun containsKey(key: K): Boolean = key in value
 
     override fun containsValue(value: V): Boolean = this.value.containsValue(value)
 
     override fun isEmpty(): Boolean = this.value.isEmpty()
+
+    override val size: Int
+        get() = value.size
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() = value.entries
+    override val keys: MutableSet<K>
+        get() = value.keys
+    override val values: MutableCollection<V>
+        get() = value.values
+
+    override fun clear() {
+        value.clear()
+    }
+
+    override fun put(key: K, value: V): V? {
+        return this.value.put(key, value)
+    }
+
+    override fun putAll(from: Map<out K, V>) {
+        value.putAll(from)
+    }
+
+    override fun remove(key: K): V? {
+        return value.remove(key)
+    }
 }

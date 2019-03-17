@@ -10,3 +10,7 @@ internal fun KClass<*>.canLoad(): Boolean {
     if (feature == null) return true
     return ModuleManager.enabled.contains(feature.value)
 }
+
+fun isFeatureEnabled(feature: String): Boolean {
+    return ModuleManager.enabled.contains(feature)
+}

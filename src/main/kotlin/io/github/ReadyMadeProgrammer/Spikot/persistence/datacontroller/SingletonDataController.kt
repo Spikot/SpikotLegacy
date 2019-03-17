@@ -4,14 +4,13 @@ import io.github.ReadyMadeProgrammer.Spikot.persistence.gson.gson
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 open class SingletonDataController<V : Any>(private val constructor: () -> V) : DataController<Unit, V> {
-    private lateinit var value: V
-    private lateinit var file: File
-    private lateinit var valueType: KClass<*>
+    protected lateinit var value: V
+    protected lateinit var file: File
+    protected lateinit var valueType: KClass<*>
 
     constructor(type: KClass<V>) : this({ type.createInstance() })
 
@@ -48,19 +47,4 @@ open class SingletonDataController<V : Any>(private val constructor: () -> V) : 
     fun set(value: V) {
         this.value = value
     }
-
-    final override val size: Int = 1
-    final override fun containsKey(key: Unit): Boolean = this::value.isInitialized
-
-    final override fun containsValue(value: V): Boolean = this.value == value
-
-    final override fun get(key: Unit): V = value
-
-    final override fun isEmpty(): Boolean = this::value.isInitialized
-
-    final override val entries: MutableSet<MutableMap.MutableEntry<Unit, V>> = mutableSetOf(AbstractMap.SimpleEntry(Unit, value))
-
-    final override val keys: MutableSet<Unit> = mutableSetOf(Unit)
-
-    final override val values: MutableCollection<V> = mutableSetOf(value)
 }

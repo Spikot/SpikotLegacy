@@ -4,6 +4,7 @@ package io.github.ReadyMadeProgrammer.Spikot.module
 
 import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
+import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
@@ -12,7 +13,7 @@ import kotlin.reflect.full.findAnnotation
 
 internal object ModuleManager {
     internal val enabled = HashSet<String>()
-    internal lateinit var instances: Sequence<Pair<SpikotPluginHolder, IModule>>
+    private lateinit var instances: Set<Pair<SpikotPluginHolder, IModule>>
 
     @Suppress("SpellCheckingInspection")
     fun load() {
@@ -31,15 +32,22 @@ internal object ModuleManager {
                     }
                     result && m.canLoad()
                 }
-                .sortedByDescending { it.second.findAnnotation<Module>()!!.loadOrder }
+                .sortedBy { it.second.findAnnotation<Module>()!!.loadOrder }
                 .map { (holder, module) -> Pair(holder, module.objectInstance ?: module.createInstance() as? IModule?) }
                 .filter { (_, module) -> module != null }
                 .map { (holder, module) -> Pair(holder, module as IModule) }
+                .toSet()
 
-        instances.forEach { (holder, module) -> module.onLoad(holder.plugin) }
         instances.forEach { (holder, module) ->
-            module.onEnable()
-            holder.plugin.subscribe(module)
+            catchAll {
+                module.onLoad(holder.plugin)
+            }
+        }
+        instances.forEach { (holder, module) ->
+            catchAll {
+                module.onEnable()
+                holder.plugin.subscribe(module)
+            }
         }
     }
 

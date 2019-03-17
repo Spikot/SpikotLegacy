@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller
 import com.github.benmanes.caffeine.cache.Caffeine
 import io.github.ReadyMadeProgrammer.Spikot.misc.StringConverter
 import io.github.ReadyMadeProgrammer.Spikot.persistence.gson.gson
+import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -17,12 +18,12 @@ open class LazyStringKeyDataController<V : Any>(caffeine: Caffeine<String, V>) :
 open class LazyUUIDKeyDataController<V : Any>(caffeine: Caffeine<UUID, V>) : LazyKeyDataController<UUID, V>(StringConverter.UUID, caffeine)
 
 open class LazyKeyDataController<K : Any, V : Any>(
-        private val keySerializer: StringConverter<K>,
+        protected val keySerializer: StringConverter<K>,
         caffeine: Caffeine<K, V>
-) : DataController<K, V> {
-    private lateinit var root: File
-    private lateinit var valueType: KClass<*>
-    private val cache = caffeine.removalListener { key: Any?, value: Any?, removalCause ->
+) : DataController<K, V>, MutableMap<K, V> {
+    protected lateinit var root: File
+    protected lateinit var valueType: KClass<*>
+    protected val cache = caffeine.removalListener { key: Any?, value: Any?, removalCause ->
         @Suppress("UNCHECKED_CAST")
         val serializedKey = keySerializer.write(key as K)
         try {
@@ -57,7 +58,17 @@ open class LazyKeyDataController<K : Any, V : Any>(
     }
 
     override fun destroy() {
-        cache.synchronous()
+        root.listFiles().forEach { it.deleteRecursively() }
+        cache.synchronous().asMap().forEach { (key, value) ->
+            val file = File(root, "${keySerializer.write(key)}.json")
+            catchAll {
+                file.createNewFile()
+                val writer = FileWriter(file)
+                gson.toJson(value, valueType.java, writer)
+                writer.flush()
+                writer.close()
+            }
+        }
     }
 
     fun get(key: K, callback: (V?) -> Unit) {
@@ -76,13 +87,13 @@ open class LazyKeyDataController<K : Any, V : Any>(
         cache.put(key, value)
     }
 
-    override val entries: Set<Map.Entry<K, V>> = cache.synchronous().asMap().entries
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> = cache.synchronous().asMap().entries
 
-    override val keys: Set<K> = cache.synchronous().asMap().keys
+    override val keys: MutableSet<K> = cache.synchronous().asMap().keys
 
     override val size: Int = cache.synchronous().asMap().size
 
-    override val values: Collection<V> = cache.synchronous().asMap().values
+    override val values: MutableCollection<V> = cache.synchronous().asMap().values
 
     override fun containsKey(key: K): Boolean {
         return cache.synchronous().asMap().containsKey(key)
@@ -94,5 +105,26 @@ open class LazyKeyDataController<K : Any, V : Any>(
 
     override fun isEmpty(): Boolean {
         return cache.synchronous().asMap().isEmpty()
+    }
+
+    override fun clear() {
+        cache.synchronous().asMap().clear()
+    }
+
+    override fun put(key: K, value: V): V? {
+        val v = cache.getIfPresent(key)
+        cache.put(key, CompletableFuture.completedFuture(value))
+        return v?.getNow(null)
+    }
+
+    override fun putAll(from: Map<out K, V>) {
+        from.forEach { key, value -> put(key, value) }
+    }
+
+    override fun remove(key: K): V? {
+        val v = cache.getIfPresent(key)
+        cache.put(key, CompletableFuture.completedFuture(null))
+        return v?.getNow(null)
+
     }
 }

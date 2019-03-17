@@ -4,6 +4,7 @@ package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
 import io.github.ReadyMadeProgrammer.Spikot.module.*
+import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import org.bukkit.Bukkit
 import org.bukkit.command.*
 import org.bukkit.plugin.Plugin
@@ -13,12 +14,12 @@ import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
 
 @Module(loadOrder = LoadOrder.API)
-@Feature(SYSTEM_FEATURE)
 object CommandManager : AbstractModule(), TabExecutor {
     private val commandHolders: MutableSet<CommandHolder> = mutableSetOf()
     private val commandNames = LinkedList<String>()
     private val constructor = PluginCommand::class.java.getDeclaredConstructor(String::class.java, Plugin::class.java)
     private fun create(name: String, owner: Plugin): PluginCommand {
+        constructor.isAccessible = true
         return constructor.newInstance(name, owner)
     }
 
@@ -81,9 +82,6 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
             { emptyList() }
             //Do nothing
         }
-        commandInfo.name.forEach {
-            println("Register Command: $it")
-        }
         child.forEach { ch ->
             ch.name.forEach {
                 childNames.add(it)
@@ -103,17 +101,19 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
                 try {
                     handler.initialize(commandContext, plugin, depth)
                     handler.execute()
-                } catch (exception: NoSuchCommandException) {
-                    usage(commandContext, depth)
-                } catch (exception: VerifyException) {
-                    commandContext.commandSender.sendMessage(exception.message)
-                } catch (exception: CastException) {
-                    commandContext.commandSender.sendMessage(exception.message)
-                } catch (exception: Exception) {
-                    handler.onException(exception)
+                } catch (e: Exception) {
+                    handler.onException(e)
                 }
+            } catch (exception: NoSuchCommandException) {
+                usage(commandContext, depth)
+            } catch (exception: VerifyException) {
+                commandContext.commandSender.sendMessage(exception.message)
+            } catch (exception: CastException) {
+                commandContext.commandSender.sendMessage(exception.message)
             } catch (e: Exception) {
-                e.printStackTrace()
+                catchAll {
+                    plugin.onCommandException(commandContext.commandSender, commandContext.command, commandContext.label, commandContext.args.toTypedArray(), e)
+                }
             }
         } else {
             subCommand.invoke(plugin, commandContext, depth + 1)

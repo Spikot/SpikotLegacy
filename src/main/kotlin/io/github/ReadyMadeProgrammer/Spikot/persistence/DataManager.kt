@@ -2,13 +2,13 @@ package io.github.ReadyMadeProgrammer.Spikot.persistence
 
 import io.github.ReadyMadeProgrammer.Spikot.module.*
 import io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller.DataController
+import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import org.bukkit.event.Listener
 import java.io.File
 import kotlin.reflect.full.companionObjectInstance
 
 @Module(loadOrder = LoadOrder.API)
-@Feature(SYSTEM_FEATURE)
 class DataManager : AbstractModule() {
     private val registered = HashSet<DataController<*, *>>()
     override fun onEnable() {
@@ -16,7 +16,7 @@ class DataManager : AbstractModule() {
             val directory = File(plugin.plugin.dataFolder, "data")
             directory.mkdirs()
             plugin.data.filter { it.canLoad() }.forEach { type ->
-                try {
+                catchAll {
                     val companion = type.companionObjectInstance as? DataController<*, *>?
                     if (companion == null) {
                         logger.warn("Cannot load data: ${type.qualifiedName}\nData class must contains DataController as companion object")
@@ -27,8 +27,6 @@ class DataManager : AbstractModule() {
                         }
                         companion.initialize(directory, type)
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
         }

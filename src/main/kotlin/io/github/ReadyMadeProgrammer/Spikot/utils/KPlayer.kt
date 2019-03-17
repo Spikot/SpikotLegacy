@@ -3,7 +3,9 @@
 package io.github.ReadyMadeProgrammer.Spikot.utils
 
 import com.google.common.collect.HashBiMap
-import io.github.ReadyMadeProgrammer.Spikot.module.*
+import io.github.ReadyMadeProgrammer.Spikot.module.AbstractModule
+import io.github.ReadyMadeProgrammer.Spikot.module.LoadOrder
+import io.github.ReadyMadeProgrammer.Spikot.module.Module
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -31,7 +33,6 @@ fun Player.has(key: String): Boolean = variableMap[id]?.get(key) != null
 fun Player.remove(key: String) = variableMap[id]!!.remove(key)
 
 @Module(loadOrder = LoadOrder.API)
-@Feature(SYSTEM_FEATURE)
 object KPlayerListener : AbstractModule() {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onJoin(e: PlayerJoinEvent) {

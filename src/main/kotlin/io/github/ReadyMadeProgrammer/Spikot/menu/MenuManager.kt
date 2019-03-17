@@ -2,7 +2,9 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
-import io.github.ReadyMadeProgrammer.Spikot.module.*
+import io.github.ReadyMadeProgrammer.Spikot.module.AbstractModule
+import io.github.ReadyMadeProgrammer.Spikot.module.LoadOrder
+import io.github.ReadyMadeProgrammer.Spikot.module.Module
 import io.github.ReadyMadeProgrammer.Spikot.thread.sync
 import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.hasInvisible
@@ -33,7 +35,6 @@ fun Player.openInventory(menuProvider: MenuProvider) {
 }
 
 @Module(loadOrder = LoadOrder.API)
-@Feature(SYSTEM_FEATURE)
 object MenuManager : AbstractModule() {
     internal var id: Int = 0
         get() {
@@ -79,7 +80,7 @@ object MenuManager : AbstractModule() {
             val slotId = event.slot
             val x = slotId % 9
             val y = slotId / 9
-            val point = Point(x, y)
+            val point = SlotPosition(x, y)
             val slot = provider.menu.slot[point] ?: return
             slot.clickHandler.forEach {
                 it(point, event.click)
