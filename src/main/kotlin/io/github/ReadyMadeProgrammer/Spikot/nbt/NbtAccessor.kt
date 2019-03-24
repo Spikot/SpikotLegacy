@@ -9,7 +9,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 abstract class NbtAccessor {
-    lateinit var nbtTagCompound: NBTTagCompound
+    @PublishedApi
+    internal lateinit var nbtTagCompound: NBTTagCompound
 
     operator fun contains(key: String): Boolean {
         return nbtTagCompound.hasKey(key)

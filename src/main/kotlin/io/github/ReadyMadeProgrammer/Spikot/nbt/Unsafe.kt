@@ -1,6 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
 import io.github.ReadyMadeProgrammer.Spikot.CraftItemStack
+import io.github.ReadyMadeProgrammer.Spikot.NBTTagCompound
 import io.github.ReadyMadeProgrammer.Spikot.misc.Value
 import org.bukkit.inventory.ItemStack
 import kotlin.reflect.KClass
@@ -36,5 +37,14 @@ inline fun <reified T : NbtAccessor> CraftItemStack.getTag(key: String): T {
     if (!this.tag.hasKeyOfType(key, TagType.TAG.id)) {
         this.tag.setCompound(key, value)
     }
-    return constructor.call(value)
+    val accessor = constructor.call()
+    accessor.nbtTagCompound = value
+    return accessor
+}
+
+inline fun <reified T : NbtAccessor> createAccessor(tag: NBTTagCompound): T {
+    val constructor = queryConstructor(T::class)
+    val accessor = constructor.call()
+    accessor.nbtTagCompound = tag
+    return accessor
 }
