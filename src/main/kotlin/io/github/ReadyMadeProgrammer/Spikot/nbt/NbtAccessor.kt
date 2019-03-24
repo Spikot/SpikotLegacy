@@ -90,6 +90,9 @@ abstract class NbtAccessor {
             NBTTagCompound::setUUID
     )
 
+    protected inline fun <reified T : Enum<T>> enum() =
+            enum(T::class)
+
     protected fun <T : Enum<T>> enum(enum: KClass<T>) =
             EnumWrappingDelegate(enum)
 
