@@ -15,7 +15,7 @@ object PacketListenerManager : AbstractModule() {
         val manager = ProtocolLibrary.getProtocolManager()
         ModuleManager.instances.forEach { (holder, instance) ->
             for (method in instance.javaClass.declaredMethods) {
-                val annotation = method.getDeclaredAnnotation(PacketListener::class.java)!!
+                val annotation = method.getDeclaredAnnotation(PacketHandler::class.java)!!
                 manager.addPacketListener(object : PacketAdapter(
                         holder.plugin,
                         annotation.priority,

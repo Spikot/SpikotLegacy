@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class PacketListener(
+annotation class PacketHandler(
         val packets: Array<KClass<in AbstractPacket>>,
         val priority: ListenerPriority = ListenerPriority.NORMAL,
         val ignoreCancelled: Boolean = true
