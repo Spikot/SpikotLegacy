@@ -2,6 +2,7 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
+import io.github.ReadyMadeProgrammer.Spikot.event.TickEvent
 import io.github.ReadyMadeProgrammer.Spikot.module.AbstractModule
 import io.github.ReadyMadeProgrammer.Spikot.module.LoadOrder
 import io.github.ReadyMadeProgrammer.Spikot.module.Module
@@ -106,6 +107,16 @@ object MenuManager : AbstractModule() {
         val provider = openedInventory[inventoryId] ?: return
         if (!provider.onClose()) {
             provider.openInventory()
+        } else {
+            openedInventory.remove(inventoryId)
+        }
+    }
+
+    @EventHandler
+    fun onTick(a: TickEvent) {
+        for (menu in openedInventory.values) {
+            menu.tickCount++
+            menu.onTick()
         }
     }
 }

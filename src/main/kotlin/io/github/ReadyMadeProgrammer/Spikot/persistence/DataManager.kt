@@ -1,9 +1,9 @@
 package io.github.ReadyMadeProgrammer.Spikot.persistence
 
+import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
 import io.github.ReadyMadeProgrammer.Spikot.module.*
 import io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller.DataController
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
-import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import org.bukkit.event.Listener
 import java.io.File
 import kotlin.reflect.full.companionObjectInstance

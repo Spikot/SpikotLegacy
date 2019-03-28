@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.0.0-b13</version>
+    <version>3.0.0-b14</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -198,7 +198,7 @@
                                 <annotationProcessorPath>
                                     <groupId>io.github.ReadyMadeProgrammer</groupId>
                                     <artifactId>SpikotClassLocator</artifactId>
-                                    <version>3.0.0-b5</version>
+                                    <version>3.0.0-b8</version>
                                 </annotationProcessorPath>
                             </annotationProcessorPaths>
                         </configuration>

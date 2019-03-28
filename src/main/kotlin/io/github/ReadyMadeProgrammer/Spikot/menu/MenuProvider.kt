@@ -15,6 +15,8 @@ abstract class MenuProvider {
     @Suppress("MemberVisibilityCanBePrivate")
     protected lateinit var player: Player
     internal lateinit var menu: MenuBuilder
+    var tickCount: Int = 0
+        internal set
     protected lateinit var inventory: Inventory
     private var opened = false
     @Suppress("unused")
@@ -56,6 +58,10 @@ abstract class MenuProvider {
     }
 
     abstract fun onOpen()
+
+    open fun onTick() {
+
+    }
 
     open fun onClose(): Boolean {
         return true

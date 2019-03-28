@@ -2,10 +2,10 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.module
 
+import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
 import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
-import io.github.ReadyMadeProgrammer.Spikot.utils.subscribe
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import kotlin.reflect.full.createInstance
