@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.0.0-b11</version>
+    <version>3.0.0-b13</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -53,6 +53,10 @@
         <repository>
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
     </repositories>
 
@@ -154,6 +158,16 @@
             <version>1.8.7</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.packetwrapper</groupId>
+            <artifactId>PacketWrapper</artifactId>
+            <version>1.12.1-R0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -238,6 +252,7 @@
                             <include>com.github.salomonbrys.kotson:kotson</include>
                             <include>com.github.ben-manes.caffeine:caffeine</include>
                             <include>com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers</include>
+                            <include>com.comphenix.packetwrapper:PacketWrapper</include>
                         </includes>
                     </artifactSet>
                 </configuration>

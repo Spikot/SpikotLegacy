@@ -13,7 +13,7 @@ import kotlin.reflect.full.findAnnotation
 
 internal object ModuleManager {
     internal val enabled = HashSet<String>()
-    private lateinit var instances: Set<Pair<SpikotPluginHolder, IModule>>
+    internal lateinit var instances: Set<Pair<SpikotPluginHolder, IModule>>
 
     @Suppress("SpellCheckingInspection")
     fun load() {
