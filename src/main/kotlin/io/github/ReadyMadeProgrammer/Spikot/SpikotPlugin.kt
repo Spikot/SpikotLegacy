@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot
 import io.github.ReadyMadeProgrammer.Spikot.module.ModuleManager
 import io.github.ReadyMadeProgrammer.Spikot.module.SpikotPluginManager
 import mu.KotlinLogging
+import org.bukkit.plugin.java.annotation.dependency.Dependency
 import org.bukkit.plugin.java.annotation.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -24,7 +25,8 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "3.0.0-b6")
+@Plugin(name = "Spikot", version = "3.0.0-b15")
+@Dependency(plugin = "ProtocolLib")
 class SpikotPlugin : Spikot() {
     override fun onEnable() {
         spikotLogger.info { "Start loading spikot" }
