@@ -8,7 +8,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-abstract class NbtAccessor {
+abstract class NBTAccessor {
     lateinit var nbtTagCompound: NBTTagCompound
 
     operator fun contains(key: String): Boolean {
@@ -90,16 +90,18 @@ abstract class NbtAccessor {
             NBTTagCompound::setUUID
     )
 
+    protected inline fun <reified T : Enum<T>> enum() = enum(T::class)
+
     protected fun <T : Enum<T>> enum(enum: KClass<T>) =
             EnumWrappingDelegate(enum)
 
-    protected fun <T : NbtAccessor> tag(constructor: (NBTTagCompound) -> T): CompoundDelegate<T> {
+    protected fun <T : NBTAccessor> tag(constructor: (NBTTagCompound) -> T): CompoundDelegate<T> {
         return CompoundDelegate(constructor)
     }
 
-    protected fun <T : Any> list(converter: TagConverter<T>): ReadWriteProperty<NbtAccessor, MutableList<T>> {
-        return object : ReadWriteProperty<NbtAccessor, MutableList<T>> {
-            override fun getValue(thisRef: NbtAccessor, property: KProperty<*>): MutableList<T> {
+    protected fun <T : Any> list(converter: TagConverter<T>): ReadWriteProperty<NBTAccessor, MutableList<T>> {
+        return object : ReadWriteProperty<NBTAccessor, MutableList<T>> {
+            override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): MutableList<T> {
                 val list = thisRef.nbtTagCompound.getList(property.name, converter.target.id)
                 if (!thisRef.nbtTagCompound.hasKeyOfType(property.name, TagType.LIST.id)) {
                     thisRef.nbtTagCompound.set(property.name, list)
@@ -110,7 +112,7 @@ abstract class NbtAccessor {
                 )
             }
 
-            override fun setValue(thisRef: NbtAccessor, property: KProperty<*>, value: MutableList<T>) {
+            override fun setValue(thisRef: NBTAccessor, property: KProperty<*>, value: MutableList<T>) {
                 val list = NBTTagList()
                 if (value is NBTTagConvertingList<*>) {
                     list.list = value.backingList

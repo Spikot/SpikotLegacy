@@ -12,7 +12,7 @@ enum class TagType(val id: Int, val type: KClass<*>) {
     BYTE_ARRAY(7, ByteArray::class),
     STRING(8, String::class),
     LIST(9, MutableList::class),
-    TAG(10, NbtAccessor::class),
+    TAG(10, NBTAccessor::class),
     INT_ARRAY(11, IntArray::class),
     LONG_ARRAY(12, LongArray::class)
 }

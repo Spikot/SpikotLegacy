@@ -50,7 +50,7 @@ interface TagConverter<T : Any> : Converter<T, NBTBase> {
                 ::NBTTagLongArray
         ) { (it as NBTTagLongArray).get() }
 
-        fun <T : NbtAccessor> TAG(constructor: (NBTTagCompound) -> T): TagConverter<T> {
+        fun <T : NBTAccessor> TAG(constructor: (NBTTagCompound) -> T): TagConverter<T> {
             return create(
                     TagType.TAG,
                     { it.nbtTagCompound }) { constructor(it as NBTTagCompound) }
