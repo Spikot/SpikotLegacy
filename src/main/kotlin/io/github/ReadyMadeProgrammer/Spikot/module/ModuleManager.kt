@@ -6,14 +6,14 @@ import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
 import io.github.ReadyMadeProgrammer.Spikot.logger
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
+import io.github.ReadyMadeProgrammer.Spikot.utils.getInstance
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
-import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 
 internal object ModuleManager {
     internal val enabled = HashSet<String>()
-    internal lateinit var instances: Set<Pair<SpikotPluginHolder, IModule>>
+    internal lateinit var instances: List<Pair<SpikotPluginHolder, IModule>>
 
     @Suppress("SpellCheckingInspection")
     fun load() {
@@ -33,10 +33,10 @@ internal object ModuleManager {
                     result && m.canLoad()
                 }
                 .sortedBy { it.second.findAnnotation<Module>()!!.loadOrder }
-                .map { (holder, module) -> Pair(holder, module.objectInstance ?: module.createInstance() as? IModule?) }
+                .map { (holder, module) -> Pair(holder, module.getInstance() as? IModule?) }
                 .filter { (_, module) -> module != null }
                 .map { (holder, module) -> Pair(holder, module as IModule) }
-                .toSet()
+                .toList()
 
         instances.forEach { (holder, module) ->
             catchAll {

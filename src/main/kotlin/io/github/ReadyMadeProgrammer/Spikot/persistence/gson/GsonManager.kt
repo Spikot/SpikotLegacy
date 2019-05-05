@@ -4,7 +4,8 @@ import com.fatboyindustrial.gsonjavatime.Converters
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.ReadyMadeProgrammer.Spikot.module.*
-import kotlin.reflect.full.createInstance
+import io.github.ReadyMadeProgrammer.Spikot.utils.getInstance
+import java.lang.reflect.ParameterizedType
 import kotlin.reflect.full.findAnnotation
 
 val gson: Gson
@@ -18,11 +19,12 @@ object GsonManager : AbstractModule() {
                 .setPrettyPrinting()
         SpikotPluginManager.spikotPlugins.asSequence().flatMap { it.serializer.asSequence() }.filter { it.canLoad() }.forEach {
             try {
-                val instance = it.createInstance()
+                val instance = it.getInstance()
+                val type = (it.java.genericInterfaces[0] as ParameterizedType).actualTypeArguments[0] as Class<*>
                 if (it.findAnnotation<Serializer>()?.hierarchy == true) {
-                    gsonBuilder.registerTypeHierarchyAdapter(it.java, instance)
+                    gsonBuilder.registerTypeHierarchyAdapter(type, instance)
                 } else {
-                    gsonBuilder.registerTypeAdapter(it.java, instance)
+                    gsonBuilder.registerTypeAdapter(type, instance)
                 }
             } catch (e: Exception) {
                 logger.warn(e) { "Exception while register type adapter: ${it.simpleName}" }

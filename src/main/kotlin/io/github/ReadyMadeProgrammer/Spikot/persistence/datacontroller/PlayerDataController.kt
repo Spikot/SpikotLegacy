@@ -3,6 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller
 import io.github.ReadyMadeProgrammer.Spikot.persistence.gson.gson
 import io.github.ReadyMadeProgrammer.Spikot.thread.async
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -75,6 +76,10 @@ open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V)
             this.value[key] = constructor(key)
         }
         return this.value[key]!!
+    }
+
+    operator fun get(player: Player): V {
+        return this[player.uniqueId]
     }
 
     operator fun set(key: UUID, value: V): V? {

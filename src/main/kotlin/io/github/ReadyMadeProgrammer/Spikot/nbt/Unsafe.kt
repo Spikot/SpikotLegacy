@@ -28,18 +28,24 @@ fun ItemStack.toCraftItemStack(): CraftItemStack {
 }
 
 fun CraftItemStack.hasTag(key: String): Boolean {
-    return this.tag.hasKeyOfType(key, TagType.TAG.id)
+    return this.tag?.hasKeyOfType(key, TagType.TAG.id) ?: false
 }
 
 inline fun <reified T : NBTAccessor> CraftItemStack.getTag(key: String): T {
-    val value = this.tag.getCompound(key)
-    if (!this.tag.hasKeyOfType(key, TagType.TAG.id)) {
-        this.tag.setCompound(key, value)
+    val tag: NBTTagCompound = this.tag ?: NBTTagCompound()
+    if (this.tag == null) {
+        this.tag = tag
+    }
+    val value: NBTTagCompound = tag.getCompound(key)
+    if (!tag.hasKeyOfType(key, TagType.TAG.id)) {
+        tag.setCompound(key, value)
     }
     return getTag(value)
 }
 
 inline fun <reified T : NBTAccessor> getTag(compound: NBTTagCompound): T {
     val constructor = queryConstructor(T::class)
-    return constructor.call(compound)
+    val tag = constructor.call()
+    tag.nbtTagCompound = compound
+    return tag
 }

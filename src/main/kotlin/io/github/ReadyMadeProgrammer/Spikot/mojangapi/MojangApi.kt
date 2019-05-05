@@ -8,6 +8,7 @@ import com.github.salomonbrys.kotson.contains
 import com.github.salomonbrys.kotson.get
 import com.google.gson.JsonParser
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import java.net.URL
 import java.time.Duration
 import java.time.Instant
@@ -31,6 +32,10 @@ fun getProfile(uuid: UUID, callback: Callback) {
 
 fun getProfile(uuid: Collection<UUID>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
     uuidPlayerProfileCache.getAll(uuid).thenApply(callback)
+}
+
+fun getProfileFromPlayer(uuid: Collection<Player>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
+    uuidPlayerProfileCache.getAll(uuid.map { it.uniqueId }).thenApply(callback)
 }
 
 internal val namePlayerProfileCache: AsyncLoadingCache<String, PlayerProfile> = Caffeine

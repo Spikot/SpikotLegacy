@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.0.0-b16</version>
+    <version>3.0.0-b21</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>io.github.readymadeprogrammer</groupId>
             <artifactId>bloodbukkit-server</artifactId>
-            <version>1.12.2-b190305-1</version>
+            <version>1.12.2-b190404-1</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -229,9 +229,6 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
-                    <outputFile>
-                        Spikot.jar
-                    </outputFile>
                     <minimizeJar>false</minimizeJar>
                     <artifactSet>
                         <includes>

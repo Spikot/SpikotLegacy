@@ -3,7 +3,7 @@ package io.github.ReadyMadeProgrammer.Spikot.misc
 import org.bukkit.command.CommandSender
 import kotlin.math.log10
 
-class PaginatorBuilder<E> {
+class ChatPaginatorBuilder<E> {
     var header: (Int, Int) -> String? = { curr, max -> "===========${curr + 1}/$max" }
     var footer: (Int, Int) -> String? = { curr, max -> "===========================" + "=".repeat(log10(curr.toDouble()).toInt() + log10(max.toDouble()).toInt()) }
     var format: (Int, Int, E) -> String = { index, _, content -> "$index. $content" }
@@ -11,7 +11,7 @@ class PaginatorBuilder<E> {
     var data: List<E> = emptyList()
 }
 
-class Paginator<E> internal constructor(
+class ChatPaginator<E> internal constructor(
         private val header: (Int, Int) -> String?,
         private val footer: (Int, Int) -> String?,
         private val format: (Int, Int, E) -> String,
@@ -44,17 +44,17 @@ class Paginator<E> internal constructor(
 }
 
 @Suppress("unused")
-fun <E> paginate(body: PaginatorBuilder<E>.() -> Unit): Paginator<E> {
+fun <E> paginate(body: ChatPaginatorBuilder<E>.() -> Unit): ChatPaginator<E> {
     return paginate(body) {}
 }
 
-private fun <E> paginate(body: PaginatorBuilder<E>.() -> Unit, observer: Observer<List<String>>): Paginator<E> {
-    val builder = PaginatorBuilder<E>()
+private fun <E> paginate(body: ChatPaginatorBuilder<E>.() -> Unit, observer: Observer<List<String>>): ChatPaginator<E> {
+    val builder = ChatPaginatorBuilder<E>()
     builder.body()
-    return Paginator(builder.header, builder.footer, builder.format, builder.length, builder.data, observer)
+    return ChatPaginator(builder.header, builder.footer, builder.format, builder.length, builder.data, observer)
 }
 
 @Suppress("unused")
-fun <E> CommandSender.sendPage(body: PaginatorBuilder<E>.() -> Unit): Paginator<E> {
+fun <E> CommandSender.sendPage(body: ChatPaginatorBuilder<E>.() -> Unit): ChatPaginator<E> {
     return paginate(body) { it.forEach(this::sendMessage) }
 }
