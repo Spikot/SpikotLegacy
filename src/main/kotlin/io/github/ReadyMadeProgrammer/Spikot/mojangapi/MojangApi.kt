@@ -38,6 +38,10 @@ fun getProfileFromPlayer(uuid: Collection<Player>, callback: (Map<UUID, PlayerPr
     uuidPlayerProfileCache.getAll(uuid.map { it.uniqueId }).thenApply(callback)
 }
 
+fun getCachedProfile(uuid: UUID): PlayerProfile? {
+    return uuidPlayerProfileCache.getIfPresent(uuid)?.getNow(null)
+}
+
 internal val namePlayerProfileCache: AsyncLoadingCache<String, PlayerProfile> = Caffeine
         .newBuilder()
         .expireAfterAccess(Duration.ofMinutes(30L))
