@@ -16,6 +16,7 @@ abstract class ConfigSpec(
     internal fun initialize() {
         this.javaClass.kotlin.declaredMemberProperties.stream().forEach { it.get(this) }
     }
+
     protected fun <T : Any> require(name: String, default: T): ReadWriteProperty<ConfigSpec, T> {
         return ConfigProperty(default, name)
     }

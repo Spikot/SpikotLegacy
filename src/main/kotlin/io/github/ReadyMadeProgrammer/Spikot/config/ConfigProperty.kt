@@ -13,8 +13,10 @@ internal class ConfigProperty<T>(
 
     override fun getValue(thisRef: ConfigSpec, property: KProperty<*>): T {
         if (!cached) {
-            cache = thisRef.yaml.getByType("${thisRef.path}.${name ?: property.name}", property.returnType.jvmErasure) as T?
-            if(cache==null){
+            @Suppress("UNCHECKED_CAST")
+            cache = thisRef.yaml.getByType("${thisRef.path}.${name
+                    ?: property.name}", property.returnType.jvmErasure) as T?
+            if (cache == null) {
                 thisRef.yaml.set("${thisRef.path}.${name ?: property.name}", default)
             }
             cached = true

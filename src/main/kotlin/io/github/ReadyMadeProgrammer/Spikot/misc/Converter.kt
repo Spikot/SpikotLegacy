@@ -3,9 +3,9 @@ package io.github.ReadyMadeProgrammer.Spikot.misc
 import java.util.*
 
 interface Converter<T, R> {
-    companion object{
-        operator fun <T, R> invoke(read: (R)->T, write: (T)->R): Converter<T, R>{
-            return object: Converter<T, R>{
+    companion object {
+        operator fun <T, R> invoke(read: (R) -> T, write: (T) -> R): Converter<T, R> {
+            return object : Converter<T, R> {
                 override fun read(raw: R): T {
                     return read(raw)
                 }
@@ -16,6 +16,7 @@ interface Converter<T, R> {
             }
         }
     }
+
     fun read(raw: R): T
     fun write(converted: T): R
 }

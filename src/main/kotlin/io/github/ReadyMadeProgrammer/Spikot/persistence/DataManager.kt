@@ -15,8 +15,16 @@ class DataManager : AbstractModule() {
         SpikotPluginManager.spikotPlugins.forEach { plugin ->
             val directory = File(plugin.plugin.dataFolder, "data")
             directory.mkdirs()
-            plugin.data.filter { it.canLoad() }.forEach { type ->
+            plugin.data.filter {
+                onDebug {
+                    logger.info("Find data: ${it.simpleName}")
+                }
+                it.canLoad()
+            }.forEach { type ->
                 catchAll {
+                    onDebug {
+                        logger.info("Load data: ${type.simpleName}")
+                    }
                     val companion = type.companionObjectInstance as? DataController<*, *>?
                     if (companion == null) {
                         logger.warn("Cannot load data: ${type.qualifiedName}\nData class must contains DataController as companion object")

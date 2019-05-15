@@ -14,3 +14,13 @@ internal fun KClass<*>.canLoad(): Boolean {
 fun isFeatureEnabled(feature: String): Boolean {
     return ModuleManager.enabled.contains(feature)
 }
+
+inline fun onEnabled(feature: String, runnable: () -> Unit) {
+    if (isFeatureEnabled(feature)) {
+        runnable()
+    }
+}
+
+inline fun onDebug(runnable: () -> Unit) {
+    onEnabled("Debug", runnable)
+}

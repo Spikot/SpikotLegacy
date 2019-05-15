@@ -26,6 +26,9 @@ internal object ModuleManager {
                 .asSequence()
                 .flatMap { p -> p.module.asSequence().map { Pair(p, it) } }
                 .filter { (_, m) ->
+                    onDebug {
+                        logger.info("Find module: ${m.simpleName}")
+                    }
                     val result = m.findAnnotation<Module>() != null
                     if (!result) {
                         logger.warn("Cannot load module: ${m.simpleName}")
@@ -40,12 +43,21 @@ internal object ModuleManager {
 
         instances.forEach { (holder, module) ->
             catchAll {
+                onDebug {
+                    logger.info("Load module: ${module.javaClass.simpleName}")
+                }
                 module.onLoad(holder.plugin)
             }
         }
         instances.forEach { (holder, module) ->
             catchAll {
+                onDebug {
+                    logger.info("Enable module: ${module.javaClass.simpleName}")
+                }
                 module.onEnable()
+                onDebug {
+                    logger.info("Subscribe module: ${module.javaClass.simpleName}")
+                }
                 holder.plugin.subscribe(module)
             }
         }
@@ -53,6 +65,9 @@ internal object ModuleManager {
 
     fun end() {
         instances.toList().reversed().forEach { (_, module) ->
+            onDebug {
+                logger.info("Disable module: ${module.javaClass.simpleName}")
+            }
             module.onDisable()
         }
     }

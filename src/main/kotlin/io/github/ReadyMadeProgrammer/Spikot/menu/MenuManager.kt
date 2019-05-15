@@ -97,7 +97,6 @@ object MenuManager : AbstractModule() {
             provider.onInteract(event)
         }
     }
-
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
         if (!event.inventory.title.hasInvisible()) {

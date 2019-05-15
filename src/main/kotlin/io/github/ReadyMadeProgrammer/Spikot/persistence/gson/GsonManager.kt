@@ -17,8 +17,16 @@ object GsonManager : AbstractModule() {
     override fun onEnable() {
         val gsonBuilder = Converters.registerAll(GsonBuilder())
                 .setPrettyPrinting()
-        SpikotPluginManager.spikotPlugins.asSequence().flatMap { it.serializer.asSequence() }.filter { it.canLoad() }.forEach {
+        SpikotPluginManager.spikotPlugins.asSequence().flatMap { it.serializer.asSequence() }.filter {
+            onDebug {
+                logger.info("Find serializer: ${it.simpleName}")
+            }
+            it.canLoad()
+        }.forEach {
             try {
+                onDebug {
+                    logger.info("Register serializer: ${it.simpleName}")
+                }
                 val instance = it.getInstance()
                 val type = (it.java.genericInterfaces[0] as ParameterizedType).actualTypeArguments[0] as Class<*>
                 if (it.findAnnotation<Serializer>()?.hierarchy == true) {

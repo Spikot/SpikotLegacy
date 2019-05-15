@@ -14,8 +14,14 @@ object ConfigManager : AbstractModule() {
         SpikotPluginManager.spikotPlugins.forEach { plugin ->
             root = File(plugin.plugin.dataFolder, "config")
             root.mkdirs()
-            plugin.config.filter { it.canLoad() }.forEach { type ->
+            plugin.config.filter {
+                onDebug {
+                    logger.info("Find config: ${it.simpleName}")
+                }
+                it.canLoad()
+            }.forEach { type ->
                 catchAll {
+                    logger.info("Load config: ${type.simpleName}")
                     val obj = type.objectInstance as? ConfigSpec
                     val annotation = type.findAnnotation<Config>()
                     when {

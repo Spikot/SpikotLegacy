@@ -29,19 +29,33 @@ object CommandManager : AbstractModule(), TabExecutor {
         val value = field[Bukkit.getServer()] as CommandMap
         field.isAccessible = false
         SpikotPluginManager.spikotPlugins.forEach { holder ->
-            holder.command.filter { it.canLoad() }.forEach {
-                @Suppress("UNCHECKED_CAST")
-                val commandHolder = CommandHolder(it as KClass<out CommandHandler>)
-                val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
-                val command = create(commandHolder.name.first(), holder.plugin)
-                command.executor = CommandManager
-                command.tabCompleter = CommandManager
-                command.aliases = names.toMutableList()
-                value.register(commandHolder.name.first(), command)
-                commandHolders += commandHolder
-                commandHolder.name.forEach { name ->
-                    commandNames.add(name)
+            holder.command.filter {
+                onDebug {
+                    logger.info("Find command: ${it.simpleName}")
                 }
+                it.canLoad()
+            }.forEach {
+                catchAll {
+                    onDebug {
+                        logger.info("Process command: ${it.simpleName}")
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    val commandHolder = CommandHolder(it as KClass<out CommandHandler>)
+                    val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
+                    val command = create(commandHolder.name.first(), holder.plugin)
+                    command.executor = CommandManager
+                    command.tabCompleter = CommandManager
+                    command.aliases = names.toMutableList()
+                    onDebug {
+                        logger.info("Register command: ${it.simpleName}")
+                    }
+                    value.register(commandHolder.name.first(), command)
+                    commandHolders += commandHolder
+                    commandHolder.name.forEach { name ->
+                        commandNames.add(name)
+                    }
+                }
+
             }
         }
     }

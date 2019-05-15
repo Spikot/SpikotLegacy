@@ -25,7 +25,7 @@ internal lateinit var spikotPlugin: SpikotPlugin
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "3.0.0-b15")
+@Plugin(name = "Spikot", version = "3.0.0-b21")
 @Dependency(plugin = "ProtocolLib")
 class SpikotPlugin : Spikot() {
     override fun onEnable() {

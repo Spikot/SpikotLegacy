@@ -24,6 +24,7 @@ open class DefaultItemBuilder(item: ItemStack) : ItemBuilder<ItemMetaBuilder<Ite
 @ItemDslMarker
 abstract class ItemBuilder<T : ItemMetaBuilder<*>>(protected val item: ItemStack) {
     constructor(material: Material) : this(ItemStack(material))
+
     val material: Material
         get() = item.type
 

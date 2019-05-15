@@ -13,12 +13,12 @@ internal class ListConfigProperty<T : Any>(
     private var cached: Boolean = false
     override fun getValue(thisRef: ConfigSpec, property: KProperty<*>): MutableList<T> {
         if (!cached) {
+            @Suppress("UNCHECKED_CAST")
             val value = thisRef.yaml.getListByType("${thisRef.path}.${name ?: property.name}", type) as MutableList<T>?
-            if(value==null){
+            if (value == null) {
                 cache = mutableListOf()
                 thisRef.yaml.set("${thisRef.path}.${name ?: property.name}", cache)
-            }
-            else{
+            } else {
                 cache = value
             }
             cached = true
