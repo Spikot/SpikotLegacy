@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 abstract class MenuProvider {
     var id by Delegates.notNull<Int>()
     @Suppress("MemberVisibilityCanBePrivate")
-    protected lateinit var player: Player
+    lateinit var player: Player
     internal lateinit var menu: MenuBuilder
     var tickCount: Int = 0
         internal set

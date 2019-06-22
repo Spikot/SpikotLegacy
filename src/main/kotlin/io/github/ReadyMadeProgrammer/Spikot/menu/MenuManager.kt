@@ -36,7 +36,8 @@ fun Player.openInventory(menuProvider: MenuProvider) {
 }
 
 @Module(loadOrder = LoadOrder.API)
-object MenuManager : AbstractModule() {
+@PublishedApi
+internal object MenuManager : AbstractModule() {
     internal var id: Int = 0
         get() {
             field++
@@ -44,6 +45,7 @@ object MenuManager : AbstractModule() {
         }
         private set
 
+    @PublishedApi
     internal val openedInventory = mutableMapOf<Int, MenuProvider>()
 
     @EventHandler
@@ -97,6 +99,7 @@ object MenuManager : AbstractModule() {
             provider.onInteract(event)
         }
     }
+
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
         if (!event.inventory.title.hasInvisible()) {
@@ -118,4 +121,13 @@ object MenuManager : AbstractModule() {
             menu.onTick()
         }
     }
+}
+
+inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
+    for ((_, menu) in MenuManager.openedInventory) {
+        if (menu.player == this) {
+            return menu as? T
+        }
+    }
+    return null
 }

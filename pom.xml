@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.0.0-b21</version>
+    <version>3.0.0-b25</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -229,6 +229,9 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
+                    <outputFile>
+                        Spikot.jar
+                    </outputFile>
                     <minimizeJar>false</minimizeJar>
                     <artifactSet>
                         <includes>
