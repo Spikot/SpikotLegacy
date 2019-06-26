@@ -2,54 +2,54 @@ package io.github.ReadyMadeProgrammer.Spikot.misc
 
 import java.util.*
 
-interface Converter<T, R> {
+interface Converter<B, F> {
     companion object {
-        operator fun <T, R> invoke(read: (R) -> T, write: (T) -> R): Converter<T, R> {
-            return object : Converter<T, R> {
-                override fun read(raw: R): T {
+        operator fun <B, F> invoke(read: (B) -> F, write: (F) -> B): Converter<B, F> {
+            return object : Converter<B, F> {
+                override fun read(raw: B): F {
                     return read(raw)
                 }
 
-                override fun write(converted: T): R {
+                override fun write(converted: F): B {
                     return write(converted)
                 }
             }
         }
     }
 
-    fun read(raw: R): T
-    fun write(converted: T): R
+    fun read(raw: B): F
+    fun write(converted: F): B
 }
 
 interface StringConverter<R> : Converter<R, String> {
     companion object {
         val UUID = object : StringConverter<UUID> {
-            override fun write(converted: UUID): String {
-                return converted.toString()
+            override fun read(raw: UUID): String {
+                return raw.toString()
             }
 
-            override fun read(raw: String): UUID {
-                return java.util.UUID.fromString(raw)
+            override fun write(converted: String): UUID {
+                return java.util.UUID.fromString(converted)
             }
         }
 
         val STRING = object : StringConverter<String> {
-            override fun write(converted: String): String {
-                return converted
-            }
-
             override fun read(raw: String): String {
                 return raw
+            }
+
+            override fun write(converted: String): String {
+                return converted
             }
         }
 
         val INT = object : StringConverter<Int> {
-            override fun write(converted: Int): String {
-                return converted.toString()
+            override fun read(raw: Int): String {
+                return raw.toString()
             }
 
-            override fun read(raw: String): Int {
-                return raw.toInt()
+            override fun write(converted: String): Int {
+                return converted.toInt()
             }
         }
     }

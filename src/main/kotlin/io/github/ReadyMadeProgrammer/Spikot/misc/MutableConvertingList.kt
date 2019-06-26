@@ -2,7 +2,7 @@ package io.github.ReadyMadeProgrammer.Spikot.misc
 
 open class MutableConvertingList<B, F>(
         override val backingList: MutableList<B>,
-        converter: Converter<F, B>
+        converter: Converter<B, F>
 ) : ConvertingList<B, F>(backingList, converter), MutableList<F> {
 
     override fun iterator(): MutableIterator<F> {
