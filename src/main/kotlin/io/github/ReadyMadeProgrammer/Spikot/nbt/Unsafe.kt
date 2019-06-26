@@ -31,6 +31,10 @@ fun CraftItemStack.hasTag(key: String): Boolean {
     return this.tag?.hasKeyOfType(key, TagType.TAG.id) ?: false
 }
 
+fun CraftItemStack.getWrappedTag(): WrapperNBTTagCompound {
+    return wrapNBT(this.tag)
+}
+
 inline fun <reified T : NBTAccessor> CraftItemStack.getTag(key: String): T {
     val tag: NBTTagCompound = this.tag ?: NBTTagCompound()
     if (this.tag == null) {
