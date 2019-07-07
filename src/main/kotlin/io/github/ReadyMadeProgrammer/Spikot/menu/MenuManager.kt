@@ -11,6 +11,7 @@ import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.hasInvisible
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.HandlerList
 import org.bukkit.event.inventory.*
 import org.bukkit.event.inventory.ClickType.*
 import org.bukkit.event.inventory.InventoryAction.*
@@ -34,6 +35,15 @@ fun Player.openInventory(menuProvider: MenuProvider) {
     menuProvider.onOpen()
     menuProvider.openInventory()
 }
+
+val Inventory.menuProvider: MenuProvider?
+    get() {
+        return if (title.hasInvisible()) {
+            MenuManager.openedInventory[title.findInvisible()]
+        } else {
+            null
+        }
+    }
 
 @Module(loadOrder = LoadOrder.API)
 @PublishedApi
@@ -93,8 +103,9 @@ internal object MenuManager : AbstractModule() {
 
     @EventHandler
     fun onDrag(event: InventoryDragEvent) {
-        if (event.inventory.title.hasInvisible()) {
-            val inventoryId = event.inventory.title.findInvisible()
+        val targetInventory = event.whoClicked.openInventory.topInventory
+        if (targetInventory.title.hasInvisible()) {
+            val inventoryId = targetInventory.title.findInvisible()
             val provider = openedInventory[inventoryId] ?: return
             provider.onInteract(event)
         }
@@ -111,6 +122,7 @@ internal object MenuManager : AbstractModule() {
             provider.openInventory()
         } else {
             openedInventory.remove(inventoryId)
+            HandlerList.unregisterAll(provider)
         }
     }
 

@@ -48,7 +48,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.3.21" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.21" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Maven: io.github.readymadeprogrammer:bloodbukkit-server:1.12.2-b190305-1" level="project" />
+    <orderEntry type="library" name="Maven: io.github.readymadeprogrammer:bloodbukkit-server:1.12.2-b190404-1" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.2.30" level="project" />
     <orderEntry type="library" name="Maven: org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: io.github.microutils:kotlin-logging:1.5.4" level="project" />

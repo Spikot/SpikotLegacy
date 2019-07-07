@@ -1,16 +1,19 @@
 package io.github.ReadyMadeProgrammer.Spikot.menu
 
+import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
+import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.thread.sync
 import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryInteractEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import kotlin.properties.Delegates
 
-abstract class MenuProvider {
+abstract class MenuProvider : Listener {
     var id by Delegates.notNull<Int>()
     @Suppress("MemberVisibilityCanBePrivate")
     lateinit var player: Player
@@ -39,6 +42,7 @@ abstract class MenuProvider {
         inventory.contents = contents
         opened = true
         player.safeOpenInventory(inventory)
+        spikotPlugin.subscribe(this)
     }
 
     internal fun initialize(id: Int, player: Player, menu: MenuBuilder) {
