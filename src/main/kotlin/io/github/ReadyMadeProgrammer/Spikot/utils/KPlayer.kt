@@ -18,7 +18,7 @@ private val variableMap = mutableMapOf<UUID, MutableMap<String, Any>>()
 private val legacySupport = HashBiMap.create<String, UUID>()
 
 @Suppress("UNCHECKED_CAST")
-operator fun <T> Player.get(key: String): T = variableMap[id]?.get(key) as T
+operator fun <T> Player.get(key: String): T? = variableMap[id]?.get(key) as T?
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 operator fun <T> Player.set(key: String, value: T) {
