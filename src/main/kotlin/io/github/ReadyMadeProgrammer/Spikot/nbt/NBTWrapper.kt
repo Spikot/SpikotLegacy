@@ -28,84 +28,84 @@ interface WrapperNBTNumber<B : NBTBase, T : Number> : WrapperNBTBase<B, T> {
 
 private val constructorNBTTagEnd = NBTTagEnd::class.java.getDeclaredConstructor().apply { isAccessible = true }
 
-inline class WrapperNBTTagEnd(override val tag: NBTTagEnd) : WrapperNBTBase<NBTTagEnd, Unit> {
+class WrapperNBTTagEnd(override val tag: NBTTagEnd) : WrapperNBTBase<NBTTagEnd, Unit> {
     constructor() : this(constructorNBTTagEnd.newInstance())
 
     override val value: Unit
         get() = Unit
 }
 
-inline class WrapperNBTTagByte(override val tag: NBTTagByte) : WrapperNBTNumber<NBTTagByte, Byte> {
+class WrapperNBTTagByte(override val tag: NBTTagByte) : WrapperNBTNumber<NBTTagByte, Byte> {
     constructor(value: Byte) : this(NBTTagByte(value))
 
     override val value: Byte
         get() = tag.g()
 }
 
-inline class WrapperNBTTagLong(override val tag: NBTTagLong) : WrapperNBTNumber<NBTTagLong, Long> {
+class WrapperNBTTagLong(override val tag: NBTTagLong) : WrapperNBTNumber<NBTTagLong, Long> {
     constructor(value: Long) : this(NBTTagLong(value))
 
     override val value: Long
         get() = tag.d()
 }
 
-inline class WrapperNBTTagInt(override val tag: NBTTagInt) : WrapperNBTNumber<NBTTagInt, Int> {
+class WrapperNBTTagInt(override val tag: NBTTagInt) : WrapperNBTNumber<NBTTagInt, Int> {
     constructor(value: Int) : this(NBTTagInt(value))
 
     override val value: Int
         get() = tag.e()
 }
 
-inline class WrapperNBTTagShort(override val tag: NBTTagShort) : WrapperNBTNumber<NBTTagShort, Short> {
+class WrapperNBTTagShort(override val tag: NBTTagShort) : WrapperNBTNumber<NBTTagShort, Short> {
     constructor(value: Short) : this(NBTTagShort(value))
 
     override val value: Short
         get() = tag.f()
 }
 
-inline class WrapperNBTTagDouble(override val tag: NBTTagDouble) : WrapperNBTNumber<NBTTagDouble, Double> {
+class WrapperNBTTagDouble(override val tag: NBTTagDouble) : WrapperNBTNumber<NBTTagDouble, Double> {
     constructor(value: Double) : this(NBTTagDouble(value))
 
     override val value: Double
         get() = tag.asDouble()
 }
 
-inline class WrapperNBTTagFloat(override val tag: NBTTagFloat) : WrapperNBTNumber<NBTTagFloat, Float> {
+class WrapperNBTTagFloat(override val tag: NBTTagFloat) : WrapperNBTNumber<NBTTagFloat, Float> {
     constructor(value: Float) : this(NBTTagFloat(value))
 
     override val value: Float
         get() = tag.i()
 }
 
-inline class WrapperNBTTagByteArray(override val tag: NBTTagByteArray) : WrapperNBTBase<NBTTagByteArray, ByteArray> {
+class WrapperNBTTagByteArray(override val tag: NBTTagByteArray) : WrapperNBTBase<NBTTagByteArray, ByteArray> {
     constructor(value: ByteArray) : this(NBTTagByteArray(value))
 
     override val value: ByteArray
         get() = tag.c()
 }
 
-inline class WrapperNBTTagIntArray(override val tag: NBTTagIntArray) : WrapperNBTBase<NBTTagIntArray, IntArray> {
+class WrapperNBTTagIntArray(override val tag: NBTTagIntArray) : WrapperNBTBase<NBTTagIntArray, IntArray> {
     constructor(value: IntArray) : this(NBTTagIntArray(value))
 
     override val value: IntArray
         get() = tag.d()
 }
 
-inline class WrapperNBTTagLongArray(override val tag: NBTTagLongArray) : WrapperNBTBase<NBTTagLongArray, LongArray> {
+class WrapperNBTTagLongArray(override val tag: NBTTagLongArray) : WrapperNBTBase<NBTTagLongArray, LongArray> {
     constructor(value: LongArray) : this(NBTTagLongArray(value))
 
     override val value: LongArray
         get() = tag.get()
 }
 
-inline class WrapperNBTTagString(override val tag: NBTTagString) : WrapperNBTBase<NBTTagString, String> {
+class WrapperNBTTagString(override val tag: NBTTagString) : WrapperNBTBase<NBTTagString, String> {
     constructor(value: String) : this(NBTTagString(value))
 
     override val value: String
         get() = tag.c_()
 }
 
-inline class WrapperNBTTagList<T : WrapperNBTBase<*, *>>(override val tag: NBTTagList) : WrapperNBTBase<NBTTagList, MutableList<T>>, MutableList<T> {
+class WrapperNBTTagList<T : WrapperNBTBase<*, *>>(override val tag: NBTTagList) : WrapperNBTBase<NBTTagList, MutableList<T>>, MutableList<T> {
     constructor() : this(NBTTagList())
 
     override val value: MutableList<T>
@@ -183,7 +183,7 @@ inline class WrapperNBTTagList<T : WrapperNBTBase<*, *>>(override val tag: NBTTa
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> = tag.list.subList(fromIndex, toIndex).map { wrapNBT<T>(it) }.toMutableList()
 }
 
-inline class WrapperNBTTagCompound(override val tag: NBTTagCompound) : WrapperNBTBase<NBTTagCompound, MutableMap<String, WrapperNBTBase<*, *>>>, MutableMap<String, WrapperNBTBase<*, *>> {
+class WrapperNBTTagCompound(override val tag: NBTTagCompound) : WrapperNBTBase<NBTTagCompound, MutableMap<String, WrapperNBTBase<*, *>>>, MutableMap<String, WrapperNBTBase<*, *>> {
     constructor() : this(NBTTagCompound())
 
     override val value: MutableMap<String, WrapperNBTBase<*, *>>

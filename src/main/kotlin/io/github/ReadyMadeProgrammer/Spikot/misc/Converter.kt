@@ -21,15 +21,15 @@ interface Converter<B, F> {
     fun write(converted: F): B
 }
 
-interface StringConverter<R> : Converter<R, String> {
+interface StringConverter<R> : Converter<String, R> {
     companion object {
         val UUID = object : StringConverter<UUID> {
-            override fun read(raw: UUID): String {
-                return raw.toString()
+            override fun read(raw: String): UUID {
+                return java.util.UUID.fromString(raw)
             }
 
-            override fun write(converted: String): UUID {
-                return java.util.UUID.fromString(converted)
+            override fun write(converted: UUID): String {
+                return converted.toString()
             }
         }
 
@@ -44,12 +44,12 @@ interface StringConverter<R> : Converter<R, String> {
         }
 
         val INT = object : StringConverter<Int> {
-            override fun read(raw: Int): String {
-                return raw.toString()
+            override fun read(raw: String): Int {
+                return raw.toInt()
             }
 
-            override fun write(converted: String): Int {
-                return converted.toInt()
+            override fun write(converted: Int): String {
+                return converted.toString()
             }
         }
     }

@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 @PublishedApi
-internal class TransformConfigProperty<T : Any, R : Any>(private val rawType: KClass<T>, private val default: R, private val converter: Converter<R, T>) : ReadWriteProperty<ConfigSpec, R> {
+internal class TransformConfigProperty<T : Any, R : Any>(private val rawType: KClass<T>, private val default: R, private val converter: Converter<T, R>) : ReadWriteProperty<ConfigSpec, R> {
     private var cache: R? = null
     private var cached = false
     override fun getValue(thisRef: ConfigSpec, property: KProperty<*>): R {
