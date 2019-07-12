@@ -7,6 +7,8 @@ import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import org.bukkit.event.Listener
 import java.io.File
 import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.isSubclassOf
 
 @Module(loadOrder = LoadOrder.API)
 class DataManager : AbstractModule() {
@@ -25,15 +27,17 @@ class DataManager : AbstractModule() {
                     onDebug {
                         logger.info("Load data: ${type.simpleName}")
                     }
-                    val companion = type.companionObjectInstance as? DataController<*, *>?
-                    if (companion == null) {
-                        logger.warn("Cannot load data: ${type.qualifiedName}\nData class must contains DataController as companion object")
+                    val instance = if (type.isSubclassOf(DataController::class)) type.objectInstance as? DataController<*, *>?
+                    else type.companionObjectInstance as? DataController<*, *>?
+                    val targetType = if (type.isSubclassOf(DataController::class)) type else type.findAnnotation<Data>()!!.targetClass
+                    if (instance == null) {
+                        logger.warn("Cannot load data: ${type.qualifiedName}\nData class must contains DataController as companion object or DataController itself")
                     } else {
-                        registered.add(companion)
-                        if (companion is Listener) {
-                            plugin.plugin.subscribe(companion)
+                        registered.add(instance)
+                        if (instance is Listener) {
+                            plugin.plugin.subscribe(instance)
                         }
-                        companion.initialize(directory, type)
+                        instance.initialize(directory, targetType)
                     }
                 }
             }

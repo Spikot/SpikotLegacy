@@ -118,7 +118,7 @@ open class LazyKeyDataController<K : Any, V : Any>(
     }
 
     override fun putAll(from: Map<out K, V>) {
-        from.forEach { key, value -> put(key, value) }
+        from.forEach { (key, value) -> put(key, value) }
     }
 
     override fun remove(key: K): V? {
