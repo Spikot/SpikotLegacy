@@ -20,7 +20,7 @@ private typealias Callback = (PlayerProfile) -> Unit
 
 @Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile()"))
 fun OfflinePlayer.getProfile(callback: Callback) {
-    OfflinePlayer.getProfile(this.uniqueId: UUID)
+    getProfile(this.uniqueId, callback)
 }
 
 @Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(name: String))"))
