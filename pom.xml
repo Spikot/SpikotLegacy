@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.0.0-b31</version>
+    <version>3.1.1</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -226,6 +226,7 @@
                 <configuration>
                     <args>
                         <arg>-XXLanguage:+InlineClasses</arg>
+                        <arg>-Xuse-experimental=kotlin.Experimental</arg>
                     </args>
                 </configuration>
             </plugin>
@@ -258,6 +259,7 @@
                             <include>com.github.ben-manes.caffeine:caffeine</include>
                             <include>com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers</include>
                             <include>com.comphenix.packetwrapper:PacketWrapper</include>
+                            <include>org.jetbrains.kotlinx:kotlinx-coroutines-core</include>
                         </includes>
                     </artifactSet>
                 </configuration>
