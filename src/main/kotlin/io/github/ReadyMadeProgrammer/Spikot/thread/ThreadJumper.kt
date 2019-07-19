@@ -3,32 +3,60 @@
 package io.github.ReadyMadeProgrammer.Spikot.thread
 
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
+import org.bukkit.Bukkit
+import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
+
+fun Plugin.runSync(block: () -> Unit) {
+    Bukkit.getScheduler().runTask(this, block)
+}
+
+fun Plugin.runAsync(block: () -> Unit) {
+    Bukkit.getScheduler().runTaskAsynchronously(this, block)
+}
 
 typealias ThreadWork<T, R> = (T) -> R
 
+@Deprecated("Use coroutine")
 fun abort(): Nothing {
     throw AbortException()
 }
 
+@Deprecated("Use coroutine")
 class AbortException : Exception()
 
+@Deprecated(
+        message = "Use coroutine",
+        replaceWith = ReplaceWith("Plugin.async{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+        level = DeprecationLevel.WARNING
+)
 fun <R : Any> async(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
     val chain = ThreadChain(type = ThreadType.ASYNC, runnable = runnable)
     chain.execute(Unit)
     return chain
 }
 
+@Deprecated(
+        message = "Use coroutine",
+        replaceWith = ReplaceWith("Plugin.sync{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+        level = DeprecationLevel.WARNING
+)
 fun <R : Any> sync(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
     val chain = ThreadChain(type = ThreadType.SYNC, runnable = runnable)
     chain.execute(Unit)
     return chain
 }
 
+@Deprecated(
+        message = "Use coroutine",
+        replaceWith = ReplaceWith("Plugin.sync{ delay(millis) }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+        level = DeprecationLevel.WARNING
+)
 fun delay(tick: Int): ThreadChain<Unit, Unit> {
     return sync {}.delay(tick)
 }
 
+@Deprecated("Use coroutine")
 @Suppress("MemberVisibilityCanBePrivate")
 data class ThreadChain<T : Any, R : Any>(val type: ThreadType, val runnable: ThreadWork<T, R>) {
     private var value: R? = null
@@ -92,6 +120,7 @@ data class ThreadChain<T : Any, R : Any>(val type: ThreadType, val runnable: Thr
     }
 }
 
+@Deprecated("Use coroutine")
 enum class ThreadType {
     SYNC, ASYNC
 }
