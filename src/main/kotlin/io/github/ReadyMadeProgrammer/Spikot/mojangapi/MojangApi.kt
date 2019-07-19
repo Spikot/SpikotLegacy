@@ -18,22 +18,27 @@ import java.util.*
 
 private typealias Callback = (PlayerProfile) -> Unit
 
+@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile()"))
 fun OfflinePlayer.getProfile(callback: Callback) {
-    getProfile(this.uniqueId, callback)
+    OfflinePlayer.getProfile(this.uniqueId: UUID)
 }
 
+@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(name: String))"))
 fun getProfile(name: String, callback: Callback) {
     namePlayerProfileCache[name].thenApply(callback)
 }
 
+@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(uuid: UUID)"))
 fun getProfile(uuid: UUID, callback: Callback) {
     uuidPlayerProfileCache[uuid].thenApply(callback)
 }
 
+@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(uuids: Collection<UUID>)"))
 fun getProfile(uuid: Collection<UUID>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
     uuidPlayerProfileCache.getAll(uuid).thenApply(callback)
 }
 
+@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(players: Collection<OfflinePlayer>)"))
 fun getProfileFromPlayer(uuid: Collection<Player>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
     uuidPlayerProfileCache.getAll(uuid.map { it.uniqueId }).thenApply(callback)
 }
@@ -42,12 +47,14 @@ fun getCachedProfile(uuid: UUID): PlayerProfile? {
     return uuidPlayerProfileCache.getIfPresent(uuid)?.getNow(null)
 }
 
+@PublishedApi
 internal val namePlayerProfileCache: AsyncLoadingCache<String, PlayerProfile> = Caffeine
         .newBuilder()
         .expireAfterAccess(Duration.ofMinutes(30L))
         .refreshAfterWrite(Duration.ofHours(1L))
         .buildAsync { key -> resolve(key) }
 
+@PublishedApi
 internal val uuidPlayerProfileCache: AsyncLoadingCache<UUID, PlayerProfile> = Caffeine
         .newBuilder()
         .expireAfterAccess(Duration.ofMinutes(30L))
