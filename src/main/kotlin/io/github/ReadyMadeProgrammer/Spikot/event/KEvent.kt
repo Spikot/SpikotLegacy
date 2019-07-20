@@ -10,13 +10,16 @@ import org.bukkit.plugin.Plugin
 inline fun <reified T : Event> Plugin.subscribe(
         priority: EventPriority = EventPriority.NORMAL,
         ignoreCancelled: Boolean = true,
-        noinline executable: (T) -> Unit) = Bukkit.getPluginManager()
-        .registerEvent(
-                T::class.java,
-                object : Listener {},
-                priority,
-                { _, event -> executable(event as T) }
-                , this,
-                ignoreCancelled)
+        crossinline executable: SelfCancellableEventListener.(T) -> Unit) {
+    val listener = object : SelfCancellableEventListener {}
+    Bukkit.getPluginManager()
+            .registerEvent(
+                    T::class.java,
+                    listener,
+                    priority,
+                    { cancel, event -> (cancel as SelfCancellableEventListener).executable(event as T) },
+                    this,
+                    ignoreCancelled)
+}
 
 fun Plugin.subscribe(listener: Listener) = Bukkit.getPluginManager().registerEvents(listener, this)
