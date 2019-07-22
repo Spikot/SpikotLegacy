@@ -5,30 +5,50 @@ package io.github.ReadyMadeProgrammer.Spikot.utils
 import org.bukkit.Material
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import kotlin.math.max
 
-fun Inventory.canGive(rawItem: Set<ItemStack>): Boolean {
-    val items = HashMap<ItemStack, Int>()
-    rawItem.forEach { item ->
-        val cloned = item.clone()
-        items[cloned] = item.amount + if (items.containsKey(cloned)) items[cloned]!! else 0
-    }
-    var empty = 0
-    storageContents.forEach { item ->
-        if (item == null || item.type == Material.AIR) {
-            empty++
-        } else {
-            val cloned = item.clone()
-            cloned.amount = 1
-            if (items.contains(cloned)) {
-                items[cloned] = max(0, items[cloned]!! - max(item.type.maxStackSize - item.amount, 0))
+fun Inventory.canGive(items: Collection<ItemStack>): Boolean {
+    class ItemPair(val item: ItemStack, var count: Int)
+
+    val everyItem = HashSet<ItemPair>(size + items.size)
+    outer@ for (item in items) {
+        if (item.type == Material.AIR || item.amount <= 0)
+            continue@outer
+        for (already in everyItem) {
+            if (already.item.isSimilar(item)) {
+                already.count += item.amount
+                continue@outer
             }
         }
+        everyItem.add(ItemPair(item, item.amount))
     }
-    return items.asSequence().filter { it.value != 0 }.map { (it.value + 1) / it.key.maxStackSize }.sum() <= empty
+
+    var overSized = 0
+    outer@ for (item in storageContents) {
+        if (item == null || item.type == Material.AIR || item.amount <= 0)
+            continue@outer
+        if (item.amount > item.maxStackSize) {
+            overSized++
+            continue@outer
+        }
+        for (already in everyItem) {
+            if (already.item.isSimilar(item)) {
+                already.count += item.amount
+                continue@outer
+            }
+        }
+        everyItem.add(ItemPair(item, item.amount))
+    }
+
+    var occupedStack = 0
+    for (item in everyItem) {
+        occupedStack += if (item.count % item.item.maxStackSize == 0) item.count / item.item.maxStackSize
+        else item.count / item.item.maxStackSize + 1
+    }
+
+    return overSized + occupedStack <= size
 }
 
-fun Inventory.giveAll(item: Set<ItemStack>): Boolean {
+fun Inventory.giveAll(item: Collection<ItemStack>): Boolean {
     return if (canGive(item)) {
         addItem(*item.toTypedArray())
         true
