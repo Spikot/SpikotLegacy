@@ -33,7 +33,7 @@ abstract class Spikot : JavaPlugin(), CoroutineScope by MainScope() {
     }
 
     override fun onDisable() {
-        cancel(CancellationException(message = "Plugin shut down"))
+        cancel(CancellationException("Plugin shut down"))
     }
 
     final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {

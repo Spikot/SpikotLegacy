@@ -18,6 +18,7 @@ private val spikotLogger = logger
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
+@PublishedApi
 internal lateinit var spikotPlugin: SpikotPlugin
 
 /**
