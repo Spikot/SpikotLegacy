@@ -6,7 +6,8 @@ import io.github.ReadyMadeProgrammer.Spikot.event.TickEvent
 import io.github.ReadyMadeProgrammer.Spikot.module.AbstractModule
 import io.github.ReadyMadeProgrammer.Spikot.module.LoadOrder
 import io.github.ReadyMadeProgrammer.Spikot.module.Module
-import io.github.ReadyMadeProgrammer.Spikot.thread.sync
+import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
+import io.github.ReadyMadeProgrammer.Spikot.thread.runSync
 import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.hasInvisible
 import org.bukkit.entity.Player
@@ -18,13 +19,15 @@ import org.bukkit.event.inventory.InventoryAction.*
 import org.bukkit.inventory.Inventory
 
 fun Player.safeOpenInventory(inventory: Inventory) {
-    sync {
+    spikotPlugin.runSync {
+        if (!player.isOnline) return@runSync
         this.openInventory(inventory)
     }
 }
 
 fun Player.safeCloseInventory() {
-    sync {
+    spikotPlugin.runSync {
+        if (!player.isOnline) return@runSync
         this.closeInventory()
     }
 }
