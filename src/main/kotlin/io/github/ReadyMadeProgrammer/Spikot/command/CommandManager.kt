@@ -4,11 +4,13 @@ package io.github.ReadyMadeProgrammer.Spikot.command
 
 import io.github.ReadyMadeProgrammer.Spikot.Spikot
 import io.github.ReadyMadeProgrammer.Spikot.module.*
+import io.github.ReadyMadeProgrammer.Spikot.plugin.SpikotPluginManager
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import org.bukkit.Bukkit
 import org.bukkit.command.*
 import org.bukkit.plugin.Plugin
 import java.util.*
+import kotlin.math.min
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
@@ -28,34 +30,30 @@ object CommandManager : AbstractModule(), TabExecutor {
         field.isAccessible = true
         val value = field[Bukkit.getServer()] as CommandMap
         field.isAccessible = false
-        SpikotPluginManager.spikotPlugins.forEach { holder ->
-            holder.command.filter {
+        SpikotPluginManager.forEach<RootCommand> { plugin, kclass ->
+            onDebug {
+                logger.info("Find command: ${kclass.simpleName}")
+            }
+            if (!kclass.canLoad()) return@forEach
+            catchAll {
                 onDebug {
-                    logger.info("Find command: ${it.simpleName}")
+                    logger.info("Process command: ${kclass.simpleName}")
                 }
-                it.canLoad()
-            }.forEach {
-                catchAll {
-                    onDebug {
-                        logger.info("Process command: ${it.simpleName}")
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    val commandHolder = CommandHolder(it as KClass<out CommandHandler>)
-                    val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
-                    val command = create(commandHolder.name.first(), holder.plugin)
-                    command.executor = CommandManager
-                    command.tabCompleter = CommandManager
-                    command.aliases = names.toMutableList()
-                    onDebug {
-                        logger.info("Register command: ${it.simpleName}")
-                    }
-                    value.register(commandHolder.name.first(), command)
-                    commandHolders += commandHolder
-                    commandHolder.name.forEach { name ->
-                        commandNames.add(name)
-                    }
+                @Suppress("UNCHECKED_CAST")
+                val commandHolder = CommandHolder(kclass as KClass<out CommandHandler>)
+                val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
+                val command = create(commandHolder.name.first(), plugin)
+                command.executor = CommandManager
+                command.tabCompleter = CommandManager
+                command.aliases = names.toMutableList()
+                onDebug {
+                    logger.info("Register command: ${kclass.simpleName}")
                 }
-
+                value.register(commandHolder.name.first(), command)
+                commandHolders += commandHolder
+                commandHolder.name.forEach { name ->
+                    commandNames.add(name)
+                }
             }
         }
     }
@@ -150,11 +148,20 @@ class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
 
     @Suppress("MemberVisibilityCanBePrivate")
     internal fun usage(commandContext: CommandContext, depth: Int) {
-        val subCommand = child.find { it.name.contains(commandContext.args[depth]) }
+        val subCommand = child.find { commandContext.args.size > depth && it.name.contains(commandContext.args[depth]) }
         if (subCommand == null) {
             commandContext.commandSender.sendMessage(usage)
             child.forEach {
-                commandContext.commandSender.sendMessage(it.usage)
+                if (it.usage.isNotEmpty()) {
+                    commandContext.commandSender.sendMessage(it.usage)
+                } else {
+                    val end = min(commandContext.args.size, depth)
+                    if (end <= 0) {
+                        commandContext.commandSender.sendMessage("/${commandContext.label} ${it.name.first()}")
+                    } else {
+                        commandContext.commandSender.sendMessage("/${commandContext.label} ${commandContext.args.subList(0, end).joinToString(" ")} ${it.name.first()}")
+                    }
+                }
             }
         } else {
             subCommand.usage(commandContext, depth + 1)

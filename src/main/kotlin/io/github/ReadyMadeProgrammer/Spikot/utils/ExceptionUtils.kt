@@ -10,6 +10,13 @@ inline fun catchAll(run: () -> Unit) {
     }
 }
 
+inline fun catchSilence(run: () -> Unit) {
+    try {
+        run()
+    } catch (ignored: Throwable) {
+    }
+}
+
 inline fun <reified T : Throwable> catchOnly(run: () -> Unit) {
     try {
         run()

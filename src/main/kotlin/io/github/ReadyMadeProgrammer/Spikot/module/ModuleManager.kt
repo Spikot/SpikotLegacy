@@ -2,8 +2,10 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.module
 
+import io.github.ReadyMadeProgrammer.Spikot.Spikot
 import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
 import io.github.ReadyMadeProgrammer.Spikot.logger
+import io.github.ReadyMadeProgrammer.Spikot.plugin.SpikotPluginManager
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
 import io.github.ReadyMadeProgrammer.Spikot.utils.catchAll
 import io.github.ReadyMadeProgrammer.Spikot.utils.getInstance
@@ -13,7 +15,7 @@ import kotlin.reflect.full.findAnnotation
 
 internal object ModuleManager {
     internal val enabled = HashSet<String>()
-    internal lateinit var instances: List<Pair<SpikotPluginHolder, IModule>>
+    internal lateinit var instances: List<Pair<Spikot, IModule>>
 
     @Suppress("SpellCheckingInspection")
     fun load() {
@@ -22,9 +24,9 @@ internal object ModuleManager {
     }
 
     fun start() {
-        instances = SpikotPluginManager.spikotPlugins
+        instances = SpikotPluginManager
+                .iterator<Module>()
                 .asSequence()
-                .flatMap { p -> p.module.asSequence().map { Pair(p, it) } }
                 .filter { (_, m) ->
                     onDebug {
                         logger.info("Find module: ${m.simpleName}")
@@ -41,15 +43,15 @@ internal object ModuleManager {
                 .map { (holder, module) -> Pair(holder, module as IModule) }
                 .toList()
 
-        instances.forEach { (holder, module) ->
+        instances.forEach { (plugin, module) ->
             catchAll {
                 onDebug {
                     logger.info("Load module: ${module.javaClass.simpleName}")
                 }
-                module.onLoad(holder.plugin)
+                module.onLoad(plugin)
             }
         }
-        instances.forEach { (holder, module) ->
+        instances.forEach { (plugin, module) ->
             catchAll {
                 onDebug {
                     logger.info("Enable module: ${module.javaClass.simpleName}")
@@ -58,7 +60,7 @@ internal object ModuleManager {
                 onDebug {
                     logger.info("Subscribe module: ${module.javaClass.simpleName}")
                 }
-                holder.plugin.subscribe(module)
+                plugin.subscribe(module)
             }
         }
     }

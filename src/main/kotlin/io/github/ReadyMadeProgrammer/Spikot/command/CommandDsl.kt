@@ -2,6 +2,7 @@
 
 package io.github.ReadyMadeProgrammer.Spikot.command
 
+import io.github.ReadyMadeProgrammer.Spikot.plugin.FindAnnotation
 import kotlin.reflect.KClass
 
 @DslMarker
@@ -11,6 +12,7 @@ annotation class CommandDsl
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
+@FindAnnotation
 annotation class RootCommand(val prefix: String)
 
 @CommandDsl

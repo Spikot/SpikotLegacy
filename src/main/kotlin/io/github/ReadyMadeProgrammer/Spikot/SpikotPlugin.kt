@@ -1,7 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot
 
 import io.github.ReadyMadeProgrammer.Spikot.module.ModuleManager
-import io.github.ReadyMadeProgrammer.Spikot.module.SpikotPluginManager
+import io.github.ReadyMadeProgrammer.Spikot.plugin.SpikotPluginManager
 import mu.KotlinLogging
 import org.bukkit.plugin.java.annotation.dependency.Dependency
 import org.bukkit.plugin.java.annotation.plugin.Plugin

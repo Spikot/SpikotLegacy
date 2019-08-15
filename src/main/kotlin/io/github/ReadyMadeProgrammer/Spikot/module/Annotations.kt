@@ -1,5 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.module
 
+import io.github.ReadyMadeProgrammer.Spikot.plugin.FindAnnotation
+
 object LoadOrder {
     const val API = -100_000
     const val FASTEST = -20_000
@@ -12,6 +14,7 @@ object LoadOrder {
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
+@FindAnnotation(impl = [IModule::class])
 annotation class Module(val loadOrder: Int = LoadOrder.NORMAL)
 
 @Target(AnnotationTarget.CLASS)

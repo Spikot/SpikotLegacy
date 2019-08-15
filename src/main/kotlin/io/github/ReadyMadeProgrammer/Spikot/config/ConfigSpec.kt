@@ -1,11 +1,13 @@
 package io.github.ReadyMadeProgrammer.Spikot.config
 
+import io.github.ReadyMadeProgrammer.Spikot.plugin.FindAnnotation
 import org.bukkit.configuration.file.YamlConfiguration
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.full.declaredMemberProperties
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
+@FindAnnotation(impl = [ConfigSpec::class])
 annotation class Config
 
 abstract class ConfigSpec(
