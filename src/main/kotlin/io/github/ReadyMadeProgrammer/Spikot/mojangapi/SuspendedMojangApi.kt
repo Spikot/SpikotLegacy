@@ -5,19 +5,35 @@ import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@PublishedApi
-internal suspend inline fun <T> callbackHelper(crossinline func: ((T) -> Any?) -> Any?): T = suspendCoroutine { continuation ->
-    func(continuation::resume)
+suspend fun OfflinePlayer.getProfile(): PlayerProfile = getProfile(uniqueId)
+
+suspend fun getProfile(name: String): PlayerProfile = suspendCoroutine { continuation ->
+    namePlayerProfileCache.get(name).thenApply {
+        continuation.resume(it)
+
+    }
 }
 
-suspend inline fun OfflinePlayer.getProfile(): PlayerProfile = getProfile(uniqueId)
+suspend fun getProfile(uuid: UUID): PlayerProfile = suspendCoroutine { continuation ->
+    uuidPlayerProfileCache.get(uuid).thenApply {
+        continuation.resume(it)
+    }
+}
 
-suspend inline fun getProfile(name: String): PlayerProfile = callbackHelper(namePlayerProfileCache.get(name)::thenApply)
+suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, PlayerProfile> = suspendCoroutine { continuation ->
+    uuidPlayerProfileCache.getAll(players.map(OfflinePlayer::getUniqueId)).thenApply {
+        continuation.resume(it)
+    }
+}
 
-suspend inline fun getProfile(uuid: UUID): PlayerProfile = callbackHelper(uuidPlayerProfileCache.get(uuid)::thenApply)
+suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> = suspendCoroutine { continuation ->
+    uuidPlayerProfileCache.getAll(uuids).thenApply {
+        continuation.resume(it)
+    }
+}
 
-suspend inline fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, PlayerProfile> = callbackHelper(uuidPlayerProfileCache.getAll(players.map(OfflinePlayer::getUniqueId))::thenApply)
-
-suspend inline fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> = callbackHelper(uuidPlayerProfileCache.getAll(uuids)::thenApply)
-
-suspend inline fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> = callbackHelper(namePlayerProfileCache.getAll(names)::thenApply)
+suspend fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> = suspendCoroutine { continuation ->
+    namePlayerProfileCache.getAll(names).thenApply {
+        continuation.resume(it)
+    }
+}
