@@ -32,22 +32,24 @@ operator fun <T> Player.set(key: String, value: T) {
 }
 
 @Deprecated(message = "Use property instead")
-fun Player.has(key: String): Boolean = variableMap[id]?.get(key) != null
+fun Player.has(key: String): Boolean = variableMap[id]?.containsKey(key) ?: false
 
 @Deprecated(message = "Use property instead")
-fun Player.remove(key: String) = variableMap[id]!!.remove(key)
+fun Player.remove(key: String) = variableMap[id]?.remove(key)
 
 @Suppress("UNCHECKED_CAST")
-operator fun <T> Player.get(property: Property<T>): T = variableMap[id]?.get(property.key) as T
+operator fun <T> Player.get(property: Property<T>): T? = variableMap[id]?.get(property.key) as T?
 
-operator fun <T> Player.set(property: Property<T>, value: T) {
+operator fun <T> Player.set(property: Property<T>, value: T?) {
     if (value != null)
-        variableMap[id]!![property.key] = value
+        variableMap[id]!![property.key] = value as Any
     else
         variableMap[id]!!.remove(property.key)
 }
 
 operator fun <T> Player.contains(property: Property<T>): Boolean = variableMap[id]?.contains(property.key) ?: false
+
+fun <T> Player.remove(property: Property<T>): T? = variableMap[id]?.remove(property.key) as? T?
 
 @Module(loadOrder = LoadOrder.API)
 object KPlayerListener : AbstractModule() {
