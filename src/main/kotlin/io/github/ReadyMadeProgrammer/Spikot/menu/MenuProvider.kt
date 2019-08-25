@@ -2,13 +2,14 @@ package io.github.ReadyMadeProgrammer.Spikot.menu
 
 import io.github.ReadyMadeProgrammer.Spikot.event.subscribe
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
-import io.github.ReadyMadeProgrammer.Spikot.thread.sync
+import io.github.ReadyMadeProgrammer.Spikot.thread.runSync
 import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryInteractEvent
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import kotlin.properties.Delegates
@@ -55,7 +56,7 @@ abstract class MenuProvider : Listener {
     protected fun update(build: MenuBuilder.() -> Unit) {
         menu.build()
         if (opened) {
-            sync {
+            spikotPlugin.runSync {
                 updateInventory()
             }
         }
@@ -72,6 +73,10 @@ abstract class MenuProvider : Listener {
     }
 
     open fun onInteract(event: InventoryInteractEvent) {
+        event.isCancelled = true
+    }
+
+    open fun onDrop(event: PlayerDropItemEvent) {
         event.isCancelled = true
     }
 }

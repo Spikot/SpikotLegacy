@@ -7,27 +7,27 @@ import io.github.ReadyMadeProgrammer.Spikot.module.AbstractModule
 import io.github.ReadyMadeProgrammer.Spikot.module.LoadOrder
 import io.github.ReadyMadeProgrammer.Spikot.module.Module
 import io.github.ReadyMadeProgrammer.Spikot.spikotPlugin
-import io.github.ReadyMadeProgrammer.Spikot.thread.runSync
+import io.github.ReadyMadeProgrammer.Spikot.thread.runNextSync
 import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
 import io.github.ReadyMadeProgrammer.Spikot.utils.hasInvisible
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.HandlerList
-import org.bukkit.event.inventory.*
-import org.bukkit.event.inventory.ClickType.*
-import org.bukkit.event.inventory.InventoryAction.*
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
 fun Player.safeOpenInventory(inventory: Inventory) {
-    spikotPlugin.runSync {
-        if (!player.isOnline) return@runSync
+    spikotPlugin.runNextSync {
+        if (!player.isOnline) return@runNextSync
         this.openInventory(inventory)
     }
 }
 
 fun Player.safeCloseInventory() {
-    spikotPlugin.runSync {
-        if (!player.isOnline) return@runSync
+    spikotPlugin.runNextSync {
+        if (!player.isOnline) return@runNextSync
         this.closeInventory()
     }
 }
@@ -66,28 +66,6 @@ internal object MenuManager : AbstractModule() {
         val topInventory = event.whoClicked.openInventory.topInventory ?: return
         if (topInventory.title == null || !topInventory.title.hasInvisible()) {
             return
-        }
-        @Suppress("NON_EXHAUSTIVE_WHEN")
-        when (event.action) {
-            NOTHING,
-            DROP_ALL_CURSOR,
-            DROP_ONE_CURSOR,
-            DROP_ALL_SLOT,
-            DROP_ONE_SLOT,
-            HOTBAR_MOVE_AND_READD,
-            HOTBAR_SWAP,
-            CLONE_STACK,
-            COLLECT_TO_CURSOR,
-            InventoryAction.UNKNOWN -> return
-        }
-        @Suppress("NON_EXHAUSTIVE_WHEN")
-        when (event.click) {
-            WINDOW_BORDER_LEFT,
-            WINDOW_BORDER_RIGHT,
-            NUMBER_KEY,
-            CONTROL_DROP,
-            CREATIVE,
-            ClickType.UNKNOWN -> return
         }
         val inventoryId = topInventory.title.findInvisible()
         val provider = openedInventory[inventoryId] ?: return
@@ -139,10 +117,7 @@ internal object MenuManager : AbstractModule() {
 }
 
 inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
-    for ((_, menu) in MenuManager.openedInventory) {
-        if (menu.player == this) {
-            return menu as? T
-        }
-    }
-    return null
+    val title = player.openInventory.topInventory?.title
+    if (title.isNullOrBlank() || !title.hasInvisible()) return null
+    return MenuManager.openedInventory[title.findInvisible()] as? T
 }
