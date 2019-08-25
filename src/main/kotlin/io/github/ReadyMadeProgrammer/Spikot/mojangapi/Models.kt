@@ -9,7 +9,6 @@ data class PlayerProfile(
         val username: String,
         val usernameHistory: List<UsernameHistory>,
         val textures: Texture,
-        val cachedAt: Instant,
         val queriedAt: Instant
 )
 

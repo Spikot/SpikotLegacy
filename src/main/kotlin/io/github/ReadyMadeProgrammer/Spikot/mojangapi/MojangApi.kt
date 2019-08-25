@@ -62,7 +62,7 @@ internal val uuidPlayerProfileCache: AsyncLoadingCache<UUID, PlayerProfile> = Ca
         .buildAsync { key -> resolve(key.toString()) }
 
 @Suppress("SpellCheckingInspection")
-fun resolve(key: String): PlayerProfile? {
+fun resolve(key: String): PlayerProfile {
     try {
         val url = URL("https://api.ashcon.app/mojang/v2/user/$key")
         val connection = url.openConnection()
@@ -96,7 +96,7 @@ fun resolve(key: String): PlayerProfile? {
         } else {
             null
         }
-        val textureRaw = textureSkinJson["raw"].asJsonObject
+        val textureRaw = textureJson["raw"].asJsonObject
         val textureRawValue = textureRaw["value"].asString
         val textureRawSignature = textureRaw["signature"].asString
         val texture = Texture(
@@ -112,16 +112,15 @@ fun resolve(key: String): PlayerProfile? {
                         textureRawSignature
                 )
         )
-        val cachedAt = convertTime(json["cached_at"].asString)
         return PlayerProfile(
                 uuid,
                 username,
                 usernameHistoryList,
                 texture,
-                cachedAt,
                 Instant.now()
         )
     } catch (e: Exception) {
+        e.printStackTrace()
         return PlayerProfile(
                 UUID.randomUUID(),
                 key,
@@ -137,7 +136,6 @@ fun resolve(key: String): PlayerProfile? {
                                 "eyJ0aW1lc3RhbXAiOjE1NjYyMjMyNDM3MTgsInByb2ZpbGVJZCI6IjA2OWE3OWY0NDRlOTQ3MjZhNWJlZmNhOTBlMzhhYWY1IiwicHJvZmlsZU5hbWUiOiJOb3RjaCIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjkyMDA5YTQ5MjViNThmMDJjNzdkYWRjM2VjZWYwN2VhNGM3NDcyZjY0ZTBmZGMzMmNlNTUyMjQ4OTM2MjY4MCJ9fX0=",
                                 "jV6J50ihAXEFjCv21+L9dYUG9BOd0DKUg9d8u1pehYY9oJs4Wm7sk9sVjZRfLYMGJt8RUT2v6lX1VLfsFsAX9DqCZQ98PdYrNe06WzUk9CEBIK0JDpWUetNH27jr/QZwslqY0k1/EyiqpWCI2UtpSXM3lfqOvGw0R1E/H4y9MIUg6vrHiHqSCruxbRcJhpdt6ZwM+xscts0hJml0KAYOXs4LWdYRJWt+eQnCm5stRjB8zY3YCpr7TfhheYhvdLnBBe/BpfVx0Mvaa6qVh3YQHY9dhM7nBUMSe+9jEFdwsm1yC3FB3Lg7F0O0lDiQ5x/V7FRxHn2Y2RnVE6YrDwzenvUiWXbPdVRmX4Hkt1RwrkbAMciaAuIETbHhQFZ2/7LzHoQVXS1qmew16Mv3rmvZ31YZnqReYo6dtJrg4i/z+mKcDerX7eyDGJhatTyAzkMa+AmER7HY1YZg9ICHksSjARG/p5BdlSEnfD7zMsRYaeXB6379KVJFQhZyo4nmEInmPIXLBWYMq5Q2lZK7jj6gjDA3O2mu34i7sLLTsHLeBEyq3KASC2aAZw+4BNhnQWfQvgvpERe91ANjszNHSeGO+8WNJG79RzY12lOxyIgqFitNxt0GZL9cNRZhpajFVu52UZSUFrh8tbvPh5q8JlAq6Hed9SzZS4tS8AoJumWyDcA="
                         )),
-                Instant.now(),
                 Instant.now()
         )
     }
