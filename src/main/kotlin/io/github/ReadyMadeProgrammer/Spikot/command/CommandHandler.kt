@@ -43,6 +43,17 @@ abstract class CommandHandler {
         return delegate
     }
 
+    fun remains(start: Int): NotNullVerboseProperty<List<String>> {
+        val delegate = NotNullVerboseProperty({ context.commandSender }) {
+            if (context.args.size <= start + depth)
+                emptyList()
+            else
+                context.args.subList(start + depth, context.args.size)
+        }
+        delegates += delegate
+        return delegate
+    }
+
     fun args(range: IntRange): NotNullVerboseProperty<List<String>> {
         val delegate = NotNullVerboseProperty({ context.commandSender }) {
             val realRange = IntRange(range.start + depth, range.endInclusive + depth)
@@ -70,8 +81,7 @@ abstract class CommandHandler {
         if (e is CastException || e is VerifyException) {
             context.commandSender.sendMessage(e.message)
         } else {
-            context.commandSender.sendMessage("알 수 없는 오류로 커맨드를 실행하지 못하였습니다")
-            e.printStackTrace()
+            throw e
         }
     }
 }
