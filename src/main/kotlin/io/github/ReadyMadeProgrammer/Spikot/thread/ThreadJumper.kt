@@ -8,7 +8,15 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.scheduler.BukkitRunnable
 
 fun Plugin.runSync(block: () -> Unit) {
-    Bukkit.getScheduler().runTask(this, block)
+    if (Bukkit.isPrimaryThread()) { // Fast routine
+        block()
+    } else {
+        Bukkit.getScheduler().runTask(this, block)
+    }
+}
+
+fun Plugin.runNextSync(block: () -> Unit) {
+    Bukkit.getScheduler().runTaskLater(this, block, 1)
 }
 
 fun Plugin.runAsync(block: () -> Unit) {
