@@ -6,7 +6,7 @@
 
     <groupId>io.github.ReadyMadeProgrammer</groupId>
     <artifactId>Spikot</artifactId>
-    <version>3.1.26</version>
+    <version>3.1.27</version>
     <packaging>jar</packaging>
 
     <name>io.github.ReadyMadeProgrammer Spikot</name>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.comphenix.packetwrapper</groupId>
             <artifactId>PacketWrapper</artifactId>
-            <version>1.12.1-R0.1-SNAPSHOT</version>
+            <version>1.12.1-R0.1E1</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
