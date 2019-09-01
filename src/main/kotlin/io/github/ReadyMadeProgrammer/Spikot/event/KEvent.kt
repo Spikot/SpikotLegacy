@@ -31,3 +31,7 @@ inline fun <reified T : Event> Plugin.subscribe(
 }
 
 fun Plugin.subscribe(listener: Listener) = Bukkit.getPluginManager().registerEvents(listener, this)
+
+fun Event.execute() {
+    Bukkit.getServer().pluginManager.callEvent(this)
+}

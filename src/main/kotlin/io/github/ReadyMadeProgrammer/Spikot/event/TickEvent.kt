@@ -11,7 +11,7 @@ import org.bukkit.event.HandlerList
 object TickEventEmitter : AbstractModule() {
     override fun onEnable() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-            TickEvent().callEvent()
+            TickEvent().execute()
         }, 1L, 1L)
     }
 }
