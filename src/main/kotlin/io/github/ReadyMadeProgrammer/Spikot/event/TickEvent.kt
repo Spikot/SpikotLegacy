@@ -10,13 +10,14 @@ import org.bukkit.event.HandlerList
 @Module(LoadOrder.API)
 object TickEventEmitter : AbstractModule() {
     override fun onEnable() {
+        var tickCount = 0
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-            TickEvent().execute()
+            TickEvent(tickCount++).execute()
         }, 1L, 1L)
     }
 }
 
-class TickEvent : Event() {
+class TickEvent(val tick: Int) : Event() {
     companion object {
         @JvmField
         val handlerList: HandlerList = HandlerList()
