@@ -1,6 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.nbt
 
 import io.github.ReadyMadeProgrammer.Spikot.NBTTagCompound
+import io.github.ReadyMadeProgrammer.Spikot.misc.Converter
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -27,6 +28,12 @@ class TagDelegate<T>(
     override fun setValue(thisRef: NBTAccessor, property: KProperty<*>, value: T) {
         thisRef.nbtTagCompound.setter(property.name, value)
     }
+
+    fun <R> convert(converter: Converter<T, R>): TagDelegate<R> = TagDelegate(
+        check,
+        { converter.read(getter(it)) },
+        { name, value -> setter(name, converter.write(value)) }
+    )
 }
 
 class CompoundDelegate<T : NBTAccessor>(private val constructor: (NBTTagCompound) -> T) :
