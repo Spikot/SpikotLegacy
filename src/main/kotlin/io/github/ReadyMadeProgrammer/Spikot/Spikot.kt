@@ -27,7 +27,7 @@ abstract class Spikot : JavaPlugin(), CoroutineScope by MainScope() {
             return Bukkit.getPluginManager().getPlugin(name)
         }
 
-        inline fun <reified T> getPlugin(): T {
+        inline fun <reified T : Plugin> getPlugin(): T {
             return Bukkit.getPluginManager().plugins.find { it is T } as T
         }
     }
