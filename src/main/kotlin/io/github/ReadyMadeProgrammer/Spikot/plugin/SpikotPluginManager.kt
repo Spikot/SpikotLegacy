@@ -16,37 +16,37 @@ object SpikotPluginManager {
     val plugins = HashSet<PluginWrapper>()
     internal fun load() {
         Bukkit.getPluginManager().plugins.asSequence()
-                .filter { it is Spikot }
-                .forEach { p ->
-                    catchAll {
-                        val field = JavaPlugin::class.java.getDeclaredField("file")
-                        field.isAccessible = true
-                        val file = field[p] as File
-                        field.isAccessible = false
-                        val jarFile = JarFile(file)
-                        val wrapper = PluginWrapper(p as Spikot)
-                        jarFile.entries().iterator().forEach entryIterate@{ entry ->
-                            if (!entry.name.startsWith("spikot"))
-                                return@entryIterate
-                            val json = JsonParser().parse(jarFile.getInputStream(entry).bufferedReader()).asJsonObject
-                            json.forEach { key, value ->
-                                catchAll {
-                                    val annotation = Class.forName(key).kotlin
-                                    val set = wrapper.classes.getOrPut(annotation) { HashSet() }
-                                    val classes = value.asJsonArray
-                                    for (clazz in classes) {
-                                        set.add(Class.forName(clazz.asString).kotlin)
-                                    }
-                                    wrapper.classes[annotation] = set
+            .filter { it is Spikot }
+            .forEach { p ->
+                catchAll {
+                    val field = JavaPlugin::class.java.getDeclaredField("file")
+                    field.isAccessible = true
+                    val file = field[p] as File
+                    field.isAccessible = false
+                    val jarFile = JarFile(file)
+                    val wrapper = PluginWrapper(p as Spikot)
+                    jarFile.entries().iterator().forEach entryIterate@{ entry ->
+                        if (!entry.name.startsWith("spikot"))
+                            return@entryIterate
+                        val json = JsonParser().parse(jarFile.getInputStream(entry).bufferedReader()).asJsonObject
+                        json.forEach { key, value ->
+                            catchAll {
+                                val annotation = Class.forName(key).kotlin
+                                val set = wrapper.classes.getOrPut(annotation) { HashSet() }
+                                val classes = value.asJsonArray
+                                for (clazz in classes) {
+                                    set.add(Class.forName(clazz.asString).kotlin)
                                 }
+                                wrapper.classes[annotation] = set
                             }
                         }
-                        if (wrapper.classes.isNotEmpty()) {
-                            plugins += wrapper
-                        }
-                        jarFile.close()
                     }
+                    if (wrapper.classes.isNotEmpty()) {
+                        plugins += wrapper
+                    }
+                    jarFile.close()
                 }
+            }
     }
 
     inline fun <reified T> forEach(block: (Spikot, KClass<*>) -> Unit) {

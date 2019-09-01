@@ -18,8 +18,8 @@ open class LazyStringKeyDataController<V : Any>(caffeine: Caffeine<String, V>) :
 open class LazyUUIDKeyDataController<V : Any>(caffeine: Caffeine<UUID, V>) : LazyKeyDataController<UUID, V>(StringConverter.UUID, caffeine)
 
 open class LazyKeyDataController<K : Any, V : Any>(
-        protected val keySerializer: StringConverter<K>,
-        caffeine: Caffeine<K, V>
+    protected val keySerializer: StringConverter<K>,
+    caffeine: Caffeine<K, V>
 ) : DataController<K, V>, MutableMap<K, V> {
     protected lateinit var root: File
     protected lateinit var valueType: KClass<*>

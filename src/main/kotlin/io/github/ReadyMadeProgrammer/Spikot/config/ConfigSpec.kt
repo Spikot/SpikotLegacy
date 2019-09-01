@@ -11,7 +11,7 @@ import kotlin.reflect.full.declaredMemberProperties
 annotation class Config
 
 abstract class ConfigSpec(
-        internal val name: String? = null
+    internal val name: String? = null
 ) {
     internal lateinit var path: String
     internal lateinit var yaml: YamlConfiguration

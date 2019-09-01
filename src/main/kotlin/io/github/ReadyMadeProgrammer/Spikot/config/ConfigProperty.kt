@@ -5,8 +5,8 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmErasure
 
 internal class ConfigProperty<T>(
-        private val default: T,
-        private val name: String? = null
+    private val default: T,
+    private val name: String? = null
 ) : ReadWriteProperty<ConfigSpec, T> {
     private var cache: T? = null
     private var cached = false
@@ -15,7 +15,7 @@ internal class ConfigProperty<T>(
         if (!cached) {
             @Suppress("UNCHECKED_CAST")
             cache = thisRef.yaml.getByType("${thisRef.path}.${name
-                    ?: property.name}", property.returnType.jvmErasure) as T?
+                ?: property.name}", property.returnType.jvmErasure) as T?
             if (cache == null) {
                 thisRef.yaml.set("${thisRef.path}.${name ?: property.name}", default)
             }

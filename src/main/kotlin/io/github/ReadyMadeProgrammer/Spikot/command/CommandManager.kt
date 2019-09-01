@@ -67,7 +67,7 @@ object CommandManager : AbstractModule(), TabExecutor {
     override fun onTabComplete(commandSender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val root = commandHolders.find { holder -> holder.name.any { it.equals(label, true) } }
         return root?.complete(plugin, CommandContext(commandSender, command, label, args.asList()), 0)?.toMutableList()
-                ?: commandNames
+            ?: commandNames
     }
 }
 

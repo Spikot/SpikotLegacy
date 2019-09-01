@@ -6,8 +6,8 @@ import kotlin.reflect.KProperty
 
 @PublishedApi
 internal class ListConfigProperty<T : Any>(
-        private val type: KClass<T>,
-        private val name: String? = null
+    private val type: KClass<T>,
+    private val name: String? = null
 ) : ReadWriteProperty<ConfigSpec, MutableList<T>> {
     private var cache: MutableList<T> = mutableListOf()
     private var cached: Boolean = false

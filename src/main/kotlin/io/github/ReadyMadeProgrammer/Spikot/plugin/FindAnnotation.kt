@@ -5,5 +5,5 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 annotation class FindAnnotation(
-        val impl: Array<KClass<*>> = []
+    val impl: Array<KClass<*>> = []
 )

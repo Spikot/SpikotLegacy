@@ -1,8 +1,8 @@
 package io.github.ReadyMadeProgrammer.Spikot.misc
 
 open class ConvertingList<B, F>(
-        open val backingList: List<B>,
-        protected val converter: Converter<B, F>
+    open val backingList: List<B>,
+    protected val converter: Converter<B, F>
 ) : List<F> {
     protected fun read(value: B): F {
         return converter.read(value)

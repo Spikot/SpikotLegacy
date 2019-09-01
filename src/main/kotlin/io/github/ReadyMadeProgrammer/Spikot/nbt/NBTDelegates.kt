@@ -6,14 +6,14 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 class TagDelegate<T>(
-        private val check: NBTTagCompound.(String) -> Boolean,
-        private val getter: NBTTagCompound.(String) -> T,
-        private val setter: NBTTagCompound.(String, T) -> Unit
+    private val check: NBTTagCompound.(String) -> Boolean,
+    private val getter: NBTTagCompound.(String) -> T,
+    private val setter: NBTTagCompound.(String, T) -> Unit
 ) : ReadWriteProperty<NBTAccessor, T> {
     constructor(type: TagType, getter: NBTTagCompound.(String) -> T, setter: NBTTagCompound.(String, T) -> Unit) : this(
-            { hasKeyOfType(it, type.id) },
-            getter,
-            setter
+        { hasKeyOfType(it, type.id) },
+        getter,
+        setter
     )
 
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {
@@ -30,7 +30,7 @@ class TagDelegate<T>(
 }
 
 class CompoundDelegate<T : NBTAccessor>(private val constructor: (NBTTagCompound) -> T) :
-        ReadWriteProperty<NBTAccessor, T> {
+    ReadWriteProperty<NBTAccessor, T> {
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {
         val value = thisRef.nbtTagCompound.getCompound(property.name)
         if (!thisRef.nbtTagCompound.hasKeyOfType(property.name, TagType.TAG.id)) {
@@ -45,7 +45,7 @@ class CompoundDelegate<T : NBTAccessor>(private val constructor: (NBTTagCompound
 }
 
 class EnumWrappingDelegate<T : Enum<T>>(
-        enumClass: KClass<T>
+    enumClass: KClass<T>
 ) : ReadWriteProperty<NBTAccessor, T> {
     private val constants: Array<T> = enumClass.java.enumConstants
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {

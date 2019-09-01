@@ -11,7 +11,7 @@ import java.lang.annotation.Inherited
 @Inherited
 @FindAnnotation(impl = [GsonSerializer::class])
 annotation class Serializer(
-        val hierarchy: Boolean = true
+    val hierarchy: Boolean = true
 )
 
 interface GsonSerializer<T> : JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>

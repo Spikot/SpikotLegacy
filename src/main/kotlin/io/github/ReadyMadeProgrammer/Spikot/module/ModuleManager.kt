@@ -25,23 +25,23 @@ internal object ModuleManager {
 
     fun start() {
         instances = SpikotPluginManager
-                .iterator<Module>()
-                .asSequence()
-                .filter { (_, m) ->
-                    onDebug {
-                        logger.info("Find module: ${m.simpleName}")
-                    }
-                    val result = m.findAnnotation<Module>() != null
-                    if (!result) {
-                        logger.warn("Cannot load module: ${m.simpleName}")
-                    }
-                    result && m.canLoad()
+            .iterator<Module>()
+            .asSequence()
+            .filter { (_, m) ->
+                onDebug {
+                    logger.info("Find module: ${m.simpleName}")
                 }
-                .sortedBy { it.second.findAnnotation<Module>()!!.loadOrder }
-                .map { (holder, module) -> Pair(holder, module.getInstance() as? IModule?) }
-                .filter { (_, module) -> module != null }
-                .map { (holder, module) -> Pair(holder, module as IModule) }
-                .toList()
+                val result = m.findAnnotation<Module>() != null
+                if (!result) {
+                    logger.warn("Cannot load module: ${m.simpleName}")
+                }
+                result && m.canLoad()
+            }
+            .sortedBy { it.second.findAnnotation<Module>()!!.loadOrder }
+            .map { (holder, module) -> Pair(holder, module.getInstance() as? IModule?) }
+            .filter { (_, module) -> module != null }
+            .map { (holder, module) -> Pair(holder, module as IModule) }
+            .toList()
 
         instances.forEach { (plugin, module) ->
             catchAll {

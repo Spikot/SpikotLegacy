@@ -40,7 +40,7 @@ private fun createSkull0(base64: String): ItemStack {
     val itemStack = ItemStack(Material.SKULL_ITEM, 1, 3.toShort())
     @Suppress("DEPRECATION")
     return Bukkit.getUnsafe().modifyItemStack(itemStack,
-            "{SkullOwner:{Id:\"$hashed\",Properties:{textures:[{Value:\"$base64\"}]}}}")
+        "{SkullOwner:{Id:\"$hashed\",Properties:{textures:[{Value:\"$base64\"}]}}}")
 }
 
 fun createSkull(profile: PlayerProfile): ItemStack {

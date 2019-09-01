@@ -16,7 +16,7 @@ internal fun <T : Any> queryConstructor(type: KClass<T>): KFunction<T> {
     }
     @Suppress("UNCHECKED_CAST")
     return constructors[type]?.value as? KFunction<T>
-            ?: throw NoSuchMethodException("Cannot find constructor with no parameter")
+        ?: throw NoSuchMethodException("Cannot find constructor with no parameter")
 }
 
 fun ItemStack.toCraftItemStack(): CraftItemStack {

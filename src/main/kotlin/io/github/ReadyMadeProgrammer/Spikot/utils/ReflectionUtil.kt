@@ -14,9 +14,9 @@ fun <T : Any> KClass<T>.getInstance(): T? {
             return instanceField.get(null) as T
         } catch (e: Throwable) {
             constructors
-                    .singleOrNull { it.parameters.all(KParameter::isOptional) }
-                    ?.apply { isAccessible = true }
-                    ?.callBy(emptyMap())
+                .singleOrNull { it.parameters.all(KParameter::isOptional) }
+                ?.apply { isAccessible = true }
+                ?.callBy(emptyMap())
         }
 
     }

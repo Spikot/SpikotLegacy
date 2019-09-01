@@ -18,7 +18,7 @@ object GsonManager : AbstractModule() {
     internal lateinit var gson: Gson
     override fun onEnable() {
         val gsonBuilder = Converters.registerAll(GsonBuilder())
-                .setPrettyPrinting()
+            .setPrettyPrinting()
         SpikotPluginManager.forEach<Serializer> { plugin, kclass ->
             onDebug {
                 logger.info("Find serializer: ${kclass.simpleName}")

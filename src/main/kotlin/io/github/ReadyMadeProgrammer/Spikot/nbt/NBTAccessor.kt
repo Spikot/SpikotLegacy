@@ -28,72 +28,72 @@ abstract class NBTAccessor {
     }
 
     protected val boolean = TagDelegate(
-            TagType.BYTE,
-            NBTTagCompound::getBoolean,
-            NBTTagCompound::setBoolean
+        TagType.BYTE,
+        NBTTagCompound::getBoolean,
+        NBTTagCompound::setBoolean
     )
     protected val byte = TagDelegate(
-            TagType.BYTE,
-            NBTTagCompound::getByte,
-            NBTTagCompound::setByte
+        TagType.BYTE,
+        NBTTagCompound::getByte,
+        NBTTagCompound::setByte
     )
     protected val short = TagDelegate(
-            TagType.SHORT,
-            NBTTagCompound::getShort,
-            NBTTagCompound::setShort
+        TagType.SHORT,
+        NBTTagCompound::getShort,
+        NBTTagCompound::setShort
     )
     protected val int = TagDelegate(
-            TagType.INT,
-            NBTTagCompound::getInt,
-            NBTTagCompound::setInt
+        TagType.INT,
+        NBTTagCompound::getInt,
+        NBTTagCompound::setInt
     )
     protected val long = TagDelegate(
-            TagType.LONG,
-            NBTTagCompound::getLong,
-            NBTTagCompound::setLong
+        TagType.LONG,
+        NBTTagCompound::getLong,
+        NBTTagCompound::setLong
     )
     protected val float = TagDelegate(
-            TagType.FLOAT,
-            NBTTagCompound::getFloat,
-            NBTTagCompound::setFloat
+        TagType.FLOAT,
+        NBTTagCompound::getFloat,
+        NBTTagCompound::setFloat
     )
     protected val double = TagDelegate(
-            TagType.DOUBLE,
-            NBTTagCompound::getDouble,
-            NBTTagCompound::setDouble
+        TagType.DOUBLE,
+        NBTTagCompound::getDouble,
+        NBTTagCompound::setDouble
     )
     protected val byteArray =
-            TagDelegate(
-                    TagType.BYTE_ARRAY,
-                    NBTTagCompound::getByteArray,
-                    NBTTagCompound::setByteArray
-            )
+        TagDelegate(
+            TagType.BYTE_ARRAY,
+            NBTTagCompound::getByteArray,
+            NBTTagCompound::setByteArray
+        )
     protected val string = TagDelegate(
-            TagType.STRING,
-            NBTTagCompound::getString,
-            NBTTagCompound::setString
+        TagType.STRING,
+        NBTTagCompound::getString,
+        NBTTagCompound::setString
     )
     protected val intArray = TagDelegate(
-            TagType.INT_ARRAY,
-            NBTTagCompound::getIntArray,
-            NBTTagCompound::setIntArray
+        TagType.INT_ARRAY,
+        NBTTagCompound::getIntArray,
+        NBTTagCompound::setIntArray
     )
     protected val longArray =
-            TagDelegate(
-                    TagType.LONG_ARRAY,
-                    NBTTagCompound::getLongArray,
-                    NBTTagCompound::setLongArray
-            )
+        TagDelegate(
+            TagType.LONG_ARRAY,
+            NBTTagCompound::getLongArray,
+            NBTTagCompound::setLongArray
+        )
     protected val uuid = TagDelegate(
-            { hasUUID(it) },
-            NBTTagCompound::getUUID,
-            NBTTagCompound::setUUID
+        { hasUUID(it) },
+        NBTTagCompound::getUUID,
+        NBTTagCompound::setUUID
     )
 
     protected inline fun <reified T : Enum<T>> enum() = enum(T::class)
 
     protected fun <T : Enum<T>> enum(enum: KClass<T>) =
-            EnumWrappingDelegate(enum)
+        EnumWrappingDelegate(enum)
 
     protected fun <T : NBTAccessor> tag(constructor: (NBTTagCompound) -> T): CompoundDelegate<T> {
         return CompoundDelegate(constructor)
@@ -107,8 +107,8 @@ abstract class NBTAccessor {
                     thisRef.nbtTagCompound.set(property.name, list)
                 }
                 return MutableConvertingList(
-                        list.list,
-                        converter
+                    list.list,
+                    converter
                 )
             }
 
@@ -125,8 +125,8 @@ abstract class NBTAccessor {
     }
 
     private class NBTTagConvertingList<T : Any>(list: MutableList<NBTBase>, converter: TagConverter<T>) :
-            MutableConvertingList<NBTBase, T>(
-                    list,
-                    converter
-            )
+        MutableConvertingList<NBTBase, T>(
+            list,
+            converter
+        )
 }

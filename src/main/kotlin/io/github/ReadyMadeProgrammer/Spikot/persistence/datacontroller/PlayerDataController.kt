@@ -1,7 +1,6 @@
 package io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller
 
 import io.github.ReadyMadeProgrammer.Spikot.persistence.gson.gson
-import io.github.ReadyMadeProgrammer.Spikot.thread.async
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -90,17 +89,19 @@ open class PlayerDataController<V : Any>(protected val constructor: (UUID) -> V)
 
     @EventHandler
     private fun onPlayerJoin(event: PlayerJoinEvent) {
-        async {
+        {
             val v = load(event.player.uniqueId)
             value[event.player.uniqueId] = v
         }
+        Plugin.async { }
     }
 
     @EventHandler
     private fun onPlayerQuit(event: PlayerQuitEvent) {
-        async {
+        {
             save(event.player.uniqueId, value[event.player.uniqueId])
         }
+        Plugin.async { }
     }
 
     final override val size: Int = value.size

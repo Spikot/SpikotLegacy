@@ -7,12 +7,12 @@ import org.bukkit.Bukkit
 import kotlin.coroutines.CoroutineContext
 
 @UseExperimental(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-public val Dispatchers.Bukkit: DispatcherBukkit
+val Dispatchers.Bukkit: DispatcherBukkit
     get() = BukkitDispatcher
 
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
-public sealed class DispatcherBukkit : MainCoroutineDispatcher(), Delay {
+sealed class DispatcherBukkit : MainCoroutineDispatcher(), Delay {
     override fun dispatch(context: CoroutineContext, block: Runnable) {
         Bukkit.getScheduler().runTask(spikotPlugin, block)
     }

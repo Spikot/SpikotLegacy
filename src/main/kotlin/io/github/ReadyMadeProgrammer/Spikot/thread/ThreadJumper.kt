@@ -34,9 +34,9 @@ fun abort(): Nothing {
 class AbortException : Exception()
 
 @Deprecated(
-        message = "Use coroutine",
-        replaceWith = ReplaceWith("Plugin.async{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
-        level = DeprecationLevel.WARNING
+    message = "Use coroutine",
+    replaceWith = ReplaceWith("Plugin.async{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+    level = DeprecationLevel.WARNING
 )
 fun <R : Any> async(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
     val chain = ThreadChain(type = ThreadType.ASYNC, runnable = runnable)
@@ -45,9 +45,9 @@ fun <R : Any> async(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
 }
 
 @Deprecated(
-        message = "Use coroutine",
-        replaceWith = ReplaceWith("Plugin.sync{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
-        level = DeprecationLevel.WARNING
+    message = "Use coroutine",
+    replaceWith = ReplaceWith("Plugin.sync{ }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+    level = DeprecationLevel.WARNING
 )
 fun <R : Any> sync(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
     val chain = ThreadChain(type = ThreadType.SYNC, runnable = runnable)
@@ -56,12 +56,13 @@ fun <R : Any> sync(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
 }
 
 @Deprecated(
-        message = "Use coroutine",
-        replaceWith = ReplaceWith("Plugin.sync{ delay(millis) }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
-        level = DeprecationLevel.WARNING
+    message = "Use coroutine",
+    replaceWith = ReplaceWith("Plugin.sync{ delay(millis) }", "io.github.ReadyMadeProgrammer.Spiko.coroutine.*"),
+    level = DeprecationLevel.WARNING
 )
 fun delay(tick: Int): ThreadChain<Unit, Unit> {
-    return sync {}.delay(tick)
+    {}
+    return Plugin.sync { }.delay(tick)
 }
 
 @Deprecated("Use coroutine")

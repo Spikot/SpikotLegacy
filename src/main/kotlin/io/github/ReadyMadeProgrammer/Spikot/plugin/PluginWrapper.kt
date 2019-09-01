@@ -4,6 +4,6 @@ import io.github.ReadyMadeProgrammer.Spikot.Spikot
 import kotlin.reflect.KClass
 
 data class PluginWrapper(
-        val plugin: Spikot,
-        val classes: MutableMap<KClass<*>, MutableSet<KClass<*>>> = HashMap()
+    val plugin: Spikot,
+    val classes: MutableMap<KClass<*>, MutableSet<KClass<*>>> = HashMap()
 )

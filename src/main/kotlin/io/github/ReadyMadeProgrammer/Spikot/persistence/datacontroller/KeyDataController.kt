@@ -25,17 +25,17 @@ open class KeyDataController<K : Any, V : Any>(protected val keySerializer: Stri
         }
         this.valueType = valueType
         root.listFiles { _, name -> name.endsWith(".json") }
-                .forEach {
-                    try {
-                        val key = keySerializer.read(it.name.substring(0 until (it.name.length - 5)))
-                        val reader = FileReader(it)
-                        val value = gson.fromJson(reader, valueType.java)
-                        reader.close()
-                        this.value[key] = value as V
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+            .forEach {
+                try {
+                    val key = keySerializer.read(it.name.substring(0 until (it.name.length - 5)))
+                    val reader = FileReader(it)
+                    val value = gson.fromJson(reader, valueType.java)
+                    reader.close()
+                    this.value[key] = value as V
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+            }
     }
 
     override fun destroy() {

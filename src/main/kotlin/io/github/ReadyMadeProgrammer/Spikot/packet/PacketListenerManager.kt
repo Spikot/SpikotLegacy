@@ -15,32 +15,32 @@ object PacketListenerManager : AbstractModule() {
     override fun onEnable() {
         val manager = ProtocolLibrary.getProtocolManager()
         val asyncManager =
-                ModuleManager.instances.forEach { (plugin, instance) ->
-                    for (method in instance.javaClass.declaredMethods) {
-                        val annotation = method.getDeclaredAnnotation(PacketHandler::class.java) ?: continue
-                        val options = if (annotation.async) arrayOf(ListenerOptions.ASYNC) else arrayOf()
-                        val packetAdapter = object : PacketAdapter(
-                                plugin,
-                                annotation.priority,
-                                annotation.packets.map {
-                                    it.java.getDeclaredField("TYPE").get(null) as PacketType
-                                },
-                                *options
-                        ) {
-                            override fun onPacketReceiving(event: PacketEvent) {
-                                if (!event.isCancelled || !annotation.ignoreCancelled) {
-                                    method.invoke(instance, event)
-                                }
-                            }
-
-                            override fun onPacketSending(event: PacketEvent) {
-                                if (!event.isCancelled || !annotation.ignoreCancelled) {
-                                    method.invoke(instance, event)
-                                }
+            ModuleManager.instances.forEach { (plugin, instance) ->
+                for (method in instance.javaClass.declaredMethods) {
+                    val annotation = method.getDeclaredAnnotation(PacketHandler::class.java) ?: continue
+                    val options = if (annotation.async) arrayOf(ListenerOptions.ASYNC) else arrayOf()
+                    val packetAdapter = object : PacketAdapter(
+                        plugin,
+                        annotation.priority,
+                        annotation.packets.map {
+                            it.java.getDeclaredField("TYPE").get(null) as PacketType
+                        },
+                        *options
+                    ) {
+                        override fun onPacketReceiving(event: PacketEvent) {
+                            if (!event.isCancelled || !annotation.ignoreCancelled) {
+                                method.invoke(instance, event)
                             }
                         }
-                        manager.addPacketListener(packetAdapter)
+
+                        override fun onPacketSending(event: PacketEvent) {
+                            if (!event.isCancelled || !annotation.ignoreCancelled) {
+                                method.invoke(instance, event)
+                            }
+                        }
                     }
+                    manager.addPacketListener(packetAdapter)
                 }
+            }
     }
 }

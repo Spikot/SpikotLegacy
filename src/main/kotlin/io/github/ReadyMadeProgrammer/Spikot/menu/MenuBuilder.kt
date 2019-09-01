@@ -5,7 +5,6 @@ package io.github.ReadyMadeProgrammer.Spikot.menu
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import io.github.ReadyMadeProgrammer.Spikot.item.item as itemBuilderMethod
 
 typealias ClickHandler = (SlotPosition, ClickType) -> Unit
 

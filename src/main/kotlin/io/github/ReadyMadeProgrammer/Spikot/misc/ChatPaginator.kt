@@ -12,12 +12,12 @@ class ChatPaginatorBuilder<E> {
 }
 
 class ChatPaginator<E> internal constructor(
-        private val header: (Int, Int) -> String?,
-        private val footer: (Int, Int) -> String?,
-        private val format: (Int, Int, E) -> String,
-        private val length: Int,
-        private val data: List<E>,
-        private val invocationObserver: Observer<List<String>>
+    private val header: (Int, Int) -> String?,
+    private val footer: (Int, Int) -> String?,
+    private val format: (Int, Int, E) -> String,
+    private val length: Int,
+    private val data: List<E>,
+    private val invocationObserver: Observer<List<String>>
 ) {
     @Suppress("MemberVisibilityCanBePrivate")
     val size
