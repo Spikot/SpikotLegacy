@@ -10,7 +10,7 @@ buildscript {
                 username "$nexusUser"
                 password "$nexusPassword"
             }
-            url 'http://nexus.readymaderepository.kro.kr/repository/maven-public/'
+            url 'http://maven.heartpattern.kr/repository/maven-public/'
         }
     }
 
@@ -32,7 +32,7 @@ repositories {
             username "$nexusUser"
             password "$nexusPassword"
         }
-        url 'http://nexus.readymaderepository.kro.kr/repository/maven-public/'
+        url 'http://maven.heartpattern.kr/repository/maven-public/'
     }
 }
 
@@ -93,9 +93,9 @@ publishing {
             }
 
             if (version.endsWith('SNAPSHOT')) {
-                url 'http://nexus.readymaderepository.kro.kr/repository/maven-snapshots/'
+                url 'http://maven.heartpattern.kr/repository/maven-snapshots/'
             } else {
-                url 'http://nexus.readymaderepository.kro.kr/repository/maven-releases/'
+                url 'http://maven.heartpattern.kr/repository/maven-releases/'
             }
         }
     }
