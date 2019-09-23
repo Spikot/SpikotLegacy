@@ -1,6 +1,7 @@
 package io.github.ReadyMadeProgrammer.Spikot.persistence.datacontroller
 
 import io.github.ReadyMadeProgrammer.Spikot.persistence.gson.gson
+import io.github.ReadyMadeProgrammer.Spikot.thread.async
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -68,21 +69,19 @@ open class NullablePlayerDataController<V : Any> : DataController<UUID, V>, Muta
 
     @EventHandler
     private fun onPlayerJoin(event: PlayerJoinEvent) {
-        {
+        async {
             val v = load(event.player.uniqueId)
             if (v != null) {
                 value[event.player.uniqueId] = v
             }
         }
-        Plugin.async { }
     }
 
     @EventHandler
     private fun onPlayerQuit(event: PlayerQuitEvent) {
-        {
+        async {
             save(event.player.uniqueId, value[event.player.uniqueId])
         }
-        Plugin.async { }
     }
 
     final override val size: Int = value.size

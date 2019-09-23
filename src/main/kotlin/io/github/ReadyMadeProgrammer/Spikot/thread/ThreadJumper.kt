@@ -61,8 +61,7 @@ fun <R : Any> sync(runnable: ThreadWork<Unit, R>): ThreadChain<Unit, R> {
     level = DeprecationLevel.WARNING
 )
 fun delay(tick: Int): ThreadChain<Unit, Unit> {
-    {}
-    return Plugin.sync { }.delay(tick)
+    return sync {}.delay(tick)
 }
 
 @Deprecated("Use coroutine")
