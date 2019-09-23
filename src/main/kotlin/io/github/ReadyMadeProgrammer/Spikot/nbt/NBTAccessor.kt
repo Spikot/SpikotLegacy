@@ -8,8 +8,14 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-abstract class NBTAccessor {
+abstract class NBTAccessor(nbtTagCompound: WrapperNBTTagCompound?) {
+    constructor() : this(null)
     lateinit var nbtTagCompound: NBTTagCompound
+
+    init {
+        if (nbtTagCompound != null)
+            this.nbtTagCompound = nbtTagCompound.tag
+    }
 
     operator fun contains(key: String): Boolean {
         return nbtTagCompound.hasKey(key)
