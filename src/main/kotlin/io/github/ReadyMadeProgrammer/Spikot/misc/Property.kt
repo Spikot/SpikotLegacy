@@ -4,10 +4,10 @@ interface Property<T> {
     val key: String
 }
 
-class SimpleProperty<T>(
+abstract class SimpleProperty<T>(
     override val key: String
 ) : Property<T>
 
-class SimpleFlagProperty(
+abstract class SimpleFlagProperty(
     override val key: String
 ) : Property<Unit>
