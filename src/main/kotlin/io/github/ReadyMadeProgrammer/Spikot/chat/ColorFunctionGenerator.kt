@@ -7,21 +7,12 @@ fun main(args: Array<String>) {
 
     ChatColor.values().map { it.name }.forEach { raw ->
         val mini = transform(raw)
-        builder.append("fun $mini(builder: Builder): ChatBuilder{\n" +
-            "    return chat{$mini(builder)}\n" +
-            "}\n" +
-            "\n" +
-            "fun $mini(text: String): ChatBuilder{\n" +
-            "    return chat{$mini(text)}\n" +
-            "}\n" +
-            "\n" +
-            "fun ChatBuilder.$mini(builder: Builder){\n" +
-            "    color($raw,builder)\n" +
-            "}\n" +
-            "\n" +
-            "fun ChatBuilder.$mini(text: String){\n" +
-            "    color($raw,text)\n" +
-            "}\n\n")
+        builder.append(
+            "fun $mini(builder: Builder): ChatBuilder = chat{$mini(builder)}\n" +
+                "fun $mini(text: String): ChatBuilder = chat{$mini(text)}\n" +
+                "fun ChatBuilder.$mini(builder: Builder) = color($raw,builder)\n" +
+                "fun ChatBuilder.$mini(text: String) = color($raw,text)\n"
+        )
     }
     println(builder.toString())
 }
