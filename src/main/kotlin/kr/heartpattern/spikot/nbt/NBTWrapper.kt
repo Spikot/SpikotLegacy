@@ -5,7 +5,7 @@ import java.util.*
 interface WrapperNBTBase<T : Any> {
     val tag: Any
     val type: TagType<T>
-    var value: T
+    val value: T
 }
 
 interface WrapperNBTNumber<T : Number> : WrapperNBTBase<T> {
