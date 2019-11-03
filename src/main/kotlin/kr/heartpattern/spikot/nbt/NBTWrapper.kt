@@ -24,24 +24,75 @@ interface WrapperNBTNumber<T : Number> : WrapperNBTBase<T> {
 }
 
 
-interface WrapperNBTEnd : WrapperNBTBase<Unit>
-interface WrapperNBTByte : WrapperNBTNumber<Byte>
-interface WrapperNBTLong : WrapperNBTNumber<Long>
-interface WrapperNBTInt : WrapperNBTNumber<Int>
-interface WrapperNBTShort : WrapperNBTNumber<Short>
-interface WrapperNBTDouble : WrapperNBTNumber<Double>
-interface WrapperNBTFloat : WrapperNBTNumber<Float>
-interface WrapperNBTByteArray : WrapperNBTBase<ByteArray>
-interface WrapperNBTIntArray : WrapperNBTBase<IntArray>
-interface WrapperNBTLongArray : WrapperNBTBase<LongArray>
-interface WrapperNBTString : WrapperNBTBase<String>
+interface WrapperNBTEnd : WrapperNBTBase<Unit> {
+    override val type: TagType<Unit>
+        get() = TagType.END
+}
+
+interface WrapperNBTByte : WrapperNBTNumber<Byte> {
+    override val type: TagType<Byte>
+        get() = TagType.BYTE
+}
+
+interface WrapperNBTLong : WrapperNBTNumber<Long> {
+    override val type: TagType<Long>
+        get() = TagType.LONG
+}
+
+interface WrapperNBTInt : WrapperNBTNumber<Int> {
+    override val type: TagType<Int>
+        get() = TagType.INT
+}
+
+interface WrapperNBTShort : WrapperNBTNumber<Short> {
+    override val type: TagType<Short>
+        get() = TagType.SHORT
+}
+
+interface WrapperNBTDouble : WrapperNBTNumber<Double> {
+    override val type: TagType<Double>
+        get() = TagType.DOUBLE
+}
+
+interface WrapperNBTFloat : WrapperNBTNumber<Float> {
+    override val type: TagType<Float>
+        get() = TagType.FLOAT
+}
+
+interface WrapperNBTByteArray : WrapperNBTBase<ByteArray> {
+    override val type: TagType<ByteArray>
+        get() = TagType.BYTE_ARRAY
+}
+
+interface WrapperNBTIntArray : WrapperNBTBase<IntArray> {
+    override val type: TagType<IntArray>
+        get() = TagType.INT_ARRAY
+}
+
+interface WrapperNBTLongArray : WrapperNBTBase<LongArray> {
+    override val type: TagType<LongArray>
+        get() = TagType.LONG_ARRAY
+}
+
+interface WrapperNBTString : WrapperNBTBase<String> {
+    override val type: TagType<String>
+        get() = TagType.STRING
+}
+
+@Suppress("UNCHECKED_CAST")
 interface WrapperNBTList<W : WrapperNBTBase<*>> : WrapperNBTBase<MutableList<W>>, MutableList<W> {
+    override val type: TagType<MutableList<W>>
+        get() = TagType.LIST as TagType<MutableList<W>>
     val enclosing: TagType<*>
 }
 
 fun <T : Any> WrapperNBTList<WrapperNBTBase<T>>.getValue(index: Int): T = get(index).value
 
+@Suppress("UNCHECKED_CAST")
 interface WrapperNBTCompound : WrapperNBTBase<MutableMap<String, WrapperNBTBase<*>>>, MutableMap<String, WrapperNBTBase<*>> {
+    override val type: TagType<MutableMap<String, WrapperNBTBase<*>>>
+        get() = TagType.COMPOUND as TagType<MutableMap<String, WrapperNBTBase<*>>>
+
     fun hasKeyOfType(key: String, type: TagType<*>): Boolean
     fun hasUUID(key: String): Boolean
 
