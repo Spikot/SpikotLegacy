@@ -1,5 +1,6 @@
 package kr.heartpattern.spikot.adapter
 
+import kr.heartpattern.spikot.module.IModule
 import kr.heartpattern.spikot.plugin.FindAnnotation
 import kotlin.reflect.KClass
 
@@ -13,4 +14,4 @@ annotation class Adapter(
 /**
  * Adapter implementation
  */
-interface IAdapter
+interface IAdapter : IModule

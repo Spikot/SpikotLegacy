@@ -67,8 +67,8 @@ dependencies {
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     kapt 'org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT'
-//    kapt "io.github.readymadeprogrammer:SpikotClassLocator:3.2.0-SNAPSHOT"
-//    kapt "io.github.readymadeprogrammer:SpikotAnnotationProcessor:3.2.0-SNAPSHOT"
+    kapt "kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT"
+    kapt "kr.heartpattern:SpikotAnnotationProcessor:4.0.0-SNAPSHOT"
 }
 
 task fatJar(type: Jar) {
