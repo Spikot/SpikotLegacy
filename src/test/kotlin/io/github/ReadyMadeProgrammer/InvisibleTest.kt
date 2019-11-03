@@ -1,18 +1,19 @@
 package io.github.ReadyMadeProgrammer
 
-import io.github.ReadyMadeProgrammer.Spikot.utils.attachInvisible
-import io.github.ReadyMadeProgrammer.Spikot.utils.decryptInvisible
-import io.github.ReadyMadeProgrammer.Spikot.utils.encryptInvisible
-import io.github.ReadyMadeProgrammer.Spikot.utils.findInvisible
-import org.junit.Test
+import kr.heartpattern.spikot.utils.attachInvisible
+import kr.heartpattern.spikot.utils.decryptInvisible
+import kr.heartpattern.spikot.utils.encryptInvisible
+import kr.heartpattern.spikot.utils.findInvisible
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@Ignore
+@Disabled
 class InvisibleTest {
     @Suppress("SpellCheckingInspection")
+
     @Test
     fun test() {
         val random = Random()

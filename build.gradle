@@ -2,7 +2,7 @@ buildscript {
     ext {
         kotlin_version = '1.3.50'
         coroutine_version = '1.3.0-M2'
-        bukkit_version = '1.12.2-SNAPSHOT'
+        paper_version = '1.12.2-R0.1-SNAPSHOT'
     }
     repositories {
         maven {
@@ -10,7 +10,7 @@ buildscript {
                 username "$nexusUser"
                 password "$nexusPassword"
             }
-            url 'http://maven.heartpattern.kr/repository/maven-public/'
+            url 'https://maven.heartpattern.kr/repository/maven-public/'
         }
     }
 
@@ -18,13 +18,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
-group 'io.github.readymadeprogrammer'
-version '3.2.3-SNAPSHOT'
+group 'kr.heartpattern'
+version '4.0.0-SNAPSHOT'
 
 repositories {
     maven {
@@ -32,41 +31,8 @@ repositories {
             username "$nexusUser"
             password "$nexusPassword"
         }
-        url 'http://maven.heartpattern.kr/repository/maven-public/'
+        url 'https://maven.heartpattern.kr/repository/maven-public/'
     }
-}
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
-    compileOnly "io.github.readymadeprogrammer:bloodbukkit-server:$bukkit_version"
-    compileOnly("org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT"){
-        exclude group:'org.bukkit', module:'bukkit'
-    }
-    compile "io.github.microutils:kotlin-logging:1.5.4"
-    compile "ch.qos.logback:logback-classic:1.2.3"
-    compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
-    compile "com.github.salomonbrys.kotson:kotson:2.5.0"
-    compile "com.github.ben-manes.caffeine:caffeine:2.6.2"
-    compile "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1"
-    compileOnly "com.comphenix.protocol:ProtocolLib-API:4.4.0"
-    compile("com.comphenix.packetwrapper:PacketWrapper:1.12.2-SNAPSHOT"){
-        exclude group:'org.bukkit', module:'bukkit'
-    }
-    compileOnly "io.github.readymadeprogrammer:SpikotClassLocator:3.2.0-SNAPSHOT"
-
-    kapt 'org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT'
-    kapt "io.github.readymadeprogrammer:SpikotClassLocator:3.2.0-SNAPSHOT"
-}
-
-task fatJar(type: Jar) {
-    baseName 'Spikot-shaded'
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
 }
 
 compileKotlin {
@@ -77,12 +43,47 @@ compileKotlin {
     }
 }
 
+dependencies {
+    compile 'net.swiftzer.semver:semver:1.1.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    compile "io.github.microutils:kotlin-logging:1.5.4"
+    compile "ch.qos.logback:logback-classic:1.2.3"
+    compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
+    compile "com.github.salomonbrys.kotson:kotson:2.5.0"
+    compile "com.github.ben-manes.caffeine:caffeine:2.6.2"
+    compile "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1"
+    compile 'net.jodah:typetools:0.6.1'
+    compileOnly "com.comphenix.protocol:ProtocolLib:4.4.0"
+    compileOnly "com.destroystokyo.paper:paper-api:$paper_version"
+    compileOnly("org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT") {
+        exclude group: 'org.bukkit', module: 'bukkit'
+    }
+
+    testCompile 'org.jetbrains.kotlin:kotlin-test:1.3.50'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
+    kapt 'org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT'
+//    kapt "io.github.readymadeprogrammer:SpikotClassLocator:3.2.0-SNAPSHOT"
+//    kapt "io.github.readymadeprogrammer:SpikotAnnotationProcessor:3.2.0-SNAPSHOT"
+}
+
+task fatJar(type: Jar) {
+    baseName 'Spikot-shaded'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             artifactId 'Spikot'
             from components.java
-//            artifact jar
         }
     }
     repositories {
@@ -93,9 +94,9 @@ publishing {
             }
 
             if (version.endsWith('SNAPSHOT')) {
-                url 'http://maven.heartpattern.kr/repository/maven-snapshots/'
+                url 'https://maven.heartpattern.kr/repository/maven-public-snapshots/'
             } else {
-                url 'http://maven.heartpattern.kr/repository/maven-releases/'
+                url 'https://maven.heartpattern.kr/repository/maven-public-releases/'
             }
         }
     }
