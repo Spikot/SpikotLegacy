@@ -3,6 +3,42 @@ package kr.heartpattern.spikot.nbt
 import kotlin.reflect.KClass
 
 sealed class TagType<T : Any>(val id: Int, val type: KClass<T>) {
+    companion object {
+        val TYPES = listOf(
+            END,
+            BYTE,
+            SHORT,
+            INT,
+            LONG,
+            FLOAT,
+            DOUBLE,
+            BYTE_ARRAY,
+            STRING,
+            LIST,
+            COMPOUND,
+            INT_ARRAY,
+            LONG_ARRAY,
+            MISC
+        )
+
+        fun ofId(id: Int): TagType<*> {
+            for (type in TYPES)
+                if (type.id == id)
+                    return type
+
+            throw IllegalArgumentException("Cannot find matching tag type for id $id")
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T : Any> ofType(type: KClass<T>): TagType<T> {
+            for (tagType in TYPES)
+                if (tagType.type == type)
+                    return tagType as TagType<T>
+
+            throw IllegalArgumentException("Cannot find matching tag type for type $type")
+        }
+    }
+
     object END : TagType<Unit>(0, Unit::class)
     object BYTE : TagType<Byte>(1, Byte::class)
     object SHORT : TagType<Short>(2, Short::class)
