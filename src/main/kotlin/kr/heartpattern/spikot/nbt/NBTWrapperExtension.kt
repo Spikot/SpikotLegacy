@@ -12,3 +12,6 @@ fun ByteArray.toNBT(): WrapperNBTByteArray = NBTAdapter.createNBTByteArray(this)
 fun IntArray.toNBT(): WrapperNBTIntArray = NBTAdapter.createNBTIntArray(this)
 fun LongArray.toNBT(): WrapperNBTLongArray = NBTAdapter.createNBTLongArray(this)
 fun String.toNBT(): WrapperNBTString = NBTAdapter.createNBTString(this)
+fun <W : WrapperNBTBase<*>> List<W>.toNBT(): WrapperNBTList<W> = NBTAdapter.createNBTList(this)
+fun Map<String, WrapperNBTBase<*>>.toNBT(): WrapperNBTCompound = NBTAdapter.createNBTCompound(this)
+
