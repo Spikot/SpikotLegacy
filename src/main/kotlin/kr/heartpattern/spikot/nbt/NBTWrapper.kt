@@ -96,38 +96,6 @@ interface WrapperNBTCompound : WrapperNBTBase<MutableMap<String, WrapperNBTBase<
     fun hasKeyOfType(key: String, type: TagType<*>): Boolean
     fun hasUUID(key: String): Boolean
 
-    fun getNBTEnd(key: String): WrapperNBTEnd
-    fun getNBTByte(key: String): WrapperNBTByte
-    fun getNBTLong(key: String): WrapperNBTLong
-    fun getNBTInt(key: String): WrapperNBTInt
-    fun getNBTShort(key: String): WrapperNBTShort
-    fun getNBTDouble(key: String): WrapperNBTDouble
-    fun getNBTFloat(key: String): WrapperNBTFloat
-    fun getNBTByteArray(key: String): WrapperNBTByteArray
-    fun getNBTIntArray(key: String): WrapperNBTIntArray
-    fun getNBTLongArray(key: String): WrapperNBTLongArray
-    fun getNBTString(key: String): WrapperNBTString
-    @Suppress("UNCHECKED_CAST")
-    fun <W : WrapperNBTBase<*>> getNBTList(key: String): WrapperNBTList<W>
-
-    fun getNBTCompound(key: String): WrapperNBTCompound
-
-    fun setNBTEnd(key: String, value: WrapperNBTEnd)
-    fun setNBTByte(key: String, value: WrapperNBTByte)
-    fun setNBTLong(key: String, value: WrapperNBTLong)
-    fun setNBTInt(key: String, value: WrapperNBTInt)
-    fun setNBTShort(key: String, value: WrapperNBTShort)
-    fun setNBTDouble(key: String, value: WrapperNBTDouble)
-    fun setNBTFloat(key: String, value: WrapperNBTFloat)
-    fun setNBTByteArray(key: String, value: WrapperNBTByteArray)
-    fun setNBTIntArray(key: String, value: WrapperNBTIntArray)
-    fun setNBTLongArray(key: String, value: WrapperNBTLongArray)
-    fun setNBTString(key: String, value: WrapperNBTString)
-    @Suppress("UNCHECKED_CAST")
-    fun <W : WrapperNBTBase<*>> setNBTList(key: String, value: WrapperNBTList<W>)
-
-    fun setNBTCompound(key: String, value: WrapperNBTCompound)
-
     fun getEnd(key: String)
     fun getBoolean(key: String): Boolean
     fun getByte(key: String): Byte
@@ -140,8 +108,8 @@ interface WrapperNBTCompound : WrapperNBTBase<MutableMap<String, WrapperNBTBase<
     fun getIntArray(key: String): IntArray
     fun getLongArray(key: String): LongArray
     fun getString(key: String): String
-    fun <W : WrapperNBTBase<*>> getList(key: String): MutableList<W>
-    fun getCompound(key: String): MutableMap<String, WrapperNBTBase<*>>
+    fun <W : WrapperNBTBase<*>> getList(key: String, type: TagType<*>): WrapperNBTList<W>
+    fun getCompound(key: String): WrapperNBTCompound
     fun getUUID(key: String): UUID
 
     fun setEnd(key: String, value: Unit)
@@ -156,7 +124,7 @@ interface WrapperNBTCompound : WrapperNBTBase<MutableMap<String, WrapperNBTBase<
     fun setIntArray(key: String, value: IntArray)
     fun setLongArray(key: String, value: LongArray)
     fun setString(key: String, value: String)
-    fun <W : WrapperNBTBase<*>> setList(key: String, value: List<W>)
-    fun setCompound(key: String, value: MutableMap<String, WrapperNBTBase<*>>)
+    fun <W : WrapperNBTBase<*>> setList(key: String, value: WrapperNBTList<W>)
+    fun setCompound(key: String, value: WrapperNBTCompound)
     fun setUUID(key: String, value: UUID)
 }

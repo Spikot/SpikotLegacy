@@ -5,7 +5,7 @@ import kr.heartpattern.spikot.plugin.FindAnnotation
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.CLASS)
 @FindAnnotation(impl = [IAdapter::class])
 annotation class Adapter(
     val target: KClass<*> = Nothing::class

@@ -93,7 +93,7 @@ abstract class NBTAccessor(val tag: WrapperNBTCompound) {
     protected fun <T : Any> list(type: TagType<T>): ReadWriteProperty<NBTAccessor, MutableList<T>> {
         return object : ReadWriteProperty<NBTAccessor, MutableList<T>> {
             override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): MutableList<T> {
-                val list = thisRef.tag.getNBTList<WrapperNBTBase<T>>(property.name)
+                val list = thisRef.tag.getList<WrapperNBTBase<T>>(property.name, type)
                 if (list.enclosing != type)
                     throw ClassCastException("List type is ${list.enclosing}")
                 return MutableConvertingList(
@@ -111,7 +111,7 @@ abstract class NBTAccessor(val tag: WrapperNBTCompound) {
             }
 
             override fun setValue(thisRef: NBTAccessor, property: KProperty<*>, value: MutableList<T>) {
-                thisRef.tag.setList(property.name, value.map { NBTAdapter.createNBT(it) })
+                thisRef.tag.setList(property.name, NBTAdapter.createNBTList(value.map { NBTAdapter.createNBT(it) }))
             }
         }
     }

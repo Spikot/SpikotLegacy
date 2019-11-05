@@ -10,7 +10,9 @@ interface ItemStackAdapter : IAdapter {
     fun isCraftItemStack(itemStack: ItemStack): Boolean
     fun toCraftItemStack(itemStack: ItemStack): ItemStack
     fun hasTag(itemStack: ItemStack): Boolean
-    fun getWrappedTag(itemStack: ItemStack): WrapperNBTCompound
+    fun getWrappedTag(itemStack: ItemStack): WrapperNBTCompound?
+    fun toNBTCompound(itemStack: ItemStack): WrapperNBTCompound
+    fun fromNBTCompound(nbt: WrapperNBTCompound): ItemStack
 
     object Resolver : VersionAdapterResolver<ItemStackAdapter>(ItemStackAdapter::class, VersionType.BUKKIT)
     companion object : ItemStackAdapter by Resolver.default

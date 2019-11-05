@@ -86,5 +86,5 @@ private fun Entity.toJson(): String {
 }
 
 private fun ItemStack.toJson(): String {
-    return NBTAdapter.compressNBT(toCraftItemStack().getWrappedTag()).toString()
+    return NBTAdapter.compressNBT(toCraftItemStack().getWrappedTag()!!).toString()
 }

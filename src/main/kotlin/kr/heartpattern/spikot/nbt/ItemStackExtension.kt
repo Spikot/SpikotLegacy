@@ -15,6 +15,6 @@ val ItemStack.hasTag: Boolean
         return ItemStackAdapter.hasTag(this)
     }
 
-fun ItemStack.getWrappedTag(): WrapperNBTCompound {
+fun ItemStack.getWrappedTag(): WrapperNBTCompound? {
     return ItemStackAdapter.getWrappedTag(this)
 }

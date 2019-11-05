@@ -47,7 +47,7 @@ class CompoundDelegate<T : NBTAccessor>(private val constructor: (WrapperNBTComp
     ReadWriteProperty<NBTAccessor, T?> {
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T? {
         if (!thisRef.tag.hasKeyOfType(property.name, TagType.COMPOUND)) {
-            return constructor(thisRef.tag.getNBTCompound(property.name))
+            return constructor(thisRef.tag.getCompound(property.name))
         }
         return null
     }
