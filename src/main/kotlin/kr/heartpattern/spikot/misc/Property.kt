@@ -18,7 +18,7 @@ abstract class AbstractMutableProperty<T>(private val property: Property<T>) : M
 
 interface FlagProperty : Property<Unit>
 
-interface MutableFlagProperty : FlagProperty
+interface MutableFlagProperty : MutableProperty<Unit>, FlagProperty
 
 @Suppress("UNCHECKED_CAST")
 open class PropertyMap {
