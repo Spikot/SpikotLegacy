@@ -52,13 +52,13 @@ dependencies {
     compile "io.github.microutils:kotlin-logging:1.5.4"
     compile "ch.qos.logback:logback-classic:1.2.3"
     compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
-    compile("com.github.salomonbrys.kotson:kotson:2.5.0")
+    compile "com.github.salomonbrys.kotson:kotson:2.5.0"
     compile "com.github.ben-manes.caffeine:caffeine:2.6.2"
-    compile("com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1")
+    compile "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.1"
     compile 'net.jodah:typetools:0.6.1'
 
     compileOnly "com.comphenix.protocol:ProtocolLib:4.4.0"
-    compileOnly("com.destroystokyo.paper:paper-api:$paper_version")
+    compileOnly "com.destroystokyo.paper:paper-api:$paper_version"
     compileOnly("org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT") {
         exclude group: 'org.bukkit', module: 'bukkit'
     }
@@ -67,9 +67,9 @@ dependencies {
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
-    kapt('org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT')
-    kapt("kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT")
-    kapt("kr.heartpattern:SpikotAnnotationProcessor:4.0.0-SNAPSHOT")
+    kapt 'org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT'
+    kapt "kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT"
+    kapt "kr.heartpattern:SpikotAnnotationProcessor:4.0.0-SNAPSHOT"
 }
 
 task fatJar(type: Jar) {
