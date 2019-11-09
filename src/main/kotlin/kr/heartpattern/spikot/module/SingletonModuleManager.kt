@@ -2,6 +2,7 @@
 
 package kr.heartpattern.spikot.module
 
+import kr.heartpattern.spikot.Bootstrap
 import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import java.util.*
@@ -10,7 +11,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 @PublishedApi
-@kr.heartpattern.spikot.Bootstrap(loadOrder = -10000)
+@Bootstrap(loadOrder = -10000)
 internal object SingletonModuleManager : kr.heartpattern.spikot.IBootstrap {
     @PublishedApi
     internal val instances: MutableMap<KClass<*>, ModuleHandler> = HashMap()

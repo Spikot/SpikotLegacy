@@ -2,7 +2,6 @@ package kr.heartpattern.spikot.plugin
 
 import com.github.salomonbrys.kotson.forEach
 import com.google.gson.JsonParser
-import kr.heartpattern.spikot.Bootstrap
 import kr.heartpattern.spikot.IBootstrap
 import kr.heartpattern.spikot.SpikotPlugin
 import kr.heartpattern.spikot.logger
@@ -16,13 +15,13 @@ import kotlin.collections.HashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-@Bootstrap(loadOrder = -20000)
 object SpikotPluginManager : IBootstrap {
     val plugins = HashSet<PluginWrapper>()
     override fun onStartup() {
         Bukkit.getPluginManager().plugins.asSequence()
             .filter { it is SpikotPlugin }
             .forEach { p ->
+                logger.debug("Find plugin: ${p.name}")
                 logger.catchAll("Cannot load plugin: ${p.name}") {
                     val field = JavaPlugin::class.java.getDeclaredField("file")
                     field.isAccessible = true

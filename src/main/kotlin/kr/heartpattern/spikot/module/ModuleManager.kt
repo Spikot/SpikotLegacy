@@ -1,7 +1,10 @@
 package kr.heartpattern.spikot.module
 
+import kr.heartpattern.spikot.Bootstrap
+import kr.heartpattern.spikot.IBootstrap
 import kr.heartpattern.spikot.SpikotPlugin
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
+import kr.heartpattern.spikot.utils.getInstance
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -11,19 +14,20 @@ import kotlin.reflect.full.isSuperclassOf
 /**
  * Manage all modules. [ModuleHandler]
  */
-object ModuleManager {
+@Bootstrap(-100000)
+object ModuleManager : IBootstrap {
     private lateinit var moduleInterceptor: Set<Pair<IModuleInterceptor, ModuleInterceptor>>
     private val shutdown = LinkedList<ModuleHandler>()
 
     /**
      * Initialize module manager
      */
-    internal fun load() {
+    override fun onLoad() {
         moduleInterceptor = SpikotPluginManager
             .annotationIterator<ModuleInterceptor>()
             .asSequence()
             .map { (type) ->
-                type.createInstance() as IModuleInterceptor to
+                type.getInstance() as IModuleInterceptor to
                     type.findAnnotation<ModuleInterceptor>()!!
             }
             .toSet()
@@ -32,7 +36,7 @@ object ModuleManager {
     /**
      * Shutdown module manager
      */
-    internal fun shutdown() {
+    override fun onShutdown() {
         for (handler in shutdown)
             if (handler.state == IModule.State.ENABLE)
                 handler.disable()

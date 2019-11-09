@@ -5,14 +5,14 @@ import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.misc.AbstractMutableProperty
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.plugin.FindAnnotation
+import kr.heartpattern.spikot.utils.getInstance
 import kr.heartpattern.spikot.utils.nonnull
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 
 /**
  * Annotate module processor.
  */
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @FindAnnotation
 annotation class ModuleInterceptor(
@@ -24,6 +24,7 @@ annotation class ModuleInterceptor(
  */
 class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModule? = null) {
     internal object MutableStateProperty : AbstractMutableProperty<IModule.State>(IModule.StateProperty)
+    private object MutablePluginProperty: AbstractMutableProperty<SpikotPlugin>(IModule.PluginProperty)
 
     private val interceptors = ModuleManager.findInterceptor(type)
     /**
@@ -45,11 +46,12 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
 
     init {
         onDebug {
-            logger.info("Create module: ${type.simpleName}")
+            logger.debug { "Create module: ${type.simpleName}" }
         }
 
         state = try {
-            module = created ?: type.createInstance() as IModule
+            context[MutablePluginProperty] = owner
+            module = created ?: type.getInstance() as IModule
             interceptors.forEach { interceptor ->
                 interceptor.onCreate(this)
             }
@@ -68,7 +70,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      * @return true if load successfully
      */
     fun load(): Boolean {
-        return performStep(IModule.State.CREATE, IModule.State.LOAD, { this.onLoad(context) }, IModuleInterceptor::onLoad)
+        return performStep(IModule.State.CREATE, IModule.State.LOAD, { onLoad(this@ModuleHandler.context) }, IModuleInterceptor::onLoad)
     }
 
     /**
@@ -100,16 +102,18 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
     private inline fun performStep(previous: IModule.State, next: IModule.State, task: IModule.() -> Unit, intercept: IModuleInterceptor.(ModuleHandler) -> Unit): Boolean {
         check(state == previous) { "Module is already $next" }
         onDebug {
-            logger.info("${state.readable} module: ${type.simpleName}")
+            logger.debug("${state.readable} module: ${type.simpleName}")
         }
         state = try {
+            logger.debug{}
             module!!.task()
+
             interceptors.forEach { interceptor ->
                 interceptor.intercept(this)
             }
             next
         } catch (e: Throwable) {
-            logger.warn("Error occur while ${state.readable} module: ${type.simpleName}")
+            logger.error(e) { "Error occur while ${state.readable} module: ${type.simpleName}" }
             interceptors.forEach { interceptor ->
                 interceptor.onError(this, next, e)
             }

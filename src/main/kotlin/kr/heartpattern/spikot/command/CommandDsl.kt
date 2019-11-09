@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 annotation class CommandDsl
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 @FindAnnotation
 annotation class RootCommand(val prefix: String)
 

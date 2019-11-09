@@ -27,7 +27,7 @@ interface IModule : Listener {
 
     val context: MutablePropertyMap
 
-    fun onLoad(context: MutablePropertyMap) {}
+    fun onLoad(context: MutablePropertyMap)
 
     fun onEnable() {}
 

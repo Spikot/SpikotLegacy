@@ -29,7 +29,7 @@ object CommandManager : AbstractModule(), TabExecutor {
     override fun onEnable() {
         val field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
         field.isAccessible = true
-        val value = field[Bukkit.getServer()] as CommandMap
+        val value = (field[Bukkit.getServer()] as? CommandMap) ?: throw IllegalStateException("Cannot extract command map")
         field.isAccessible = false
         SpikotPluginManager.forEachAnnotation<RootCommand> { (kclass, plugin) ->
             onDebug {

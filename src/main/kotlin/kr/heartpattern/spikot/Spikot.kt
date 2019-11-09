@@ -2,6 +2,7 @@ package kr.heartpattern.spikot
 
 import kr.heartpattern.spikot.module.IModule
 import kr.heartpattern.spikot.module.SingletonModuleManager
+import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
 import mu.KotlinLogging
 import org.bukkit.configuration.file.YamlConfiguration
@@ -29,7 +30,7 @@ internal lateinit var spikot: Spikot
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "3.0.0-b21")
+@Plugin(name = "Spikot", version = "4.0.0-SNAPSHOT")
 @Dependency(plugin = "ProtocolLib")
 class Spikot : SpikotPlugin() {
     internal val enabled = HashSet<String>()
@@ -47,6 +48,8 @@ class Spikot : SpikotPlugin() {
                     val feature = YamlConfiguration.loadConfiguration(File(spikot.dataFolder, "module.yml"))
                     enabled += feature.getStringList("enable")
                 }
+
+                SpikotPluginManager.onStartup()
                 BootstrapManager.onStartup()
                 spikotLogger.info { "End loading spikot" }
             }
