@@ -18,9 +18,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
+
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
+
+apply from: 'local.gradle'
 
 group 'kr.heartpattern'
 version '4.0.0-SNAPSHOT'
@@ -43,8 +46,14 @@ compileKotlin {
     }
 }
 
+sourceSets{
+    main.java.srcDirs += 'src/main/java'
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    main.resources.srcDirs += 'src/main/resources'
+}
+
 dependencies {
-    compile 'net.swiftzer.semver:semver:1.1.0'
+    compile 'net.swiftzer.semver:semver:1.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -72,7 +81,7 @@ dependencies {
     kapt "kr.heartpattern:SpikotAnnotationProcessor:4.0.0-SNAPSHOT"
 }
 
-task fatJar(type: Jar) {
+task createPlugin(type: Jar) {
     baseName 'Spikot-shaded'
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
