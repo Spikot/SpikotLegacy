@@ -3,18 +3,20 @@ package kr.heartpattern.spikot.nbt
 import kr.heartpattern.spikot.adapters.ItemStackAdapter
 import org.bukkit.inventory.ItemStack
 
+inline class WrapperCraftItemStack(val itemStack: ItemStack)
+
 val ItemStack.isCraftItemStack: Boolean
     get() = ItemStackAdapter.isCraftItemStack(this)
 
-fun ItemStack.toCraftItemStack(): ItemStack {
-    return ItemStackAdapter.toCraftItemStack(this)
+fun ItemStack.toCraftItemStack(): WrapperCraftItemStack {
+    return WrapperCraftItemStack(ItemStackAdapter.toCraftItemStack(this))
 }
 
-val ItemStack.hasTag: Boolean
+val WrapperCraftItemStack.hasTag: Boolean
     get() {
-        return ItemStackAdapter.hasTag(this)
+        return ItemStackAdapter.hasTag(this.itemStack)
     }
 
-fun ItemStack.getWrappedTag(): WrapperNBTCompound? {
-    return ItemStackAdapter.getWrappedTag(this)
+fun WrapperCraftItemStack.getWrappedTag(): WrapperNBTCompound? {
+    return ItemStackAdapter.getWrappedTag(this.itemStack)
 }
