@@ -1,5 +1,6 @@
 package kr.heartpattern.spikot.coroutine
 
+import com.google.auto.service.AutoService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.internal.MainDispatcherFactory
 import kr.heartpattern.spikot.spikot
@@ -39,6 +40,7 @@ sealed class DispatcherBukkit : MainCoroutineDispatcher(), Delay {
 
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
+@AutoService(MainDispatcherFactory::class)
 internal class BukkitDispatcherFactory : MainDispatcherFactory {
     override val loadPriority: Int
         get() = 0
