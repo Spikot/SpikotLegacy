@@ -63,7 +63,7 @@ class Spikot : SpikotPlugin() {
     }
 
     inline fun <reified T : IModule> get(): T {
-        return SingletonModuleManager.instances[T::class] as? T
+        return SingletonModuleManager.typeHandlerMap[T::class] as? T
             ?: error("Cannot find loaded module: ${T::class.simpleName}")
     }
 }

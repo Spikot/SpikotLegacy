@@ -72,7 +72,7 @@ val Inventory.menuProvider: MenuProvider?
         }
     }
 
-@Module(loadOrder = LoadOrder.API)
+@Module @LoadBefore([IModule::class])
 @PublishedApi
 internal object MenuManager : AbstractModule() {
     internal var id: Int = 0

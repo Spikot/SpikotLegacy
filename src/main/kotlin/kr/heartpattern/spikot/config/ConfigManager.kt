@@ -1,6 +1,7 @@
 package kr.heartpattern.spikot.config
 
 import kr.heartpattern.spikot.module.*
+import kr.heartpattern.spikot.module.canLoad
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
 import org.bukkit.configuration.file.YamlConfiguration
@@ -8,7 +9,7 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-@Module(loadOrder = LoadOrder.API - 1000)
+@Module @LoadBefore([IModule::class])
 object ConfigManager : AbstractModule() {
     private lateinit var root: File
     override fun onEnable() {

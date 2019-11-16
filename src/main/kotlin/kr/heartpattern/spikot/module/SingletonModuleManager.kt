@@ -3,6 +3,8 @@
 package kr.heartpattern.spikot.module
 
 import kr.heartpattern.spikot.Bootstrap
+import kr.heartpattern.spikot.IBootstrap
+import kr.heartpattern.spikot.SpikotPlugin
 import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import java.util.*
@@ -11,47 +13,45 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 @PublishedApi
-@Bootstrap(loadOrder = -10000)
-internal object SingletonModuleManager : kr.heartpattern.spikot.IBootstrap {
+@Bootstrap
+internal object SingletonModuleManager : IBootstrap {
     @PublishedApi
-    internal val instances: MutableMap<KClass<*>, ModuleHandler> = HashMap()
+    internal val typeHandlerMap: MutableMap<KClass<*>, ModuleHandler> = HashMap()
+    private val instances = LinkedList<ModuleHandler>()
 
     override fun onStartup() {
+        val modules = LinkedList<KClass<*>>()
+        val modulePlugin = HashMap<KClass<*>, SpikotPlugin>()
+
         for ((module, plugin) in SpikotPluginManager.annotationIterator<Module>()) {
             onDebug {
                 logger.info("Find module: ${module.simpleName}")
             }
-            if (!module.canLoad())
-                continue
-
-            instances[module] = ModuleManager.createModule(module, plugin)
+            modulePlugin[module] = plugin
+            modules += module
         }
 
-        val remover = LinkedList<KClass<*>>()
+        val sorted = sortModuleDependencies(modules)
+        val disabled = HashSet<KClass<*>>()
+        for(element in sorted){
+            if(!element.canLoad() || element.findAnnotation<Module>()!!.depend.any{it in disabled})
+                disabled += element
+            else
+                instances += ModuleManager.createModule(element, modulePlugin[element]!!)
+        }
 
-        for (handler in instances.values
-            .asSequence()
-            .sortedBy { it.type.findAnnotation<Module>()!!.loadOrder })
-            if (!handler.load())
-                remover.add(handler.type)
+        for(element in instances)
+            if(element.state != IModule.State.ERROR)
+                element.load()
 
-        for (remove in remover)
-            instances.remove(remove)
-        remover.clear()
-
-        for (handler in instances.values
-            .asSequence()
-            .sortedBy { it.type.findAnnotation<Module>()!!.loadOrder })
-            if (!handler.enable())
-                remover.add(handler.type)
-
-        for (remove in remover)
-            instances.remove(remove)
+        for(element in instances)
+            if(element.state != IModule.State.ERROR)
+                element.enable()
     }
 
     override fun onShutdown() {
-        instances.values.toList().reversed().forEach { handler ->
-            handler.disable()
-        }
+        for(element in instances.reversed())
+            if(element.state != IModule.State.ERROR)
+                element.disable()
     }
 }

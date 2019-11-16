@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
 
-@Module(loadOrder = LoadOrder.API)
+@Module @LoadBefore([IModule::class])
 object CommandManager : AbstractModule(), TabExecutor {
     private val commandHolders: MutableSet<CommandHolder> = mutableSetOf()
     private val commandNames = LinkedList<String>()

@@ -14,7 +14,7 @@ import kotlin.reflect.full.findAnnotation
 val gson: Gson
     get() = GsonManager.gson
 
-@Module(LoadOrder.API - 1000)
+@Module @LoadBefore([IModule::class])
 object GsonManager : AbstractModule() {
     internal lateinit var gson: Gson
     override fun onLoad(context: MutablePropertyMap) {
