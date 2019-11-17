@@ -12,12 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.io.File
 
 /**
- * Internal logger used in spikot framework
- */
-@Suppress("unused")
-internal val logger = KotlinLogging.logger("Spikot")
-private val spikotLogger = logger
-/**
  * Spikot plugin instance used in spikot framework
  * @since 1.0.0
  * @author ReadyMadeProgrammer
@@ -33,6 +27,7 @@ internal lateinit var spikot: Spikot
 @Plugin(name = "Spikot", version = "4.0.0-SNAPSHOT")
 @Dependency(plugin = "ProtocolLib")
 class Spikot : SpikotPlugin() {
+    val spikotLogger = KotlinLogging.logger{}
     internal val enabled = HashSet<String>()
 
     override fun onLoad() {

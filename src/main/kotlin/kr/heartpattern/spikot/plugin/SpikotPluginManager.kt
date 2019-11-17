@@ -4,8 +4,8 @@ import com.github.salomonbrys.kotson.forEach
 import com.google.gson.JsonParser
 import kr.heartpattern.spikot.IBootstrap
 import kr.heartpattern.spikot.SpikotPlugin
-import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.utils.catchAll
+import mu.KotlinLogging
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -16,6 +16,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 object SpikotPluginManager : IBootstrap {
+    private val logger = KotlinLogging.logger {}
     val plugins = HashSet<PluginWrapper>()
     override fun onStartup() {
         Bukkit.getPluginManager().plugins.asSequence()

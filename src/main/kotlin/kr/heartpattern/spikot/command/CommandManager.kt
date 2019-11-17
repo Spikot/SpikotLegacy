@@ -3,10 +3,10 @@
 package kr.heartpattern.spikot.command
 
 import kr.heartpattern.spikot.SpikotPlugin
-import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.module.*
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
+import mu.KotlinLogging
 import org.bukkit.Bukkit
 import org.bukkit.command.*
 import org.bukkit.plugin.Plugin
@@ -16,7 +16,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.createInstance
 
-@Module @LoadBefore([IModule::class])
+@Module
+@LoadBefore([IModule::class])
 object CommandManager : AbstractModule(), TabExecutor {
     private val commandHolders: MutableSet<CommandHolder> = mutableSetOf()
     private val commandNames = LinkedList<String>()
@@ -29,17 +30,14 @@ object CommandManager : AbstractModule(), TabExecutor {
     override fun onEnable() {
         val field = Bukkit.getServer().javaClass.getDeclaredField("commandMap")
         field.isAccessible = true
-        val value = (field[Bukkit.getServer()] as? CommandMap) ?: throw IllegalStateException("Cannot extract command map")
+        val value = (field[Bukkit.getServer()] as? CommandMap)
+            ?: throw IllegalStateException("Cannot extract command map")
         field.isAccessible = false
         SpikotPluginManager.forEachAnnotation<RootCommand> { (kclass, plugin) ->
-            onDebug {
-                logger.info("Find command: ${kclass.simpleName}")
-            }
+            logger.debug("Find command: ${kclass.simpleName}")
             if (!kclass.canLoad()) return@forEachAnnotation
             logger.catchAll("Cannot register command: ${kclass.simpleName}") {
-                onDebug {
-                    logger.info("Process command: ${kclass.simpleName}")
-                }
+                logger.debug("Process command: ${kclass.simpleName}")
                 @Suppress("UNCHECKED_CAST")
                 val commandHolder = CommandHolder(kclass as KClass<out CommandHandler>)
                 val names = commandHolder.name.toMutableSet().apply { remove(commandHolder.name.first()) }
@@ -47,9 +45,7 @@ object CommandManager : AbstractModule(), TabExecutor {
                 command.executor = CommandManager
                 command.tabCompleter = CommandManager
                 command.aliases = names.toMutableList()
-                onDebug {
-                    logger.info("Register command: ${kclass.simpleName}")
-                }
+                logger.debug("Register command: ${kclass.simpleName}")
                 value.register(commandHolder.name.first(), command)
                 commandHolders += commandHolder
                 commandHolder.name.forEach { name ->
@@ -73,6 +69,11 @@ object CommandManager : AbstractModule(), TabExecutor {
 }
 
 class CommandHolder(private val commandHandler: KClass<out CommandHandler>) {
+    companion object {
+        @JvmStatic
+        private val logger = KotlinLogging.logger {}
+    }
+
     internal val name: Set<String>
     private val usage: String
     private val help: String

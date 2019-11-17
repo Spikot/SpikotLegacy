@@ -1,12 +1,12 @@
 package kr.heartpattern.spikot.module
 
 import kr.heartpattern.spikot.SpikotPlugin
-import kr.heartpattern.spikot.logger
 import kr.heartpattern.spikot.misc.AbstractMutableProperty
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.plugin.FindAnnotation
 import kr.heartpattern.spikot.utils.getInstance
 import kr.heartpattern.spikot.utils.nonnull
+import mu.KotlinLogging
 import kotlin.reflect.KClass
 
 /**
@@ -23,6 +23,10 @@ annotation class ModuleInterceptor(
  * Handle module's whole lifecycle
  */
 class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModule? = null) {
+    companion object{
+        @JvmStatic
+        private val logger = KotlinLogging.logger{}
+    }
     internal object MutableStateProperty : AbstractMutableProperty<IModule.State>(IModule.StateProperty)
     private object MutablePluginProperty: AbstractMutableProperty<SpikotPlugin>(IModule.PluginProperty)
 
@@ -45,9 +49,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
         private set
 
     init {
-        onDebug {
-            logger.debug { "Create module: ${type.simpleName}" }
-        }
+        logger.debug { "Create module: ${type.simpleName}" }
 
         state = try {
             context[MutablePluginProperty] = owner
@@ -105,7 +107,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
             logger.debug("${state.readable} module: ${type.simpleName}")
         }
         state = try {
-            logger.debug{}
+            logger.debug{"${next.readable} module: ${module!!.javaClass.simpleName}"}
             module!!.task()
 
             interceptors.forEach { interceptor ->
@@ -113,7 +115,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
             }
             next
         } catch (e: Throwable) {
-            logger.error(e) { "Error occur while ${state.readable} module: ${type.simpleName}" }
+            logger.error(e) { "Error occur while ${next.readable} module: ${type.simpleName}" }
             interceptors.forEach { interceptor ->
                 interceptor.onError(this, next, e)
             }

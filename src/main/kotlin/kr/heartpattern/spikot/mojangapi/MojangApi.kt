@@ -7,7 +7,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.salomonbrys.kotson.contains
 import com.github.salomonbrys.kotson.get
 import com.google.gson.JsonParser
-import kr.heartpattern.spikot.logger
+import mu.KotlinLogging
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.net.URL
@@ -18,6 +18,8 @@ import java.time.temporal.ChronoField
 import java.util.*
 
 private typealias Callback = (PlayerProfile) -> Unit
+
+private val logger = KotlinLogging.logger{}
 
 @Suppress("DEPRECATION")
 @Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile()"))

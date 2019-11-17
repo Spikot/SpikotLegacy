@@ -14,16 +14,12 @@ object ConfigManager : AbstractModule() {
     private lateinit var root: File
     override fun onEnable() {
         SpikotPluginManager.forEachAnnotation<Config> { (kclass, plugin) ->
-            onDebug {
-                logger.info("Find config: ${kclass.simpleName}")
-            }
+            logger.debug("Find config: ${kclass.simpleName}")
             if (!kclass.canLoad()) return@forEachAnnotation
             root = File(plugin.dataFolder, "config")
             root.mkdirs()
             logger.catchAll("Cannot load config: ${kclass.simpleName}") {
-                onDebug {
-                    logger.info("Load config: ${kclass.simpleName}")
-                }
+                logger.debug("Load config: ${kclass.simpleName}")
                 val obj = kclass.objectInstance as? ConfigSpec
                 val annotation = kclass.findAnnotation<Config>()
                 when {

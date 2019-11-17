@@ -4,6 +4,7 @@ import kr.heartpattern.spikot.plugin.FindAnnotation
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
 import kr.heartpattern.spikot.utils.getInstance
+import mu.KotlinLogging
 import kotlin.reflect.full.findAnnotation
 
 /**
@@ -39,6 +40,7 @@ interface IBootstrap {
  * Call bootstrap classes
  */
 internal object BootstrapManager : IBootstrap {
+    private val logger = KotlinLogging.logger{}
     private lateinit var instances: List<IBootstrap>
 
     override fun onStartup() {
@@ -55,14 +57,14 @@ internal object BootstrapManager : IBootstrap {
 
         for (instance in instances) {
             logger.catchAll("Cannot load bootstrap") {
-                logger.debug{"Load module ${instance::class.simpleName}"}
+                logger.debug{"Load bootstrap ${instance::class.simpleName}"}
                 instance.onLoad()
             }
         }
 
         for (instance in instances) {
             logger.catchAll("Cannot start bootstrap") {
-                logger.debug{"Enable module ${instance::class.simpleName}"}
+                logger.debug{"Enable bootstrap ${instance::class.simpleName}"}
                 instance.onStartup()
             }
         }
@@ -71,7 +73,7 @@ internal object BootstrapManager : IBootstrap {
     override fun onShutdown() {
         for (bootstrap in instances.reversed()) {
             logger.catchAll("Cannot shutdown bootstrap") {
-                logger.debug{"Shutdown module ${bootstrap::class.simpleName}"}
+                logger.debug{"Shutdown bootstrap ${bootstrap::class.simpleName}"}
                 bootstrap.onShutdown()
             }
         }

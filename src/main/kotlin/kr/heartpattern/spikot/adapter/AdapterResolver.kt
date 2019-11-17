@@ -14,8 +14,9 @@ import kotlin.reflect.full.isSubclassOf
 abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractModule() {
     private lateinit var handler: ModuleHandler
 
-    lateinit var default: T
-        private set
+    @Suppress("UNCHECKED_CAST")
+    val default: T
+        get() = handler.module as T
 
     @Suppress("UNCHECKED_CAST")
     override fun onLoad(context: MutablePropertyMap) {

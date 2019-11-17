@@ -70,7 +70,7 @@ abstract class AbstractModule : IModule {
     }
 
     protected val plugin: SpikotPlugin by contextDelegate(IModule.PluginProperty).nonnull()
-    protected val logger: KLogger by lazy { KotlinLogging.logger("${plugin.name}-${this::class.simpleName}") }
+    protected val logger: KLogger by lazy { KotlinLogging.logger(this@AbstractModule.javaClass.name) }
 
     protected fun file(name: String): File {
         return File(plugin.dataFolder, name)

@@ -22,14 +22,10 @@ object GsonManager : AbstractModule() {
         val gsonBuilder = Converters.registerAll(GsonBuilder())
             .setPrettyPrinting()
         SpikotPluginManager.forEachAnnotation<Serializer> { (kclass, _) ->
-            onDebug {
-                logger.info("Find serializer: ${kclass.simpleName}")
-            }
+            logger.debug("Find serializer: ${kclass.simpleName}")
             if (!kclass.canLoad()) return@forEachAnnotation
             logger.catchAll("Cannot create gson serializer: ${kclass.simpleName}") {
-                onDebug {
-                    logger.info("Register serializer: ${kclass.simpleName}")
-                }
+                logger.debug("Register serializer: ${kclass.simpleName}")
                 val instance = kclass.getInstance()
                 val type = (kclass.java.genericInterfaces[0] as ParameterizedType).actualTypeArguments[0] as Class<*>
                 if (kclass.findAnnotation<Serializer>()?.hierarchy == true) {

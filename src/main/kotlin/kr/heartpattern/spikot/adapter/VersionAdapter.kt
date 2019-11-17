@@ -14,7 +14,7 @@ import kotlin.reflect.full.findAnnotation
  * Annotate supported version
  */
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class SupportedVersion(
     val version: String,
     vararg val platform: String = []

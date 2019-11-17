@@ -44,7 +44,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     compile "io.github.microutils:kotlin-logging:1.5.4"
-    compile "ch.qos.logback:logback-classic:1.2.3"
     compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
     compile "com.github.ben-manes.caffeine:caffeine:2.6.2"
