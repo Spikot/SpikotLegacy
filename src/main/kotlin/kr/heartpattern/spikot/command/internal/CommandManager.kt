@@ -25,7 +25,7 @@ object CommandManager : AbstractModule() {
                 ?: throw IllegalStateException("Cannot extract command map")
         }
 
-        pluginCommandConstructor = PluginCommand::class.java.getConstructor(String::class.java, Plugin::class.java)
+        pluginCommandConstructor = PluginCommand::class.java.getDeclaredConstructor(String::class.java, Plugin::class.java)
         pluginCommandConstructor.isAccessible = true
     }
 
