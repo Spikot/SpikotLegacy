@@ -6,7 +6,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kr.heartpattern.spikot.command.CommandManager
 import kr.heartpattern.spikot.utils.plus
 import mu.KotlinLogging
 import org.bukkit.Bukkit
@@ -36,14 +35,6 @@ abstract class SpikotPlugin : JavaPlugin(), CoroutineScope by MainScope() {
 
     override fun onDisable() {
         cancel(CancellationException("Plugin shut down"))
-    }
-
-    final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        return CommandManager.onCommand(sender, command, label, args)
-    }
-
-    final override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String> {
-        return CommandManager.onTabComplete(sender, command, label, args)
     }
 
     open fun onCommandException(sender: CommandSender, command: Command, label: String, args: Array<String>, exception: Exception) {

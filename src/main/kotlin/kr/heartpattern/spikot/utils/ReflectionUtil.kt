@@ -1,5 +1,9 @@
 package kr.heartpattern.spikot.utils
 
+import java.lang.reflect.AccessibleObject
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KVisibility
@@ -22,4 +26,17 @@ fun <T : Any> KClass<T>.getInstance(): T? {
 
     }
     return this.objectInstance ?: createInstance()
+}
+
+inline fun <reified T : Annotation> KClass<*>.findAnnotations(): List<T> {
+    return annotations.filterIsInstance<T>()
+}
+
+@UseExperimental(ExperimentalContracts::class)
+inline fun <T : AccessibleObject> T.withAccessible(block: (T) -> Unit) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    val originalAccessibility = isAccessible
+    isAccessible = true
+    block(this)
+    isAccessible = originalAccessibility
 }

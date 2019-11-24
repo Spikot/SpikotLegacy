@@ -1,6 +1,10 @@
 package kr.heartpattern.spikot.command
 
-import org.bukkit.command.Command
+import kr.heartpattern.spikot.SpikotPlugin
 import org.bukkit.command.CommandSender
 
-data class CommandContext(val commandSender: CommandSender, val command: Command, val label: String, val args: List<String>)
+data class CommandContext(
+    val plugin: SpikotPlugin,
+    val sender: CommandSender,
+    val args: List<String>
+)
