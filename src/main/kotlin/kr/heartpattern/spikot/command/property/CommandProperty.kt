@@ -1,6 +1,6 @@
 package kr.heartpattern.spikot.command.property
 
-import kr.heartpattern.spikot.command.Command
+import kr.heartpattern.spikot.command.AbstractCommand
 import kr.heartpattern.spikot.command.CommandContext
 import kr.heartpattern.spikot.command.PropertyNotInitializedException
 import kr.heartpattern.spikot.command.ValidationException
@@ -10,17 +10,17 @@ import kr.heartpattern.spikot.misc.Option
 import java.util.*
 import kotlin.reflect.KProperty
 
-class CommandProperty<T>(val pos: Int, val value: CommandContext.() -> T) : TransformableProperty<T> {
+class CommandProperty<T>(val pos: Int, val value: TransformerContext.() -> T) : TransformableProperty<T> {
     private var cache: Option<T> = None
-    private val validators: MutableList<TransformerContext.(T) -> Boolean> = LinkedList()
+    private val validators: MutableList<CommandContext.(T) -> Boolean> = LinkedList()
     private val childs: MutableList<CommandProperty<*>> = LinkedList()
 
     internal fun initialize(context: CommandContext) {
         if (cache == None) {
-            val fetch = context.value()
             val transformerContext = TransformerContext(pos, context)
+            val fetch = transformerContext.value()
             for (validator in validators)
-                if (!transformerContext.validator(fetch))
+                if (!context.validator(fetch))
                     throw ValidationException(pos)
             cache = Just(fetch)
         }
@@ -32,17 +32,17 @@ class CommandProperty<T>(val pos: Int, val value: CommandContext.() -> T) : Tran
     override val isInitialized: Boolean
         get() = cache is Just<T>
 
-    override fun getValue(thisRef: Command, property: KProperty<*>): T {
-        return (cache as? Just<T>)?.value?: throw PropertyNotInitializedException(property)
+    override fun getValue(thisRef: AbstractCommand, property: KProperty<*>): T {
+        return (cache as? Just<T>)?.value ?: throw PropertyNotInitializedException(property)
     }
 
-    override fun <R> transform(transformer: CommandContext.(T) -> R): CommandProperty<R> {
+    override fun <R> transform(transformer: TransformerContext.(T) -> R): CommandProperty<R> {
         val child = CommandProperty<R>(pos) { transformer((cache as Just<T>).value) }
         childs += child
         return child
     }
 
-    override fun validate(validator: TransformerContext.(T) -> Boolean): CommandProperty<T> {
+    override fun validate(validator: CommandContext.(T) -> Boolean): CommandProperty<T> {
         validators += validator
         return this
     }
