@@ -10,8 +10,10 @@ abstract class Description {
     var name: Set<String> = emptySet()
     var usage: String = ""
     var help: String = ""
-    internal var childs: Set<CommandNode> = emptySet()
-    internal var completer: CommandContext.() -> List<String> = { emptyList() }
+    var childs: Set<CommandNode> = emptySet()
+        internal set
+    var completer: CommandContext.() -> List<String> = { emptyList() }
+        internal set
 
     constructor(initializer: Description.() -> Unit) {
         initializer()

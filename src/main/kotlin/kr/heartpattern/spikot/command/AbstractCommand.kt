@@ -1,14 +1,17 @@
 package kr.heartpattern.spikot.command
 
 import kr.heartpattern.spikot.SpikotPlugin
+import kr.heartpattern.spikot.command.dsl.Description
 import kr.heartpattern.spikot.command.property.CommandProperty
 import org.bukkit.command.CommandSender
 import java.util.*
+import kotlin.reflect.full.companionObjectInstance
 
 abstract class AbstractCommand {
     internal lateinit var context: CommandContext
     internal val properties = LinkedList<CommandProperty<*>>()
     val plugin: SpikotPlugin by lazy { context.plugin }
+    val description: Description = this::class.companionObjectInstance as Description
 
     fun sender(): CommandProperty<CommandSender> {
         val property = CommandProperty(-1) { context.sender }
