@@ -13,9 +13,9 @@ class CommandHandler(type: KClass<out AbstractCommand>) : AbstractCommandHandler
             for (property in instance.properties) {
                 property.initialize(context)
             }
+            instance.execute()
         } catch (exception: ValidationException) {
             //Ignore
         }
-        instance.execute()
     }
 }
