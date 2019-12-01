@@ -11,7 +11,6 @@ import kotlin.reflect.full.createInstance
 
 class SuspendCommandHandler(type: KClass<out AbstractCommand>) : AbstractCommandHandler(type) {
     private val companion = type.companionObjectInstance as Description
-    override val childs: Collection<CommandNode> = companion.childs
 
     override fun execute(context: CommandContext) {
         context.plugin.launch {

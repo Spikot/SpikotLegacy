@@ -10,7 +10,7 @@ abstract class Description {
     var name: Set<String> = emptySet()
     var usage: String = ""
     var help: String = ""
-    var childs: Set<CommandNode> = emptySet()
+    var childs: Set<KClass<out AbstractCommand>> = emptySet()
         internal set
     var completer: CommandContext.() -> List<String> = { emptyList() }
         internal set
@@ -23,7 +23,7 @@ abstract class Description {
         name = enclosingClass.findAnnotation<Name>()?.name?.toSet() ?: emptySet()
         usage = enclosingClass.findAnnotation<Usage>()?.usage ?: ""
         help = (enclosingClass.findAnnotation<Help>())?.help ?: ""
-        childs = (enclosingClass.findAnnotations<Child>()).map { it.child }.map { CommandNode(it) }.toSet()
+        childs = (enclosingClass.findAnnotations<Child>()).map { it.child }.toSet()
     }
 
     fun childs(builder: ChildBuilder.() -> Unit) {

@@ -5,7 +5,7 @@ import kr.heartpattern.spikot.command.CommandContext
 import kr.heartpattern.spikot.command.internal.handler.AbstractCommandHandler
 import kotlin.reflect.KClass
 
-class CommandNode(
+internal class CommandNode(
     val handler: AbstractCommandHandler
 ) {
     companion object {
