@@ -14,4 +14,4 @@ annotation class Serializer(
     val hierarchy: Boolean = true
 )
 
-interface GsonSerializer<T> : JsonSerializer<T>, JsonDeserializer<T>, InstanceCreator<T>
+interface GsonSerializer<T> : JsonSerializer<T>, JsonDeserializer<T>
