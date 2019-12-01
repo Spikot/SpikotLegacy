@@ -24,7 +24,7 @@ abstract class AbstractCommandHandler(val type: KClass<out AbstractCommand>) {
 
     open val names: Collection<String> = companion.name
 
-    internal open val childs: Collection<CommandNode> = companion.childs.map{CommandNode(it)}
+    internal open val childs: Collection<CommandNode> = companion.childClasses.map{CommandNode(it)}
 
     private val childNames
         get() = childs.asSequence().flatMap { it.handler.names.asSequence() }
