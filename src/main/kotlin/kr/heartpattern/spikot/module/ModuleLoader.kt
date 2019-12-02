@@ -102,7 +102,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      * @return Whether step is success
      */
     private inline fun performStep(previous: IModule.State, next: IModule.State, task: IModule.() -> Unit, intercept: IModuleInterceptor.(ModuleHandler) -> Unit): Boolean {
-        check(state == previous) { "Module is already $next" }
+        check(state == previous) { "Module should be $previous, but $state" }
         onDebug {
             logger.debug("${state.readable} module: ${type.simpleName}")
         }
