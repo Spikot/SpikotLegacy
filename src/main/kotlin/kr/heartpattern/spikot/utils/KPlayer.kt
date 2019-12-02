@@ -9,7 +9,12 @@ import kr.heartpattern.spikot.misc.MutableProperty
 import kr.heartpattern.spikot.misc.Property
 import org.bukkit.entity.Player
 
-operator fun <T> Player.get(property: Property<T>): T? = PlayerPropertyAdapter.get(this, property)
+operator fun <T> Player.get(property: Property<T>): T? =
+    if (PlayerPropertyAdapter.contains(this, property))
+        PlayerPropertyAdapter.get(this, property)
+    else
+        null
+
 operator fun Player.get(property: FlagProperty): Boolean = PlayerPropertyAdapter.contains(this, property)
 operator fun <T> Player.set(property: MutableProperty<T>, value: T?) = PlayerPropertyAdapter.set(this, property, value)
 operator fun Player.set(property: MutableFlagProperty, value: Boolean) {
