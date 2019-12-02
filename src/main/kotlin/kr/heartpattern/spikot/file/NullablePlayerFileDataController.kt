@@ -11,12 +11,16 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.util.*
-import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 open class NullablePlayerFileDataController<V : Any> : FileDataController(), MutableMap<UUID, V> {
-    private val valueType: KClass<V> = TypeResolver.resolveRawArgument(NullablePlayerFileDataController::class.java, this::class.java).kotlin as KClass<V>
+    private val valueType: Type = (TypeResolver.resolveGenericType(
+        NullablePlayerFileDataController::class.java,
+        this::class.java
+    ) as ParameterizedType).actualTypeArguments[0]
     protected val map: HashMap<UUID, V> = HashMap()
 
     override fun onLoad(context: MutablePropertyMap) {
@@ -39,7 +43,7 @@ open class NullablePlayerFileDataController<V : Any> : FileDataController(), Mut
         return if (file.exists()) {
             try {
                 FileReader(file).use { reader ->
-                    gson.fromJson(reader, valueType.java) as V
+                    gson.fromJson<V>(reader, valueType)
                 }
             } catch (e: Exception) {
                 logger.error(e) { "Cannot load player file data: $key" }
@@ -58,7 +62,7 @@ open class NullablePlayerFileDataController<V : Any> : FileDataController(), Mut
         try {
             file.createNewFile()
             FileWriter(file).use { writer ->
-                gson.toJson(value, valueType.java, writer)
+                gson.toJson(value, valueType, writer)
             }
         } catch (e: Exception) {
             logger.error(e) { "Error occured while saving player data: $key" }
@@ -66,19 +70,19 @@ open class NullablePlayerFileDataController<V : Any> : FileDataController(), Mut
     }
 
     @EventHandler
-    private fun onPlayerJoin(event: PlayerJoinEvent) {
+    fun PlayerJoinEvent.onPlayerJoin() {
         plugin.runAsync {
-            val v = load(event.player.uniqueId)
+            val v = load(player.uniqueId)
             if (v != null) {
-                map[event.player.uniqueId] = v
+                map[player.uniqueId] = v
             }
         }
     }
 
     @EventHandler
-    private fun onPlayerQuit(event: PlayerQuitEvent) {
+    fun PlayerQuitEvent.onPlayerQuit() {
         plugin.runAsync {
-            save(event.player.uniqueId, map[event.player.uniqueId])
+            save(player.uniqueId, map[player.uniqueId])
         }
     }
 

@@ -12,13 +12,15 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 @Suppress("UNCHECKED_CAST")
 open class PlayerFileDataController<V : Any>(protected val constructor: (UUID) -> V) : FileDataController(), Map<UUID, V> {
-    private val valueType: KClass<V> = TypeResolver.resolveRawArgument(PlayerFileDataController::class.java, this::class.java).kotlin as KClass<V>
+    private val valueType: Type = (TypeResolver.resolveGenericType(PlayerFileDataController::class.java, this::class.java) as ParameterizedType).actualTypeArguments[0]
     protected val map: HashMap<UUID, V> = HashMap()
 
     constructor(type: KClass<V>) : this({ type.createInstance() })
@@ -42,10 +44,9 @@ open class PlayerFileDataController<V : Any>(protected val constructor: (UUID) -
             constructor(key)
         } else {
             try {
-                val reader = FileReader(file)
-                val r = gson.fromJson(reader, valueType.java) as V
-                reader.close()
-                r
+                FileReader(file).use { reader ->
+                    gson.fromJson(reader, valueType) as V
+                }
             } catch (e: Exception) {
                 logger.error(e) { "Cannot load player file data: $key" }
                 constructor(key)
@@ -58,7 +59,7 @@ open class PlayerFileDataController<V : Any>(protected val constructor: (UUID) -
         try {
             file.createNewFile()
             FileWriter(file).use { writer ->
-                gson.toJson(value, valueType.java, writer)
+                gson.toJson(value, valueType, writer)
             }
         } catch (e: Exception) {
             logger.error(e) { "Cannot save player file data: $key" }
@@ -84,17 +85,18 @@ open class PlayerFileDataController<V : Any>(protected val constructor: (UUID) -
     }
 
     @EventHandler
-    private fun onPlayerJoin(event: PlayerJoinEvent) {
+    fun PlayerJoinEvent.onPlayerJoin() {
         plugin.runAsync {
-            val v = load(event.player.uniqueId)
-            map[event.player.uniqueId] = v
+            val v = load(player.uniqueId)
+            map[player.uniqueId] = v
         }
     }
 
     @EventHandler
-    private fun onPlayerQuit(event: PlayerQuitEvent) {
+    fun PlayerQuitEvent.onPlayerQuit() {
         plugin.runAsync {
-            save(event.player.uniqueId, map[event.player.uniqueId])
+            save(player.uniqueId, map[player.uniqueId])
+            map.remove(player.uniqueId)
         }
     }
 

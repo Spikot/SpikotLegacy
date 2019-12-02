@@ -8,8 +8,9 @@ import net.jodah.typetools.TypeResolver
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.util.*
-import kotlin.reflect.KClass
 
 open class IntKeyFileDataController<V : Any> : KeyFileDataController<Int, V>(StringConverter.INT)
 
@@ -19,14 +20,14 @@ open class UUIDKeyFileDataController<V : Any> : KeyFileDataController<UUID, V>(S
 
 @Suppress("UNCHECKED_CAST")
 open class KeyFileDataController<K : Any, V : Any>(protected val keySerializer: StringConverter<K>) : FileDataController(), MutableMap<K, V> {
-    private val keyType: KClass<K>
-    private val valueType: KClass<V>
+    private val keyType: Type
+    private val valueType: Type
     protected val value = HashMap<K, V>()
 
     init {
-        val generic = TypeResolver.resolveRawArguments(KeyFileDataController::class.java, this::class.java)
-        keyType = generic[0].kotlin as KClass<K>
-        valueType = generic[1].kotlin as KClass<V>
+        val generic = TypeResolver.resolveGenericType(KeyFileDataController::class.java, this::class.java) as ParameterizedType
+        keyType = generic.actualTypeArguments[0]
+        valueType = generic.actualTypeArguments[1]
     }
 
     override fun onLoad(context: MutablePropertyMap) {
@@ -36,7 +37,7 @@ open class KeyFileDataController<K : Any, V : Any>(protected val keySerializer: 
                 logger.catchAll("Cannot load key data file: $file") {
                     val key = keySerializer.read(file.name.substring(0 until file.name.length - 5))
                     val reader = FileReader(file)
-                    val value = gson.fromJson(reader, valueType.java)
+                    val value = gson.fromJson<V>(reader, valueType)
                     reader.close()
                     this.value[key] = value as V
                 }
@@ -50,7 +51,7 @@ open class KeyFileDataController<K : Any, V : Any>(protected val keySerializer: 
             logger.catchAll("Cannot save key data file: $key") {
                 file.createNewFile()
                 val writer = FileWriter(file)
-                gson.toJson(value, valueType.java, writer)
+                gson.toJson(value, valueType, writer)
                 writer.flush()
                 writer.close()
             }
