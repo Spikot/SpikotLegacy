@@ -6,11 +6,6 @@ pipeline{
     }
 
     stages{
-        stage('clone'){
-            steps{
-                checkout scm
-            }
-        }
         stage('test'){
             steps{
                 sh './gradlew -PnexusUser=${MAVEN_CREDENTIAL_USR} -PnexusPassword=${MAVEN_CREDENTIAL_PSW} clean test'
@@ -25,6 +20,11 @@ pipeline{
             steps{
                 sh './gradlew -PnexusUser=${MAVEN_CREDENTIAL_USR} -PnexusPassword=${MAVEN_CREDENTIAL_PSW} publish'
             }
+        }
+    }
+    post{
+        always{
+            archiveArtifacts artifacts: 'build/libs/Spikot-Plugin.jar'
         }
     }
 }

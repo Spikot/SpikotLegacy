@@ -77,7 +77,7 @@ configurations {
 }
 
 task createPlugin(type: Jar) {
-    baseName 'Spikot-shaded'
+    archiveName 'Spikot-Plugin.jar'
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
