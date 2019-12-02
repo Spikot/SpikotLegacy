@@ -8,7 +8,8 @@ def kotlin_version = '1.3.50'
 def coroutine_version = '1.3.0-M2'
 def paper_version = '1.12.2-R0.1-SNAPSHOT'
 
-apply from: 'local.gradle'
+if (new File('local.gradle').exists())
+    apply from: 'local.gradle'
 
 group 'kr.heartpattern'
 version '4.0.0-SNAPSHOT'
@@ -31,7 +32,7 @@ compileKotlin {
     }
 }
 
-sourceSets{
+sourceSets {
     main.java.srcDirs += 'src/main/java'
     main.kotlin.srcDirs += 'src/main/kotlin'
     main.resources.srcDirs += 'src/main/resources'
