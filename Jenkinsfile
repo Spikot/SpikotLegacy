@@ -24,7 +24,7 @@ pipeline{
     }
     post{
         always{
-            archiveArtifacts artifacts: 'build/libs/SpikotPlugin.jar'
+            archiveArtifacts artifacts: 'build/libs/Spikot-Plugin.jar'
         }
     }
 }
