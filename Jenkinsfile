@@ -21,7 +21,7 @@ node{
         }
         stage('publish'){
             steps{
-                sh './gradlew publish -PnexusUser=$MAVEN_CREDENTIAL_USR -PnexusPassword=$MAVEN_CREDENTIAL_PSW'
+                sh './gradlew -PnexusUser=$MAVEN_CREDENTIAL_USR -PnexusPassword=$MAVEN_CREDENTIAL_PSW publish'
             }
         }
     }
