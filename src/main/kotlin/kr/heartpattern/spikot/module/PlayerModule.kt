@@ -25,6 +25,7 @@ open class PlayerModuleController<T : AbstractPlayerModule>(
     fun PlayerJoinEvent.onJoin() {
         val moduleHandler = ModuleManager.createModule(type, plugin)
         (moduleHandler.module as AbstractPlayerModule).player = player
+        moduleHandler.load()
         if (moduleHandler.enable())
             table[player.uniqueId] = moduleHandler
     }
