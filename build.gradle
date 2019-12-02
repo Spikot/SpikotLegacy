@@ -8,8 +8,8 @@ def kotlin_version = '1.3.50'
 def coroutine_version = '1.3.0-M2'
 def paper_version = '1.12.2-R0.1-SNAPSHOT'
 
-def nexus_user = project.hasProperty('nexusUser') ? nexusUser : getProperty('nexusUser')
-def nexus_password = project.hasProperty('nexusPassword') ? nexusPassword : getProperty('nexusPassword')
+def nexus_user = project.hasProperty('nexusUser') ? getProperty('nexusUser') : nexusUser
+def nexus_password = project.hasProperty('nexusPassword') ? getProperty('nexusPassword') : nexusPassword
 
 if (new File('local.gradle').exists())
     apply from: 'local.gradle'
