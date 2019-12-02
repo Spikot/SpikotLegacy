@@ -1,6 +1,7 @@
 package kr.heartpattern.spikot.module
 
 import com.google.common.collect.HashMultimap
+import kr.heartpattern.spikot.spikot
 import java.util.*
 import java.util.concurrent.atomic.LongAdder
 import kotlin.collections.HashMap
@@ -79,7 +80,14 @@ internal fun sortModuleDependencies(modules: List<KClass<*>>): List<KClass<*>> {
         }
     }
 
-    check(result.size == modules.size + 2) { "Circular module dependency found" }
+    if(result.size != modules.size + 2) {
+        val diff = modules.filterNot{result.contains(it)}
+        spikot.logger.error("Circular module dependency found. Following module produce conflict")
+        for(module in diff){
+            spikot.logger.error(module.qualifiedName)
+        }
+        throw IllegalArgumentException("Circular module dependency found")
+    }
 
     return result.filter { it != BeginModule::class && it != EndModule::class }
 }
