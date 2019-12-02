@@ -86,7 +86,7 @@ internal fun sortModuleDependencies(modules: List<KClass<*>>): List<KClass<*>> {
         for(module in diff){
             spikot.logger.error(module.qualifiedName)
         }
-        throw IllegalArgumentException("Circular module dependency found")
+        throw IllegalStateException("Circular module dependency found")
     }
 
     return result.filter { it != BeginModule::class && it != EndModule::class }

@@ -3,27 +3,48 @@ package io.github.ReadyMadeProgrammer
 import kr.heartpattern.spikot.module.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import java.lang.IllegalStateException
 import kotlin.test.assertEquals
 
-@Module @LoadBefore([IModule::class, FirstMiddleModule::class]) class FirstFirstModule: AbstractModule()
-@Module @LoadBefore([IModule::class]) class FirstMiddleModule: AbstractModule()
-@Module(depend=[FirstMiddleModule::class]) @LoadBefore([IModule::class]) class FirstLastModule: AbstractModule()
+@Module
+@LoadBefore([IModule::class, FirstMiddleModule::class])
+class FirstFirstModule : AbstractModule()
 
-@Module @LoadBefore([MiddleMiddleModule::class])class MiddleFirstModule: AbstractModule()
-@Module class MiddleMiddleModule: AbstractModule()
-@Module(depend=[MiddleMiddleModule::class]) class MiddleLastModule: AbstractModule()
+@Module
+@LoadBefore([IModule::class])
+class FirstMiddleModule : AbstractModule()
 
-@Module(depend = [IModule::class]) @LoadBefore([LastMiddleModule::class]) class LastFirstModule: AbstractModule()
-@Module(depend = [IModule::class]) class LastMiddleModule: AbstractModule()
-@Module(depend = [IModule::class, LastMiddleModule::class]) class LastLastModule: AbstractModule()
+@Module(depend = [FirstMiddleModule::class])
+@LoadBefore([IModule::class])
+class FirstLastModule : AbstractModule()
 
-@Module(depend = [MiddleLastModule::class]) @LoadBefore([MiddleFirstModule::class]) class CircularModule: AbstractModule()
+@Module
+@LoadBefore([MiddleMiddleModule::class])
+class MiddleFirstModule : AbstractModule()
+
+@Module
+class MiddleMiddleModule : AbstractModule()
+
+@Module(depend = [MiddleMiddleModule::class])
+class MiddleLastModule : AbstractModule()
+
+@Module(depend = [IModule::class])
+@LoadBefore([LastMiddleModule::class])
+class LastFirstModule : AbstractModule()
+
+@Module(depend = [IModule::class])
+class LastMiddleModule : AbstractModule()
+
+@Module(depend = [IModule::class, LastMiddleModule::class])
+class LastLastModule : AbstractModule()
+
+@Module(depend = [MiddleLastModule::class])
+@LoadBefore([MiddleFirstModule::class])
+class CircularModule : AbstractModule()
 
 
-class ModuleSorterTest{
+class ModuleSorterTest {
     @Test
-    fun successTest(){
+    fun successTest() {
         val sorted = sortModuleDependencies(listOf(
             LastLastModule::class,
             MiddleMiddleModule::class,
@@ -53,8 +74,9 @@ class ModuleSorterTest{
     }
 
     @Test
-    fun failTest(){
-        assertThrows(IllegalStateException::class.java){
+    fun failTest() {
+        assertThrows(UninitializedPropertyAccessException::class.java) {
+            // Access to spikot(to show error message) produce this.
             sortModuleDependencies(listOf(
                 LastLastModule::class,
                 MiddleMiddleModule::class,
