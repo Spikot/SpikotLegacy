@@ -12,7 +12,8 @@ import org.bukkit.plugin.RegisteredListener
 inline fun <reified T : Event> Plugin.subscribe(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = true,
-    crossinline executable: SelfCancellableEventListener.(T) -> Unit) {
+    crossinline executable: SelfCancellableEventListener.(T) -> Unit
+) {
     val handler = T::class.java.getDeclaredMethod("getHandlerList").invoke(null) as HandlerList
     val listener = object : SelfCancellableEventListener {
         override fun cancel() {
