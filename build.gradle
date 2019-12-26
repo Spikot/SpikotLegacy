@@ -90,12 +90,12 @@ task createDokkaArchive(type: Zip){
     archiveFileName = "Spikot-kdoc.zip"
     destinationDirectory = file("./build/libs/")
 
-    from "./kdoc"
+    from "./build/kdoc"
 }
 
 dokka{
     outputFormat = 'html'
-    outputDirectory = 'kdoc/dokka'
+    outputDirectory = './build/kdoc/'
     configuration{
         externalDocumentationLink{
             url = new URL("https://hub.spigotmc.org/javadocs/spigot/")
