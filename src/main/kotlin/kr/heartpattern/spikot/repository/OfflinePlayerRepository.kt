@@ -72,7 +72,7 @@ abstract class OfflinePlayerRepository<V : Any>(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun PlayerQuitEvent.onQuit() {
-        offlineStorage.put(player.uniqueId, onlineStorage[player.uniqueId])
+        offlineStorage.put(player.uniqueId, onlineStorage[player.uniqueId]!!)
         onlineStorage.remove(player.uniqueId)
     }
 

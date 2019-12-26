@@ -32,7 +32,7 @@ class FileStorage<K, V>(
     override suspend fun getAllKeys(): Collection<K> {
         return withContext(Dispatchers.IO) {
             directory
-                .listFiles { dir, name -> name.endsWith(".json") }!!
+                .listFiles { _, name -> name.endsWith(".json") }!!
                 .map {
                     deserialize(keySerializer, it.name)
                 }

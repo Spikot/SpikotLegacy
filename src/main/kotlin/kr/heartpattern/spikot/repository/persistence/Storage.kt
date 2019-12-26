@@ -51,9 +51,7 @@ interface Storage<K, V> {
     suspend fun loadAll(keys: Collection<K>): Map<K, Option<V>> {
         val result = HashMap<K, Option<V>>()
         for (key in keys) {
-            val loaded = load(key)
-            if (loaded != null)
-                result[key] = loaded
+            result[key] = load(key)
         }
         return result
     }

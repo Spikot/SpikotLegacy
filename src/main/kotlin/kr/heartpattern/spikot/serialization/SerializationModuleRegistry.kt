@@ -33,11 +33,11 @@ object SerializationModuleRegistry : AbstractModule() {
 
     override fun onEnable() {
         serializationModule = SerializersModule {
-            SpikotPluginManager.forEachAnnotation<SerializationModule> { (type, plugin, _) ->
+            SpikotPluginManager.forEachAnnotation<SerializationModule> { (type, _, _) ->
                 include(type.getInstance() as SerialModule)
             }
         }
 
-        jsonSerializer = Json(JsonConfiguration.Default, serializationModule)
+        jsonSerializer = Json(JsonConfiguration.Stable, serializationModule)
     }
 }
