@@ -6,6 +6,12 @@ import org.bukkit.Material
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
+/**
+ * Check all of given [items] can be added into inventory
+ * @receiver Inventory to check
+ * @param items Collection of items to check
+ * @return true if all of item can be added, false if any of item cannot be added.
+ */
 fun Inventory.canGive(items: Collection<ItemStack>): Boolean {
     class ItemPair(val item: ItemStack, var count: Int)
 
@@ -66,6 +72,12 @@ fun Inventory.canGive(items: Collection<ItemStack>): Boolean {
     return emptySlot >= requiredSlot
 }
 
+/**
+ * Give all of item or none of item
+ * @receiver Inventory to add item
+ * @param item Collection of item to give
+ * @return Whether add is succeed
+ */
 fun Inventory.giveAll(item: Collection<ItemStack>): Boolean {
     return if (canGive(item)) {
         addItem(*item.toTypedArray())

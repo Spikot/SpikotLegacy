@@ -17,9 +17,9 @@ import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Entry point of plugin which use Spikot Framework.
- * Plugin lifecycle is managed by spikot so developer should not override any of method in JavaPlugin
+ * Plugin lifecycle is managed by spikot, therefore developer should not override any of method in JavaPlugin.
  * Developer should define their plugin main class like this.
- * class PluginMain: Spikot()
+ * class PluginMain: SpikotPlugin()
  */
 abstract class SpikotPlugin : JavaPlugin(), CoroutineScope by MainScope() {
     val logger = KotlinLogging.logger("plugin-${name}")

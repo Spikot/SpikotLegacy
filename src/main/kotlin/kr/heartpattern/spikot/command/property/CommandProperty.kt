@@ -10,7 +10,10 @@ import kr.heartpattern.spikot.misc.Option
 import java.util.*
 import kotlin.reflect.KProperty
 
-class CommandProperty<T>(val pos: Int, val value: TransformerContext.() -> T) : TransformableProperty<T> {
+/**
+ * Command property which represent some information of command
+ */
+class CommandProperty<T> internal constructor(val pos: Int, val value: TransformerContext.() -> T) : TransformableProperty<T> {
     private var cache: Option<T> = None
     private val validators: MutableList<CommandContext.(T) -> Boolean> = LinkedList()
     private val childs: MutableList<CommandProperty<*>> = LinkedList()

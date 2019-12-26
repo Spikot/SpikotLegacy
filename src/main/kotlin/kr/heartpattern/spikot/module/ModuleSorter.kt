@@ -8,7 +8,6 @@ import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-
 private object BeginModule : AbstractModule()
 private object EndModule : AbstractModule()
 

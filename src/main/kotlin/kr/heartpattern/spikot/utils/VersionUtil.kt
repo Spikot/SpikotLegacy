@@ -10,6 +10,15 @@ import java.util.regex.Pattern
 private val versionIntervalRegex = Pattern.compile("(([(\\[])(\\S+))?(\\s*~\\s*)((\\S+)([)\\]]))?")
 private val nmsVersionRegex = Pattern.compile("org\\.bukkit\\.craftbukkit\\.v(S+)")
 
+/**
+ * Parse version interval. Version interval can be both-side-bounded or one-side-bounded.
+ * Example of both-side-bounded version interval is "[1.5.2 ~ 1.12.2)" which means equals or large than 1.5.2, less than
+ * 1.12.2
+ * Example of one-side-bounded version interval is "(1.5.2 ~ " which means large than 1.5.2, or "~ 1.12.2]" which means
+ * equals or less than 1.12.2
+ * @param version Version interval string
+ * @return Parsed version interval
+ */
 fun parseVersionInterval(version: String): Interval<SemVer> {
     if (version == "all")
         return Interval(UnboundInterval.NegativeInfinite(), UnboundInterval.PositiveInfinite())
@@ -33,6 +42,9 @@ fun parseVersionInterval(version: String): Interval<SemVer> {
     return Interval(startVersion, endVersion)
 }
 
+/**
+ * NMS version of server
+ */
 val Server.NMSVersion: String
     get() {
         val server = this::class.java
@@ -41,12 +53,21 @@ val Server.NMSVersion: String
         return matcher.group(1)
     }
 
+/**
+ * Minecraft version of server in SemVer format
+ */
 val Server.minecraftSemVer: SemVer
     get() = SemVer.parse(version)
 
+/**
+ * Bukkit version of server in SemVer format
+ */
 val Server.bukkitSemVer: SemVer
     get() = SemVer.parse(bukkitVersion)
 
+/**
+ * NMS version of server in SemVer format
+ */
 val Server.NMSSemVer: SemVer
     get() {
         val version = NMSVersion

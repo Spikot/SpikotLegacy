@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 @Module @LoadBefore([IModule::class])
-object ConfigManager : AbstractModule() {
+internal object ConfigManager : AbstractModule() {
     private lateinit var root: File
     override fun onEnable() {
         SpikotPluginManager.forEachAnnotation<Config> { (kclass, plugin) ->

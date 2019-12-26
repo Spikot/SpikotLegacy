@@ -27,6 +27,11 @@ internal object MenuBuilderProperty : MutableProperty<MenuBuilder>
 internal object MenuInventoryProperty : MutableProperty<Inventory>
 internal object MenuOpenProperty : MutableFlagProperty
 
+/**
+ * Open inventory safely. Can be used in inventory event.
+ * @receiver Player to open inventory
+ * @param inventory Inventory to open
+ */
 fun Player.safeOpenInventory(inventory: Inventory) {
     spikot.runNextSync {
         if (!player.isOnline) return@runNextSync
@@ -34,6 +39,10 @@ fun Player.safeOpenInventory(inventory: Inventory) {
     }
 }
 
+/**
+ * Close inventory safely. Can be used in inventory event
+ * @receiver Player to close inventory
+ */
 fun Player.safeCloseInventory() {
     spikot.runNextSync {
         if (!player.isOnline) return@runNextSync
@@ -41,6 +50,12 @@ fun Player.safeCloseInventory() {
     }
 }
 
+/**
+ * Open inventory with given menu provider
+ * @receiver Player to open inventory
+ * @param plugin Plugin to handle menu
+ * @param menuProvider MenuProvider which handle menu
+ */
 fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
     val handler = ModuleManager.createModule(menuProvider, plugin)
     val builder = MenuBuilder()
@@ -64,6 +79,9 @@ fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
     player.safeOpenInventory(inventory)
 }
 
+/**
+ * MenuProvider which manage this inventory. Return null if inventory does not managed by menu provider
+ */
 val Inventory.menuProvider: MenuProvider?
     get() {
         return if (title.hasInvisible()) {
@@ -72,6 +90,17 @@ val Inventory.menuProvider: MenuProvider?
             null
         }
     }
+
+/**
+ * Get MenuProvider this player currently open. Return null if player does not open MenuProvider
+ * @receiver Player to get current MenuProvider
+ * @param T Type of MenuProvider
+ */
+inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
+    val title = player.openInventory.topInventory?.title
+    if (title.isNullOrBlank() || !title.hasInvisible()) return null
+    return MenuManager.openedInventory[title.findInvisible()] as? T
+}
 
 @Module @LoadBefore([IModule::class])
 @PublishedApi
@@ -133,10 +162,4 @@ internal object MenuManager : AbstractModule() {
             handler.disable()
         }
     }
-}
-
-inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
-    val title = player.openInventory.topInventory?.title
-    if (title.isNullOrBlank() || !title.hasInvisible()) return null
-    return MenuManager.openedInventory[title.findInvisible()] as? T
 }

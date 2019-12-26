@@ -12,6 +12,8 @@ import kotlin.reflect.full.findAnnotation
 
 /**
  * Annotate supported version
+ * @param version Target version. Version is written like (1.5.2 ~ 1.12.2] or ~ 1.5.2).
+ * @param platform Target platform. Platform is string that can be obtained by Bukkit.getServer().getPlatform()
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -21,7 +23,7 @@ annotation class SupportedVersion(
 )
 
 /**
- * Type of version in bukkit
+ * Type of version
  */
 enum class VersionType {
     MINECRAFT,

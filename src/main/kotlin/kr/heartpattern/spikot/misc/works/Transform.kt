@@ -1,5 +1,8 @@
 package kr.heartpattern.spikot.misc.works
 
+/**
+ * Represent transformed value
+ */
 interface Transform<T, U> {
     companion object {
         operator fun <T, U> invoke(before: T, after: U): Transform<T, U> {
@@ -13,6 +16,9 @@ interface Transform<T, U> {
     data class SimpleTransform<T, U>(override val before: T, override val after: U) : Transform<T, U>
 }
 
+/**
+ * Represent transformed value which after value is mutable
+ */
 interface MutableTransform<T, U> : Transform<T, U> {
     companion object {
         operator fun <T, U> invoke(before: T, after: U): MutableTransform<T, U> {

@@ -15,9 +15,13 @@ import kotlin.collections.HashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
+/**
+ * Manage all spikot plugin
+ */
 object SpikotPluginManager : IBootstrap {
     private val logger = KotlinLogging.logger {}
-    val plugins = HashSet<PluginWrapper>()
+    @PublishedApi
+    internal val plugins = HashSet<PluginWrapper>()
     override fun onStartup() {
         Bukkit.getPluginManager().plugins.asSequence()
             .filter { it is SpikotPlugin }
@@ -54,21 +58,37 @@ object SpikotPluginManager : IBootstrap {
             }
     }
 
+    /**
+     * Iterate all class annotated with T. T should be annotated with FindAnnotation annotation
+     * @param T Annotation to find
+     * @param block Consumer
+     */
     inline fun <reified T : Annotation> forEachAnnotation(block: (AnnotatedClass<T>) -> Unit) {
         forEachAnnotation(T::class, block)
     }
 
-    inline fun <reified T : Annotation> forEachAnnotation(type: KClass<T>, block: (AnnotatedClass<T>) -> Unit) {
+    /**
+     * Iterate all class annotated with T. T should be annotated with FindAnnotation annotation
+     * @param type Annotation to find
+     * @param block Consumer
+     */
+    inline fun <T : Annotation> forEachAnnotation(type: KClass<T>, block: (AnnotatedClass<T>) -> Unit) {
         for (plugin in plugins) {
             val classes = plugin.classes[type]
             if (classes != null) {
                 for (clazz in classes) {
-                    block(AnnotatedClass(clazz, plugin.plugin, clazz.findAnnotation()!!))
+                    @Suppress("UNCHECKED_CAST")
+                    block(AnnotatedClass(clazz, plugin.plugin, clazz.annotations.first{type.isInstance(it)} as T))
                 }
             }
         }
     }
 
+    /**
+     * Return iterator of all class annotated with T. T should be annotated with FindAnnotation annotation
+     * @param T Annotation to find
+     * @return Iterator of all class annotated with T
+     */
     inline fun <reified T : Annotation> annotationIterator(): Iterator<AnnotatedClass<T>> {
         val list = LinkedList<AnnotatedClass<T>>()
         forEachAnnotation<T> { annotatedClass ->
@@ -78,6 +98,12 @@ object SpikotPluginManager : IBootstrap {
     }
 }
 
+/**
+ * Class information annotated with T
+ * @param type Class annotated with T
+ * @param plugin Plugin that owing [type] class
+ * @param annotation Annotation instance
+ */
 data class AnnotatedClass<T>(
     val type: KClass<*>,
     val plugin: SpikotPlugin,

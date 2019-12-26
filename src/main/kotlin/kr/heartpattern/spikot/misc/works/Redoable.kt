@@ -3,11 +3,11 @@
 package kr.heartpattern.spikot.misc.works
 
 /**
- * Represent redoable work
+ * Represent redo-able single work
  */
 interface Redoable : Undoable {
     /**
-     * Whether this work is redoable.
+     * Whether this work is currently redo-able.
      */
     val isRedoable: Boolean
 
@@ -15,9 +15,13 @@ interface Redoable : Undoable {
      * Redo this work
      * @throws IllegalStateException if work is already redo.
      */
+    @Throws(IllegalStateException::class)
     fun redo()
 }
 
+/**
+ * Partially implemented redo-able single work
+ */
 abstract class AbstractRedoable : AbstractUndoable(), Redoable {
     final override val isRedoable: Boolean
         get() = isUndoed

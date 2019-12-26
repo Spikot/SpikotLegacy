@@ -1,10 +1,23 @@
 package kr.heartpattern.spikot.misc.works
 
+/**
+ * Represent undo-able single work
+ */
 interface Undoable {
+    /**
+     * Whether this task is currently undo-able
+     */
     val isUndoable: Boolean
+
+    /**
+     * Perform undo
+     */
     fun undo()
 }
 
+/**
+ * Partially implemented undo-able single work
+ */
 abstract class AbstractUndoable : Undoable {
     internal var isUndoed = false
     final override val isUndoable: Boolean

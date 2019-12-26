@@ -4,11 +4,25 @@ package kr.heartpattern.spikot.misc.works
 
 import java.util.*
 
+/**
+ * Stack of redo-able tasks
+ * @param T Type of redo-able task
+ */
 interface RedoStack<T : Redoable> : UndoStack<T> {
+    /**
+     * Whether there are any redo-able task
+     */
     val isRedoable: Boolean
+
+    /**
+     * Perform redo
+     */
     fun redo()
 }
 
+/**
+ * Simple RedoStack implementation
+ */
 class SimpleRedoStack<T : Redoable> : RedoStack<T> {
     private val undoStack = Stack<T>()
     private val redoStack = Stack<T>()

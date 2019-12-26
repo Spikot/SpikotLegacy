@@ -1,5 +1,12 @@
 package kr.heartpattern.spikot.misc
 
+/**
+ * List that convert type lazily
+ * @param B Back type
+ * @param F Front type
+ * @param backingList Back list with back type
+ * @param converter Converter that convert between back and front type
+ */
 open class ConvertingList<B, F>(
     open val backingList: List<B>,
     protected val converter: Converter<B, F>

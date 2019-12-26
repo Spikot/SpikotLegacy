@@ -47,6 +47,11 @@ fun getProfileFromPlayer(uuid: Collection<Player>, callback: (Map<UUID, PlayerPr
     uuidPlayerProfileCache.getAll(uuid.map { it.uniqueId }).thenApply(callback)
 }
 
+/**
+ * Get cached profile. Return null if there are no cached value
+ * @param uuid UUID of player
+ * @return Cached PlayerProfile
+ */
 fun getCachedProfile(uuid: UUID): PlayerProfile? {
     return uuidPlayerProfileCache.getIfPresent(uuid)?.getNow(null)
 }
@@ -66,7 +71,7 @@ internal val uuidPlayerProfileCache: AsyncLoadingCache<UUID, PlayerProfile> = Ca
     .buildAsync { key -> resolve(key.toString()) }
 
 @Suppress("SpellCheckingInspection")
-fun resolve(key: String): PlayerProfile {
+internal fun resolve(key: String): PlayerProfile {
     try {
         val url = URL("https://api.ashcon.app/mojang/v2/user/$key")
         val connection = url.openConnection()

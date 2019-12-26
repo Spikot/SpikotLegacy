@@ -5,6 +5,12 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
+/**
+ * Delegate nbt tag
+ * @param check Check if tag is applicable for this delegate
+ * @param getter Get tag from nbt
+ * @param setter Set tag to nbt
+ */
 class TagDelegate<T : Any>(
     val check: WrapperNBTCompound.(String) -> Boolean,
     val getter: WrapperNBTCompound.(String) -> T,
@@ -25,12 +31,19 @@ class TagDelegate<T : Any>(
         }
     }
 
+    /**
+     * Get converted tag
+     * @param converter Type converter
+     */
     fun <R : Any> convert(converter: Converter<T, R>): TagDelegate<R> = TagDelegate(
         check,
         { converter.read(getter(it)) },
         { name, value -> setter(name, converter.write(value)) }
     )
 
+    /**
+     * Get not null delegate
+     */
     val notnull: ReadWriteProperty<NBTAccessor, T>
         get() = object : ReadWriteProperty<NBTAccessor, T> {
             override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {
@@ -43,6 +56,10 @@ class TagDelegate<T : Any>(
         }
 }
 
+/**
+ * Delegate compound tag
+ * @param constructor NBTAccessor constructor
+ */
 class CompoundDelegate<T : NBTAccessor>(private val constructor: (WrapperNBTCompound) -> T) :
     ReadWriteProperty<NBTAccessor, T?> {
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T? {
@@ -60,6 +77,9 @@ class CompoundDelegate<T : NBTAccessor>(private val constructor: (WrapperNBTComp
         }
     }
 
+    /**
+     * Get not null delegate
+     */
     val notnull: ReadWriteProperty<NBTAccessor, T>
         get() = object : ReadWriteProperty<NBTAccessor, T> {
             override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {
@@ -72,6 +92,10 @@ class CompoundDelegate<T : NBTAccessor>(private val constructor: (WrapperNBTComp
         }
 }
 
+/**
+ * Delegate enum class
+ * @param enumClass Enum class
+ */
 class EnumWrappingDelegate<T : Enum<T>>(
     enumClass: KClass<T>
 ) : ReadWriteProperty<NBTAccessor, T?> {
@@ -91,6 +115,9 @@ class EnumWrappingDelegate<T : Enum<T>>(
         }
     }
 
+    /**
+     * Get not null delegate
+     */
     val notnull: ReadWriteProperty<NBTAccessor, T>
         get() = object : ReadWriteProperty<NBTAccessor, T> {
             override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T {

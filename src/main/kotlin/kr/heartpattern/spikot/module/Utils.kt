@@ -12,16 +12,22 @@ internal fun KClass<*>.canLoad(): Boolean {
     return spikot.enabled.contains(feature.value)
 }
 
+/**
+ * Check feature is enabled
+ * @param feature Feature name
+ * @return Whether feature is enabled
+ */
 fun isFeatureEnabled(feature: String): Boolean {
     return spikot.enabled.contains(feature)
 }
 
+/**
+ * Run lambda only if feature is enabled
+ * @param feature Feature name
+ * @param runnable lambda which is run only if feature is enabled
+ */
 inline fun onEnabled(feature: String, runnable: () -> Unit) {
     if (isFeatureEnabled(feature)) {
         runnable()
     }
-}
-
-inline fun onDebug(runnable: () -> Unit) {
-    onEnabled("Debug", runnable)
 }

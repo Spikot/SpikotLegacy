@@ -10,6 +10,9 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
 
+/**
+ * Configure skull item
+ */
 class SkullItemBuilder(itemStack: ItemStack) : ItemBuilder<SkullItemMetaBuilder>(itemStack) {
     constructor() : this(ItemStack(Material.SKULL_ITEM))
 
@@ -20,13 +23,22 @@ class SkullItemBuilder(itemStack: ItemStack) : ItemBuilder<SkullItemMetaBuilder>
     }
 }
 
+/**
+ * Configure skull item meta
+ */
 class SkullItemMetaBuilder(itemMeta: SkullMeta) : ItemMetaBuilder<SkullMeta>(itemMeta) {
+    /**
+     * Owner of skull
+     */
     var owner: OfflinePlayer
         get() = itemMeta.owningPlayer
         set(value) {
             itemMeta.owningPlayer = value
         }
 
+    /**
+     * Owing player of skull
+     */
     var owingPlayer: OfflinePlayer
         get() = itemMeta.owningPlayer
         set(value) {
@@ -43,10 +55,20 @@ private fun createSkull0(base64: String): ItemStack {
         "{SkullOwner:{Id:\"$hashed\",Properties:{textures:[{Value:\"$base64\"}]}}}")
 }
 
+/**
+ * Create skull from player profile
+ * @param profile Profile of skull skin
+ * @return Created skull item
+ */
 fun createSkull(profile: PlayerProfile): ItemStack {
     return createSkull(profile.textures.skin.url.toString())
 }
 
+/**
+ * Create skull from skull texture
+ * @param base64 Base64 encoded skull texture
+ * @return Created skull item
+ */
 fun createSkull(base64: String): ItemStack {
     return createSkull0(Base64.getEncoder().encodeToString(("{\"textures\":{\"SKIN\":{\"url\":\"$base64\"}}}").toByteArray()))
 }

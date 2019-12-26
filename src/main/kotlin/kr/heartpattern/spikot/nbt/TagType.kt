@@ -2,8 +2,17 @@ package kr.heartpattern.spikot.nbt
 
 import kotlin.reflect.KClass
 
+/**
+ * Represent nbt tag type
+ * @param T Corresponding java type
+ * @param id NMS internal type id
+ * @param type Corresponding java class
+ */
 sealed class TagType<T : Any>(val id: Int, val type: KClass<T>) {
     companion object {
+        /**
+         * All nbt types
+         */
         val TYPES = listOf(
             END,
             BYTE,
@@ -21,6 +30,11 @@ sealed class TagType<T : Any>(val id: Int, val type: KClass<T>) {
             MISC
         )
 
+        /**
+         * Get nbt type from id
+         * @param id NMS internal id
+         * @return Corresponding tag type
+         */
         fun ofId(id: Int): TagType<*> {
             for (type in TYPES)
                 if (type.id == id)
@@ -29,6 +43,11 @@ sealed class TagType<T : Any>(val id: Int, val type: KClass<T>) {
             throw IllegalArgumentException("Cannot find matching tag type for id $id")
         }
 
+        /**
+         * Get nbt type from java class
+         * @param type Java class
+         * @return Corresponding tag type
+         */
         @Suppress("UNCHECKED_CAST")
         fun <T : Any> ofType(type: KClass<T>): TagType<T> {
             for (tagType in TYPES)

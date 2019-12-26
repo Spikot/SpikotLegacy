@@ -2,17 +2,47 @@ package kr.heartpattern.spikot.misc
 
 import kr.heartpattern.spikot.misc.UnboundInterval.*
 
+/**
+ * Represent one-side interval
+ */
 sealed class UnboundInterval<in T : Comparable<T>> {
+    /**
+     * Negative infinite bound
+     */
     class NegativeInfinite<T : Comparable<T>> : UnboundInterval<T>()
+
+    /**
+     * Positive infinite bound
+     */
     class PositiveInfinite<T : Comparable<T>> : UnboundInterval<T>()
+
+    /**
+     * Open bound
+     * @param value Value lie on bound
+     */
     data class Open<T : Comparable<T>>(val value: T) : UnboundInterval<T>()
+
+    /**
+     * Close bound
+     * @param value Value lie on bound
+     */
     data class Close<T : Comparable<T>>(val value: T) : UnboundInterval<T>()
 }
 
+/**
+ * Represent both-side interval
+ * @param start Left side bound
+ * @param end Right side bound
+ */
 class Interval<T : Comparable<T>>(
     val start: UnboundInterval<T>,
     val end: UnboundInterval<T>
 ) {
+    /**
+     * Whether value is in range
+     * @param value Value to check
+     * @return Value is in this interval
+     */
     operator fun contains(value: T): Boolean {
         val startAccept = when (start) {
             is NegativeInfinite -> true
@@ -30,6 +60,11 @@ class Interval<T : Comparable<T>>(
         return startAccept && endAccept
     }
 
+    /**
+     * Whether this interval contains given interval
+     * @param interval Interval to check
+     * @return Interval is in this interval
+     */
     operator fun contains(interval: Interval<T>): Boolean {
         val startAccept = when (start) {
             is NegativeInfinite -> true

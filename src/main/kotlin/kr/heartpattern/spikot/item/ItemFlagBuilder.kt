@@ -3,6 +3,9 @@ package kr.heartpattern.spikot.item
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.ItemMeta
 
+/**
+ * Configure flag of ItemStack
+ */
 @ItemDslMarker
 class ItemFlagBuilder(private val itemMeta: ItemMeta) {
     val HIDE_ENCHANT: Unit

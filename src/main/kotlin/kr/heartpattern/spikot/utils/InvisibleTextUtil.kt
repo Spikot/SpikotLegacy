@@ -6,10 +6,21 @@ private const val allowedLength = allowedTag.length
 private const val special = '§'
 private const val bounder = "§r"
 
+/**
+ * Attach invisible number after string
+ * @receiver String to attach invisible number
+ * @param i Number to be attached
+ * @return String with invisible [i] attached
+ */
 fun String.attachInvisible(i: Int): String {
     return this + i.encryptInvisible()
 }
 
+/**
+ * Encrypt number to invisible number
+ * @receiver Number to encrypt
+ * @return Encrypted number
+ */
 fun Int.encryptInvisible(): String {
     var i = this
     val builder = StringBuilder()
@@ -22,6 +33,11 @@ fun Int.encryptInvisible(): String {
     return builder.toString()
 }
 
+/**
+ * Decrypt invisible number to number
+ * @receiver String to decrypt
+ * @return Decrypted number
+ */
 fun String.decryptInvisible(): Int {
     if (this.length < 6 || !this.startsWith(bounder) && !this.endsWith(bounder)) {
         throw IllegalArgumentException("Illegal Format")
@@ -35,6 +51,11 @@ fun String.decryptInvisible(): Int {
     return i
 }
 
+/**
+ * Find invisible number and decrypt it
+ * @receiver String to find invisible number
+ * @return Founded invisible number
+ */
 fun String.findInvisible(): Int {
     var i = this.length - 1
     if (this[i] != 'r' || this[i - 1] != '§') throw IllegalArgumentException("Cannot found invisible code")
@@ -49,6 +70,11 @@ fun String.findInvisible(): Int {
     return this.substring(i).decryptInvisible()
 }
 
+/**
+ * Check string contains invisible number
+ * @receiver String to check
+ * @return Whether string contains invisible number
+ */
 fun String.hasInvisible(): Boolean {
     try {
         this.findInvisible()

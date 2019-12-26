@@ -11,11 +11,22 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
+/**
+ * Module which is created for each player
+ */
 abstract class AbstractPlayerModule : AbstractModule() {
+    /**
+     * Owner of this module
+     */
     lateinit var player: Player
         internal set
 }
 
+/**
+ * Module which control player module
+ * @param T Controlled player module
+ * @param type Type of player module
+ */
 open class PlayerModuleController<T : AbstractPlayerModule>(
     private val type: KClass<T>
 ) : AbstractModule() {
@@ -36,10 +47,20 @@ open class PlayerModuleController<T : AbstractPlayerModule>(
         module.disable()
     }
 
+    /**
+     * Get module for given player
+     * @param player Player to find module
+     * @return Module for given player
+     */
     operator fun get(player: Player): T {
         return table[player.uniqueId]!!.module!! as T
     }
 
+    /**
+     * Get module for given player
+     * @param uuid UUID of online player
+     * @return Module for given uuid's player
+     */
     operator fun get(uuid: UUID): T {
         return table[uuid]!!.module!! as T
     }

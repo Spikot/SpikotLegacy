@@ -7,6 +7,9 @@ import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SpawnEggMeta
 
+/**
+ * Configure spawn egg item
+ */
 class SpawnEggItemBuilder(itemStack: ItemStack) : ItemBuilder<SpawnEggItemMetaBuilder>(itemStack) {
     constructor() : this(ItemStack(Material.MONSTER_EGG))
 
@@ -18,7 +21,13 @@ class SpawnEggItemBuilder(itemStack: ItemStack) : ItemBuilder<SpawnEggItemMetaBu
 
 }
 
+/**
+ * Configure spawn egg item meta
+ */
 class SpawnEggItemMetaBuilder(itemMeta: SpawnEggMeta) : ItemMetaBuilder<SpawnEggMeta>(itemMeta) {
+    /**
+     * EntityType this spawn egg spawn
+     */
     var spawnedType: EntityType
         get() = itemMeta.spawnedType
         set(value) {

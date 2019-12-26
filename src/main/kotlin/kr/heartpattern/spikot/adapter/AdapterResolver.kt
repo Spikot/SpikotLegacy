@@ -14,6 +14,9 @@ import kotlin.reflect.full.isSubclassOf
 abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractModule() {
     private lateinit var handler: ModuleHandler
 
+    /**
+     * Default adapter instance
+     */
     @Suppress("UNCHECKED_CAST")
     val default: T
         get() = handler.module as T
@@ -42,7 +45,7 @@ abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractMo
     }
 
     /**
-     * Check whether given adapter can be applied
+     * Check whether given adapter is applicable
      */
     abstract fun canApply(adapter: T): Boolean
 

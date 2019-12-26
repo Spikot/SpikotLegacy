@@ -7,6 +7,9 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 
+/**
+ * Configure leather item
+ */
 class LeatherArmorItemBuilder(itemStack: ItemStack) : ItemBuilder<LeatherArmorItemMetaBuilder>(itemStack) {
     constructor(material: Material) : this(ItemStack(material))
 
@@ -17,7 +20,14 @@ class LeatherArmorItemBuilder(itemStack: ItemStack) : ItemBuilder<LeatherArmorIt
     }
 }
 
+/**
+ * Configure leather item meta
+ */
 class LeatherArmorItemMetaBuilder(itemMeta: LeatherArmorMeta) : ItemMetaBuilder<LeatherArmorMeta>(itemMeta) {
+
+    /**
+     * Color of leather armor
+     */
     var color: Color
         get() = itemMeta.color
         set(value) {

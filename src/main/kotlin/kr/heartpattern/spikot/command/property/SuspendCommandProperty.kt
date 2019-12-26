@@ -10,6 +10,10 @@ import kr.heartpattern.spikot.misc.Option
 import java.util.*
 import kotlin.reflect.KProperty
 
+/**
+ * Command property which represent some information of command.
+ * SuspendCommandProperty can use suspended function in transform and validate lambda.
+ */
 class SuspendCommandProperty<T>(val pos: Int, val value: suspend TransformerContext.() -> T) : SuspendTransformableProperty<T> {
     private var cache: Option<T> = None
     private val suspendValidators: MutableList<suspend CommandContext.(T) -> Boolean> = LinkedList()

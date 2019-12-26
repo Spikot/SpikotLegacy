@@ -54,8 +54,10 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
         state = try {
             context[MutablePluginProperty] = owner
             module = created ?: type.getInstance() as IModule
-            interceptors.forEach { interceptor ->
-                interceptor.onCreate(this)
+            if(created == null){
+                interceptors.forEach { interceptor ->
+                    interceptor.onCreate(this)
+                }
             }
             IModule.State.CREATE
         } catch (e: Throwable) {
@@ -103,9 +105,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      */
     private inline fun performStep(previous: IModule.State, next: IModule.State, task: IModule.() -> Unit, intercept: IModuleInterceptor.(ModuleHandler) -> Unit): Boolean {
         check(state == previous) { "Module should be $previous, but $state" }
-        onDebug {
-            logger.debug("${state.readable} module: ${type.simpleName}")
-        }
+        logger.debug("${state.readable} module: ${type.simpleName}")
         state = try {
             logger.debug{"${next.readable} module: ${module!!.javaClass.simpleName}"}
             module!!.task()

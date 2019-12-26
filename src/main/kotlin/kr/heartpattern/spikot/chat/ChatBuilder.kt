@@ -11,24 +11,47 @@ import org.bukkit.entity.Player
 
 internal typealias Builder = ChatBuilder.() -> Unit
 
+/**
+ * Send message with builder
+ * @receiver Player to be receive message
+ * @param builder Chat builder
+ */
 fun Player.sendMessage(builder: Builder) {
     this.spigot().sendMessage(chat(builder).toChatComponent())
 }
 
+/**
+ * Send message with builder
+ * @receiver Player to be receive message
+ * @param builder Chat builder
+ */
 fun Player.sendMessage(builder: ChatBuilder) {
     this.spigot().sendMessage(builder.toChatComponent())
 }
 
+/**
+ * Create ChatBuilder instance from builder
+ * @param builder Builder that configure chat
+ * @return ChatBuilder instance
+ */
 fun chat(builder: Builder): ChatBuilder {
     val base = ChatBuilder()
     base.builder()
     return base
 }
 
+/**
+ * Create ChatBuilder instance from String
+ * @param text String to be set for ChatBuilder
+ * @return ChatBuilder instance
+ */
 fun chat(text: String): ChatBuilder {
     return ChatBuilder(text)
 }
 
+/**
+ * Chat representation
+ */
 class ChatBuilder {
     private var _keybind: Boolean = false
     private var _text: String = ""
