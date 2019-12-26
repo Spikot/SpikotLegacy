@@ -19,33 +19,7 @@ import java.util.*
 
 private typealias Callback = (PlayerProfile) -> Unit
 
-private val logger = KotlinLogging.logger{}
-
-@Suppress("DEPRECATION")
-@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile()"))
-fun OfflinePlayer.getProfile(callback: Callback) {
-    getProfile(this.uniqueId, callback)
-}
-
-@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(name: String))"))
-fun getProfile(name: String, callback: Callback) {
-    namePlayerProfileCache[name].thenApply(callback)
-}
-
-@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(uuid: UUID)"))
-fun getProfile(uuid: UUID, callback: Callback) {
-    uuidPlayerProfileCache[uuid].thenApply(callback)
-}
-
-@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(uuids: Collection<UUID>)"))
-fun getProfile(uuid: Collection<UUID>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
-    uuidPlayerProfileCache.getAll(uuid).thenApply(callback)
-}
-
-@Deprecated(message = "Use suspended version", replaceWith = ReplaceWith("OfflinePlayer.getProfile(players: Collection<OfflinePlayer>)"))
-fun getProfileFromPlayer(uuid: Collection<Player>, callback: (Map<UUID, PlayerProfile>) -> Unit) {
-    uuidPlayerProfileCache.getAll(uuid.map { it.uniqueId }).thenApply(callback)
-}
+private val logger = KotlinLogging.logger {}
 
 /**
  * Get cached profile. Return null if there are no cached value
