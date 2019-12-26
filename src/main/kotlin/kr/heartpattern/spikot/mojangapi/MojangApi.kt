@@ -2,20 +2,20 @@
 
 package kr.heartpattern.spikot.mojangapi
 
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.salomonbrys.kotson.contains
 import com.github.salomonbrys.kotson.get
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
+import com.google.common.cache.LoadingCache
 import com.google.gson.JsonParser
 import mu.KotlinLogging
-import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import java.net.URL
-import java.time.Duration
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private typealias Callback = (PlayerProfile) -> Unit
 
@@ -27,22 +27,28 @@ private val logger = KotlinLogging.logger {}
  * @return Cached PlayerProfile
  */
 fun getCachedProfile(uuid: UUID): PlayerProfile? {
-    return uuidPlayerProfileCache.getIfPresent(uuid)?.getNow(null)
+    return uuidPlayerProfileCache.getIfPresent(uuid)
 }
 
 @PublishedApi
-internal val namePlayerProfileCache: AsyncLoadingCache<String, PlayerProfile> = Caffeine
+internal val namePlayerProfileCache: Cache<String, PlayerProfile> = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(Duration.ofMinutes(30L))
-    .refreshAfterWrite(Duration.ofHours(1L))
-    .buildAsync { key -> resolve(key) }
+    .expireAfterAccess(30, TimeUnit.MINUTES)
+    .refreshAfterWrite(1L, TimeUnit.DAYS)
+    .build<String, PlayerProfile>()
 
 @PublishedApi
-internal val uuidPlayerProfileCache: AsyncLoadingCache<UUID, PlayerProfile> = Caffeine
+internal val uuidPlayerProfileCache: LoadingCache<UUID, PlayerProfile> = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(Duration.ofMinutes(30L))
-    .refreshAfterWrite(Duration.ofHours(1L))
-    .buildAsync { key -> resolve(key.toString()) }
+    .expireAfterAccess(30, TimeUnit.MINUTES)
+    .refreshAfterWrite(1L, TimeUnit.DAYS)
+    .build(
+        object : CacheLoader<UUID, PlayerProfile>() {
+            override fun load(key: UUID): PlayerProfile {
+                return resolve(key.toString())
+            }
+        }
+    )
 
 @Suppress("SpellCheckingInspection")
 internal fun resolve(key: String): PlayerProfile {

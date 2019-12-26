@@ -1,9 +1,10 @@
 package kr.heartpattern.spikot.mojangapi
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.bukkit.OfflinePlayer
 import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.collections.HashMap
 
 /**
  * Get profile of offline player
@@ -17,9 +18,12 @@ suspend fun OfflinePlayer.getProfile(): PlayerProfile = getProfile(uniqueId)
  * @param name Name of player
  * @return PlayerProfile of name
  */
-suspend fun getProfile(name: String): PlayerProfile = suspendCoroutine { continuation ->
-    namePlayerProfileCache.get(name).thenApply {
-        continuation.resume(it)
+suspend fun getProfile(name: String): PlayerProfile {
+    val cached = namePlayerProfileCache.getIfPresent(name)
+    return cached ?: withContext(Dispatchers.IO) {
+        val fetched = resolve(name)
+        namePlayerProfileCache.put(name, fetched)
+        fetched
     }
 }
 
@@ -28,9 +32,12 @@ suspend fun getProfile(name: String): PlayerProfile = suspendCoroutine { continu
  * @param uuid UUID of player
  * @return PlayerProfile of uuid
  */
-suspend fun getProfile(uuid: UUID): PlayerProfile = suspendCoroutine { continuation ->
-    uuidPlayerProfileCache.get(uuid).thenApply {
-        continuation.resume(it)
+suspend fun getProfile(uuid: UUID): PlayerProfile {
+    val cached = uuidPlayerProfileCache.getIfPresent(uuid)
+    return cached ?: withContext(Dispatchers.IO) {
+        val fetched = resolve(uuid.toString())
+        uuidPlayerProfileCache.put(uuid, fetched)
+        fetched
     }
 }
 
@@ -39,10 +46,8 @@ suspend fun getProfile(uuid: UUID): PlayerProfile = suspendCoroutine { continuat
  * @param players Collection of OfflinePlayer
  * @return Map of PlayerProfile
  */
-suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, PlayerProfile> = suspendCoroutine { continuation ->
-    uuidPlayerProfileCache.getAll(players.map(OfflinePlayer::getUniqueId)).thenApply {
-        continuation.resume(it)
-    }
+suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, PlayerProfile> {
+    return getProfilesFromUUID(players.map { it.uniqueId })
 }
 
 /**
@@ -50,9 +55,20 @@ suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, 
  * @param uuids Collection of uuid
  * @return Map of PlayerProfile
  */
-suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> = suspendCoroutine { continuation ->
-    uuidPlayerProfileCache.getAll(uuids).thenApply {
-        continuation.resume(it)
+suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> {
+    val cached = uuidPlayerProfileCache.getAllPresent(uuids)
+    return if (cached.size == uuids.size) {
+        cached
+    } else {
+        withContext(Dispatchers.IO) {
+            val loadedMap = HashMap<UUID, PlayerProfile>(cached)
+            for (uuid in uuids - cached.keys) {
+                val fetched = resolve(uuid.toString())
+                uuidPlayerProfileCache.put(uuid, fetched)
+                loadedMap[uuid] = fetched
+            }
+            loadedMap
+        }
     }
 }
 
@@ -61,8 +77,19 @@ suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfil
  * @param names Collection of name
  * @return Map of PlayerProfile
  */
-suspend fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> = suspendCoroutine { continuation ->
-    namePlayerProfileCache.getAll(names).thenApply {
-        continuation.resume(it)
+suspend fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> {
+    val cached = namePlayerProfileCache.getAllPresent(names)
+    return if (cached.size == names.size) {
+        cached
+    } else {
+        withContext(Dispatchers.IO) {
+            val loadedMap = HashMap<String, PlayerProfile>(cached)
+            for (name in names - cached.keys) {
+                val fetched = resolve(name)
+                namePlayerProfileCache.put(name, fetched)
+                loadedMap[name] = fetched
+            }
+            loadedMap
+        }
     }
 }
