@@ -114,8 +114,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username nexus_user
-                password nexus_password
+                username "${nexusUser}"
+                password "${nexusPassword}"
             }
 
             if (version.endsWith('SNAPSHOT')) {
