@@ -1,10 +1,13 @@
 package kr.heartpattern.spikot.event
 
 import kr.heartpattern.spikot.module.AbstractModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
+@Module(priority = ModulePriority.API)
 internal object TickEventEmitter : AbstractModule() {
     override fun onEnable() {
         var tickCount = 0

@@ -11,6 +11,9 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
+import kr.heartpattern.spikot.module.BaseModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.repository.persistence.StorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
@@ -23,6 +26,8 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+@BaseModule
+@Module(priority = ModulePriority.LOWEST)
 abstract class OfflinePlayerRepository<V : Any>(
     storageFactory: StorageFactory,
     valueSerializer: KSerializer<V>,

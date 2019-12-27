@@ -102,7 +102,7 @@ inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
     return MenuManager.openedInventory[title.findInvisible()] as? T
 }
 
-@Module @LoadBefore([IModule::class])
+@Module(ModulePriority.API)
 @PublishedApi
 internal object MenuManager : AbstractModule() {
     internal var id: Int = 0

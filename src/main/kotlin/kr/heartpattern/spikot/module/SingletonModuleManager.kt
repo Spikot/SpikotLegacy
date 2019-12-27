@@ -26,6 +26,8 @@ internal object SingletonModuleManager : IBootstrap {
         val modulePlugin = HashMap<KClass<*>, SpikotPlugin>()
 
         for ((module, plugin) in SpikotPluginManager.annotationIterator<Module>()) {
+            if (module.findAnnotation<BaseModule>() != null)
+                continue
             logger.debug("Find module: ${module.simpleName}")
             modulePlugin[module] = plugin
             modules += module
@@ -34,7 +36,7 @@ internal object SingletonModuleManager : IBootstrap {
         val sorted = sortModuleDependencies(modules)
         val disabled = HashSet<KClass<*>>()
         for (element in sorted) {
-            if (!element.canLoad() || element.findAnnotation<Module>()!!.depend.any { it in disabled })
+            if (!element.canLoad() || element.findAnnotation<Module>()!!.dependOn.any { it in disabled })
                 disabled += element
             else
                 instances += ModuleManager.createModule(element, modulePlugin[element]!!)

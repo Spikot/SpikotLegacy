@@ -8,9 +8,14 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
+import kr.heartpattern.spikot.module.BaseModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.repository.persistence.StorageFactory
 import java.util.concurrent.TimeUnit
 
+@BaseModule
+@Module(priority = ModulePriority.LOWEST)
 class LazyCachedKeyRepository<K, V : Any>(
     storageFactory: StorageFactory,
     keySerializer: KSerializer<K>,

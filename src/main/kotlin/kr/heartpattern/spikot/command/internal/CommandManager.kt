@@ -2,7 +2,10 @@ package kr.heartpattern.spikot.command.internal
 
 import kr.heartpattern.spikot.command.AbstractCommand
 import kr.heartpattern.spikot.command.Root
-import kr.heartpattern.spikot.module.*
+import kr.heartpattern.spikot.module.AbstractModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.canLoad
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
 import kr.heartpattern.spikot.utils.withAccessible
@@ -13,8 +16,7 @@ import org.bukkit.plugin.Plugin
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
 
-@Module
-@LoadBefore([IModule::class])
+@Module(priority = ModulePriority.API)
 object CommandManager : AbstractModule() {
     private val commandMap: CommandMap
     private val pluginCommandConstructor: Constructor<PluginCommand>

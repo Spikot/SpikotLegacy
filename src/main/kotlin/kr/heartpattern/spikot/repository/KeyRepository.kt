@@ -5,8 +5,13 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
+import kr.heartpattern.spikot.module.BaseModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.repository.persistence.StorageFactory
 
+@BaseModule
+@Module(priority = ModulePriority.LOWEST)
 abstract class KeyRepository<K : Any, V : Any>(
     storageFactory: StorageFactory,
     keySerializer: KSerializer<K>,

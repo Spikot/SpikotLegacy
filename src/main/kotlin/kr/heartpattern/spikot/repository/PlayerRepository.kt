@@ -6,6 +6,9 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
+import kr.heartpattern.spikot.module.BaseModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.repository.persistence.StorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
@@ -18,6 +21,8 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+@BaseModule
+@Module(priority = ModulePriority.LOWEST)
 abstract class PlayerRepository<V : Any>(
     storageFactory: StorageFactory,
     valueSerializer: KSerializer<V>,

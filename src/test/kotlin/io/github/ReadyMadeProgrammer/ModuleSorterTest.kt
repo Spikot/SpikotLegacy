@@ -6,89 +6,90 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 @Module
-@LoadBefore([IModule::class, FirstMiddleModule::class])
-class FirstFirstModule : AbstractModule()
+private class DefaultModule : AbstractModule()
+
+@Module(priority = ModulePriority.SYSTEM)
+private class SystemModule : AbstractModule()
+
+@Module(priority = ModulePriority.API)
+private class APIModule : AbstractModule()
+
+@Module(priority = ModulePriority.LOWEST)
+private class LowestModule : AbstractModule()
+
+@Module(priority = ModulePriority.LOW)
+private class LowModule : AbstractModule()
+
+@Module(priority = ModulePriority.NORMAL)
+private class NormalModule : AbstractModule()
+
+@Module(priority = ModulePriority.HIGH)
+private class HighModule : AbstractModule()
+
+@Module(priority = ModulePriority.HIGHEST)
+private class HighestModule : AbstractModule()
+
+@BaseModule
+@Module(priority = ModulePriority.HIGH, dependOn = [HighModule::class])
+private open class BaselineModule : AbstractModule()
 
 @Module
-@LoadBefore([IModule::class])
-class FirstMiddleModule : AbstractModule()
+private class ImplementModule : BaselineModule()
 
-@Module(depend = [FirstMiddleModule::class])
-@LoadBefore([IModule::class])
-class FirstLastModule : AbstractModule()
+@Module(priority = ModulePriority.HIGH)
+@LoadBefore([ImplementModule::class])
+class BeforeModule : AbstractModule()
 
-@Module
-@LoadBefore([MiddleMiddleModule::class])
-class MiddleFirstModule : AbstractModule()
-
-@Module
-class MiddleMiddleModule : AbstractModule()
-
-@Module(depend = [MiddleMiddleModule::class])
-class MiddleLastModule : AbstractModule()
-
-@Module(depend = [IModule::class])
-@LoadBefore([LastMiddleModule::class])
-class LastFirstModule : AbstractModule()
-
-@Module(depend = [IModule::class])
-class LastMiddleModule : AbstractModule()
-
-@Module(depend = [IModule::class, LastMiddleModule::class])
-class LastLastModule : AbstractModule()
-
-@Module(depend = [MiddleLastModule::class])
-@LoadBefore([MiddleFirstModule::class])
-class CircularModule : AbstractModule()
-
+@Module(priority = ModulePriority.NORMAL, dependOn = [HighestModule::class])
+class ConflictModule : AbstractModule()
 
 class ModuleSorterTest {
     @Test
-    fun successTest() {
-        val sorted = sortModuleDependencies(listOf(
-            LastLastModule::class,
-            MiddleMiddleModule::class,
-            FirstLastModule::class,
-            LastMiddleModule::class,
-            LastFirstModule::class,
-            MiddleFirstModule::class,
-            FirstFirstModule::class,
-            MiddleLastModule::class,
-            FirstMiddleModule::class
-        ))
+    fun emptyTest() {
+        val sorted = sortModuleDependencies(listOf())
+        assertEquals(emptyList(), sorted)
+    }
 
-        assertEquals(
-            sorted,
-            listOf(
-                FirstFirstModule::class,
-                FirstMiddleModule::class,
-                FirstLastModule::class,
-                MiddleFirstModule::class,
-                MiddleMiddleModule::class,
-                MiddleLastModule::class,
-                LastFirstModule::class,
-                LastMiddleModule::class,
-                LastLastModule::class
-            )
+    @Test
+    fun successTest() {
+        val modules = listOf(
+            APIModule::class,
+            LowestModule::class,
+            LowModule::class,
+            NormalModule::class,
+            DefaultModule::class,
+            HighModule::class,
+            BeforeModule::class,
+            ImplementModule::class,
+            HighestModule::class
         )
+        val sorted = sortModuleDependencies(modules.shuffled())
+
+        for (i in 0..2) {
+            assertEquals(modules[i], sorted[i])
+        }
+
+        assertEquals(modules.subList(3, 5).toSet(), sorted.subList(3, 5).toSet())
+        assertEquals(modules.subList(5, 8).toSet(), sorted.subList(5, 8).toSet())
+        assertEquals(modules[8], sorted[8])
     }
 
     @Test
     fun failTest() {
         assertThrows(UninitializedPropertyAccessException::class.java) {
             // Access to spikot(to show error message) produce this.
-            sortModuleDependencies(listOf(
-                LastLastModule::class,
-                MiddleMiddleModule::class,
-                FirstLastModule::class,
-                LastMiddleModule::class,
-                LastFirstModule::class,
-                MiddleFirstModule::class,
-                FirstFirstModule::class,
-                MiddleLastModule::class,
-                FirstMiddleModule::class,
-                CircularModule::class
-            ))
+            val sorted = sortModuleDependencies(listOf(
+                APIModule::class,
+                LowestModule::class,
+                LowModule::class,
+                NormalModule::class,
+                DefaultModule::class,
+                HighModule::class,
+                BeforeModule::class,
+                ImplementModule::class,
+                HighestModule::class,
+                ConflictModule::class
+            ).shuffled())
         }
     }
 }

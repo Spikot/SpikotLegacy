@@ -14,6 +14,8 @@ import kotlin.reflect.KClass
 /**
  * Module which is created for each player
  */
+@Module(priority = ModulePriority.LOWEST)
+@BaseModule
 abstract class AbstractPlayerModule : AbstractModule() {
     /**
      * Owner of this module
@@ -27,6 +29,8 @@ abstract class AbstractPlayerModule : AbstractModule() {
  * @param T Controlled player module
  * @param type Type of player module
  */
+@Module(priority = ModulePriority.LOWEST)
+@BaseModule
 open class PlayerModuleController<T : AbstractPlayerModule>(
     private val type: KClass<T>
 ) : AbstractModule() {

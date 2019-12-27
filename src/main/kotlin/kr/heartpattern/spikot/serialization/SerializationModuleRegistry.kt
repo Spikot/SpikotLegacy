@@ -5,9 +5,8 @@ import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerialModule
 import kotlinx.serialization.modules.SerializersModule
 import kr.heartpattern.spikot.module.AbstractModule
-import kr.heartpattern.spikot.module.IModule
-import kr.heartpattern.spikot.module.LoadBefore
 import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.plugin.FindAnnotation
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.getInstance
@@ -23,8 +22,7 @@ val serializationModule: SerialModule
 val jsonSerializer: Json
     get() = SerializationModuleRegistry.jsonSerializer
 
-@Module
-@LoadBefore([IModule::class])
+@Module(priority = ModulePriority.SYSTEM)
 object SerializationModuleRegistry : AbstractModule() {
     lateinit var serializationModule: SerialModule
         private set

@@ -6,10 +6,15 @@ import kotlinx.serialization.internal.UnitSerializer
 import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.None
+import kr.heartpattern.spikot.module.BaseModule
+import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.repository.persistence.StorageFactory
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+@BaseModule
+@Module(priority = ModulePriority.LOWEST)
 abstract class SingletonRepository<V : Any>(
     storageFactory: StorageFactory,
     serializer: KSerializer<V>,

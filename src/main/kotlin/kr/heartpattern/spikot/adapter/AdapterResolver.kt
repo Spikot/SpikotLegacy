@@ -1,9 +1,7 @@
 package kr.heartpattern.spikot.adapter
 
 import kr.heartpattern.spikot.misc.MutablePropertyMap
-import kr.heartpattern.spikot.module.AbstractModule
-import kr.heartpattern.spikot.module.ModuleHandler
-import kr.heartpattern.spikot.module.ModuleManager
+import kr.heartpattern.spikot.module.*
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -11,6 +9,8 @@ import kotlin.reflect.full.isSubclassOf
 /**
  * Adapter resolver that select which adapter to be used by default
  */
+@BaseModule
+@Module(priority = ModulePriority.API)
 abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractModule() {
     private lateinit var handler: ModuleHandler
 
