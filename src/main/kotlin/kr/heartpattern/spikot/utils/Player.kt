@@ -24,7 +24,6 @@ operator fun Player.set(property: MutableFlagProperty, value: Boolean) {
 operator fun <T> Player.contains(property: Property<T>): Boolean = PlayerPropertyAdapter.contains(this, property)
 fun <T> Player.remove(property: MutableProperty<T>): T? = PlayerPropertyAdapter.remove(this, property)
 
-
 fun <T> playerDelegate(prop: Property<T>): ReadOnlyProperty<Player, T?> {
     return object : ReadOnlyProperty<Player, T?> {
         override fun getValue(thisRef: Player, property: KProperty<*>): T? {
@@ -40,6 +39,26 @@ fun <T> playerDelegate(prop: MutableProperty<T>): ReadWriteProperty<Player, T?> 
         }
 
         override fun setValue(thisRef: Player, property: KProperty<*>, value: T?) {
+            thisRef[prop] = value
+        }
+    }
+}
+
+fun playerDelegate(prop: FlagProperty): ReadOnlyProperty<Player, Boolean> {
+    return object : ReadOnlyProperty<Player, Boolean> {
+        override fun getValue(thisRef: Player, property: KProperty<*>): Boolean {
+            return thisRef[prop]
+        }
+    }
+}
+
+fun playerDelegate(prop: MutableFlagProperty): ReadWriteProperty<Player, Boolean> {
+    return object : ReadWriteProperty<Player, Boolean> {
+        override fun getValue(thisRef: Player, property: KProperty<*>): Boolean {
+            return thisRef[prop]
+        }
+
+        override fun setValue(thisRef: Player, property: KProperty<*>, value: Boolean) {
             thisRef[prop] = value
         }
     }
