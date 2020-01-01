@@ -43,6 +43,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version"
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 
     // Compile dependencies

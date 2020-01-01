@@ -1,10 +1,9 @@
 package kr.heartpattern.spikot.mojangapi
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.future.await
 import org.bukkit.OfflinePlayer
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 /**
  * Get profile of offline player
@@ -19,12 +18,7 @@ suspend fun OfflinePlayer.getProfile(): PlayerProfile = getProfile(uniqueId)
  * @return PlayerProfile of name
  */
 suspend fun getProfile(name: String): PlayerProfile {
-    val cached = namePlayerProfileCache.getIfPresent(name)
-    return cached ?: withContext(Dispatchers.IO) {
-        val fetched = resolve(name)
-        namePlayerProfileCache.put(name, fetched)
-        fetched
-    }
+    return namePlayerProfileCache.get(name).await()
 }
 
 /**
@@ -33,12 +27,7 @@ suspend fun getProfile(name: String): PlayerProfile {
  * @return PlayerProfile of uuid
  */
 suspend fun getProfile(uuid: UUID): PlayerProfile {
-    val cached = uuidPlayerProfileCache.getIfPresent(uuid)
-    return cached ?: withContext(Dispatchers.IO) {
-        val fetched = resolve(uuid.toString())
-        uuidPlayerProfileCache.put(uuid, fetched)
-        fetched
-    }
+    return uuidPlayerProfileCache.get(uuid).await()
 }
 
 /**
@@ -57,19 +46,11 @@ suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, 
  */
 suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> {
     val cached = uuidPlayerProfileCache.getAllPresent(uuids)
-    return if (cached.size == uuids.size) {
-        cached
-    } else {
-        withContext(Dispatchers.IO) {
-            val loadedMap = HashMap<UUID, PlayerProfile>(cached)
-            for (uuid in uuids - cached.keys) {
-                val fetched = resolve(uuid.toString())
-                uuidPlayerProfileCache.put(uuid, fetched)
-                loadedMap[uuid] = fetched
-            }
-            loadedMap
-        }
+    val result = LinkedHashMap<UUID, PlayerProfile>()
+    for ((key, value) in cached) {
+        result[key] = value.await()
     }
+    return result
 }
 
 /**
@@ -79,17 +60,10 @@ suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfil
  */
 suspend fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> {
     val cached = namePlayerProfileCache.getAllPresent(names)
-    return if (cached.size == names.size) {
-        cached
-    } else {
-        withContext(Dispatchers.IO) {
-            val loadedMap = HashMap<String, PlayerProfile>(cached)
-            for (name in names - cached.keys) {
-                val fetched = resolve(name)
-                namePlayerProfileCache.put(name, fetched)
-                loadedMap[name] = fetched
-            }
-            loadedMap
-        }
+
+    val result = LinkedHashMap<String, PlayerProfile>()
+    for ((key, value) in cached) {
+        result[key] = value.await()
     }
+    return result
 }
