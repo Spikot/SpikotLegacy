@@ -3,7 +3,6 @@ package kr.heartpattern.spikot.repository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
-import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
@@ -35,8 +34,7 @@ abstract class PlayerRepository<V : Any>(
     valueSerializer,
     namespace
 ), Map<UUID, V> by storage, ReadWriteProperty<Player, V> {
-    override fun onLoad(context: MutablePropertyMap) {
-        super.onLoad(context)
+    override fun onEnable() {
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 load(player)

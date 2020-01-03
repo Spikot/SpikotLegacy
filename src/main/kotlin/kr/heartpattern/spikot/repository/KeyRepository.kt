@@ -2,7 +2,6 @@ package kr.heartpattern.spikot.repository
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
-import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
@@ -24,11 +23,10 @@ abstract class KeyRepository<K : Any, V : Any>(
     valueSerializer,
     namespace
 ), MutableMap<K, V> by storage {
-    override fun onLoad(context: MutablePropertyMap) {
-        super.onLoad(context)
+    override fun onEnable() {
         runBlocking {
             storage.putAll(
-                persistenceManager.loadAll(keys)
+                persistenceManager.loadAll(persistenceManager.getAllKeys())
                     .map { (key, value) ->
                         key to value.getOrNull()!!
                     }

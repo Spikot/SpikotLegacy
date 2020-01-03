@@ -34,7 +34,7 @@ class FileStorage<K, V>(
             directory
                 .listFiles { _, name -> name.endsWith(".json") }!!
                 .map {
-                    deserialize(keySerializer, it.name)
+                    deserialize(keySerializer, it.name.substring(0 until it.name.length - 5))
                 }
         }
     }

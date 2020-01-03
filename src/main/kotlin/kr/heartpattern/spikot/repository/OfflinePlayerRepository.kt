@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
-import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
@@ -49,8 +48,7 @@ abstract class OfflinePlayerRepository<V : Any>(
         }
     }.build<UUID, V>()
 
-    override fun onLoad(context: MutablePropertyMap) {
-        super.onLoad(context)
+    override fun onEnable() {
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 onlineStorage[player.uniqueId] = load(player.uniqueId)

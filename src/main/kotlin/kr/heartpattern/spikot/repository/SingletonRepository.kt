@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.internal.UnitSerializer
 import kr.heartpattern.spikot.misc.Just
-import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
@@ -27,8 +26,7 @@ abstract class SingletonRepository<V : Any>(
     namespace
 ) {
     protected lateinit var value: V
-    override fun onLoad(context: MutablePropertyMap) {
-        super.onLoad(context)
+    override fun onEnable() {
         runBlocking {
             value = when (val result = persistenceManager.load(Unit)) {
                 is Just -> result.value
