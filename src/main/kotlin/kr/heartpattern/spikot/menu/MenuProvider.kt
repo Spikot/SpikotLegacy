@@ -2,7 +2,7 @@ package kr.heartpattern.spikot.menu
 
 import kr.heartpattern.spikot.module.AbstractModule
 import kr.heartpattern.spikot.spikot
-import kr.heartpattern.spikot.thread.runSync
+import kr.heartpattern.spikot.thread.runNextSync
 import kr.heartpattern.spikot.utils.nonnull
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryInteractEvent
@@ -52,13 +52,13 @@ abstract class MenuProvider : AbstractModule() {
     protected fun update(build: MenuBuilder.() -> Unit) {
         menu.build()
         if (isOpen) {
-            spikot.runSync {
+            spikot.runNextSync {
                 updateInventory()
             }
         }
     }
 
-    /**
+    /**ㅇ
      * Invoked when menu is close.
      * @return false to prevent menu closing.
      */
