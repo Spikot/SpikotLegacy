@@ -45,7 +45,7 @@ suspend fun getProfileFromPlayer(players: Collection<OfflinePlayer>): Map<UUID, 
  * @return Map of PlayerProfile
  */
 suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfile> {
-    val cached = uuidPlayerProfileCache.getAllPresent(uuids)
+    val cached = uuidPlayerProfileCache.getAll(uuids)
     val result = LinkedHashMap<UUID, PlayerProfile>()
     for ((key, value) in cached) {
         result[key] = value.await()
@@ -59,7 +59,7 @@ suspend fun getProfilesFromUUID(uuids: Collection<UUID>): Map<UUID, PlayerProfil
  * @return Map of PlayerProfile
  */
 suspend fun getProfilesFromName(names: Collection<String>): Map<String, PlayerProfile> {
-    val cached = namePlayerProfileCache.getAllPresent(names)
+    val cached = namePlayerProfileCache.getAll(names)
 
     val result = LinkedHashMap<String, PlayerProfile>()
     for ((key, value) in cached) {
