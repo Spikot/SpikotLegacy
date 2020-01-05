@@ -29,7 +29,17 @@ abstract class AbstractCommand {
      * @return CommandProperty return CommandSender of this command
      */
     fun sender(): CommandProperty<CommandSender> {
-        val property = CommandProperty(-1) { context.sender }
+        val property = CommandProperty(-2) { context.sender }
+        properties += property
+        return property
+    }
+
+    /**
+     * Property that return command label
+     * @return CommandProperty return label of this command
+     */
+    fun label(): CommandProperty<String> {
+        val property = CommandProperty(-1) { context.label }
         properties += property
         return property
     }

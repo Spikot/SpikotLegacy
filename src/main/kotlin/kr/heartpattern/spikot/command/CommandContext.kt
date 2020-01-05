@@ -12,5 +12,6 @@ import org.bukkit.command.CommandSender
 data class CommandContext(
     val plugin: SpikotPlugin,
     val sender: CommandSender,
+    val label: String,
     val args: List<String>
 )
