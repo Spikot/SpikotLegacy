@@ -35,7 +35,19 @@ class Paginator<E>(
      * Current page number with index start from 0
      */
     var currentPage: Int = 0
-        private set
+        set(value) {
+            field = when {
+                value < 0 -> {
+                    0
+                }
+                value > pageCount -> {
+                    pageCount - 1
+                }
+                else -> {
+                    value
+                }
+            }
+        }
 
     /**
      * Number of page
@@ -62,17 +74,13 @@ class Paginator<E>(
      * Move to next page
      */
     fun next() {
-        if (pageCount - 1 > currentPage) {
-            currentPage++
-        }
+        currentPage++
     }
 
     /**e
      * Move to previous page
      */
     fun prev() {
-        if (0 < currentPage) {
-            currentPage--
-        }
+        currentPage--
     }
 }
