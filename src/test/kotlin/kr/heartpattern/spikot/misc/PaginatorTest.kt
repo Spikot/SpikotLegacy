@@ -1,6 +1,5 @@
-package io.github.ReadyMadeProgrammer
+package kr.heartpattern.spikot.misc
 
-import kr.heartpattern.spikot.misc.Paginator
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

@@ -1,6 +1,5 @@
-package io.github.ReadyMadeProgrammer
+package kr.heartpattern.spikot.module
 
-import kr.heartpattern.spikot.module.*
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

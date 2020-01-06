@@ -1,9 +1,5 @@
-package io.github.ReadyMadeProgrammer
+package kr.heartpattern.spikot.utils
 
-import kr.heartpattern.spikot.utils.attachInvisible
-import kr.heartpattern.spikot.utils.decryptInvisible
-import kr.heartpattern.spikot.utils.encryptInvisible
-import kr.heartpattern.spikot.utils.findInvisible
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
