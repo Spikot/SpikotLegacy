@@ -80,24 +80,12 @@ fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
 }
 
 /**
- * MenuProvider which manage this inventory. Return null if inventory does not managed by menu provider
- */
-val Inventory.menuProvider: MenuProvider?
-    get() {
-        return if (title.hasInvisible()) {
-            MenuManager.openedInventory[title.findInvisible()]?.module as MenuProvider?
-        } else {
-            null
-        }
-    }
-
-/**
  * Get MenuProvider this player currently open. Return null if player does not open MenuProvider
  * @receiver Player to get current MenuProvider
  * @param T Type of MenuProvider
  */
 inline fun <reified T : MenuProvider> Player.getOpenedInventory(): T? {
-    val title = player.openInventory.topInventory?.title
+    val title = player.openInventory.title
     if (title.isNullOrBlank() || !title.hasInvisible()) return null
     return MenuManager.openedInventory[title.findInvisible()] as? T
 }
@@ -117,14 +105,14 @@ internal object MenuManager : AbstractModule() {
 
     @EventHandler
     fun onSlotClick(event: InventoryClickEvent) {
-        val topInventory = event.whoClicked.openInventory.topInventory ?: return
-        if (topInventory.title == null || !topInventory.title.hasInvisible()) {
+        val title = event.whoClicked.openInventory.title
+        if (title == null || !title.hasInvisible()) {
             return
         }
-        val inventoryId = topInventory.title.findInvisible()
+        val inventoryId = title.findInvisible()
         val provider = openedInventory[inventoryId]?.module as MenuProvider? ?: return
         provider.onInteract(event)
-        if (event.clickedInventory === topInventory) {
+        if (event.clickedInventory === event.whoClicked.openInventory.topInventory) {
             val slotId = event.slot
             val x = slotId % 9
             val y = slotId / 9
@@ -138,9 +126,9 @@ internal object MenuManager : AbstractModule() {
 
     @EventHandler
     fun onDrag(event: InventoryDragEvent) {
-        val targetInventory = event.whoClicked.openInventory.topInventory
-        if (targetInventory.title.hasInvisible()) {
-            val inventoryId = targetInventory.title.findInvisible()
+        val title = event.whoClicked.openInventory.title
+        if (title.hasInvisible()) {
+            val inventoryId = title.findInvisible()
             val provider = openedInventory[inventoryId]?.module as MenuProvider? ?: return
             provider.onInteract(event)
         }
@@ -148,10 +136,10 @@ internal object MenuManager : AbstractModule() {
 
     @EventHandler
     fun onInventoryClose(event: InventoryCloseEvent) {
-        if (!event.inventory.title.hasInvisible()) {
+        if (!event.view.title.hasInvisible()) {
             return
         }
-        val inventoryId = event.inventory.title.findInvisible()
+        val inventoryId = event.view.title.findInvisible()
         val handler = openedInventory[inventoryId] ?: return
         val provider = handler.module as MenuProvider
         if (!provider.onClose()) {
