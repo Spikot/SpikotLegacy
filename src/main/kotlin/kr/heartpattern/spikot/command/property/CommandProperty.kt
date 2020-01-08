@@ -36,7 +36,7 @@ class CommandProperty<T> internal constructor(val pos: Int, val value: Transform
         get() = cache is Just<T>
 
     override fun getValue(thisRef: AbstractCommand, property: KProperty<*>): T {
-        return (cache as? Just<T>)?.value ?: throw PropertyNotInitializedException(property)
+        return ((cache as? Just<T>) ?: throw PropertyNotInitializedException(property)).value
     }
 
     override fun <R> transform(transformer: TransformerContext.(T) -> R): CommandProperty<R> {
