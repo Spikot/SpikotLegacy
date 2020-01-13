@@ -31,7 +31,7 @@ abstract class SingletonRepository<V : Any>(
             value = when (val result = persistenceManager.load(Unit)) {
                 is Just -> result.value
                 is None -> {
-                    throw Exception("Cannot load singleton repository: ${namespace ?: this::class.qualifiedName}")
+                    default()
                 }
             }
         }
