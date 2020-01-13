@@ -105,7 +105,6 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      */
     private inline fun performStep(previous: IModule.State, next: IModule.State, task: IModule.() -> Unit, intercept: IModuleInterceptor.(ModuleHandler) -> Unit): Boolean {
         check(state == previous) { "Module should be $previous, but $state" }
-        logger.debug("${state.readable} module: ${type.simpleName}")
         state = try {
             logger.debug{"${next.readable} module: ${module!!.javaClass.simpleName}"}
             module!!.task()
