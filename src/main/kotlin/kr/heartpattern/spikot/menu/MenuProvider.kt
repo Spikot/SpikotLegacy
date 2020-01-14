@@ -39,8 +39,9 @@ abstract class MenuProvider : AbstractModule() {
     val isOpen: Boolean by contextDelegate(MenuOpenProperty)
 
     private fun updateInventory() {
-        menu.slot.forEach { (point, item) ->
-            player.openInventory.topInventory.setItem(point.x + point.y * 9, item.itemStack)
+        for (index in 0 until player.openInventory.topInventory.size) {
+            val item = menu.slot[SlotPosition(index)]
+            player.openInventory.topInventory.setItem(index, item?.itemStack)
         }
         player.updateInventory()
     }
