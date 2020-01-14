@@ -122,4 +122,11 @@ class MenuBuilder {
         builder.build()
         slot[point] = Slot(builder.item, builder.eventHandlers)
     }
+
+    /**
+     * Clear slots
+     */
+    fun clear() {
+        slot.clear()
+    }
 }
