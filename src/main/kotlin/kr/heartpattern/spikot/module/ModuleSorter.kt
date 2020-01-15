@@ -98,7 +98,7 @@ internal fun sortModuleDependencies(modules: List<KClass<*>>): List<KClass<*>> {
                     } else {
                         when (inherit.priority) {
                             SYSTEM -> {
-                                // Do nothing
+                                update(null, SystemMarkerModule::class)
                             }
                             API -> {
                                 update(SystemMarkerModule::class, APIMarkerModule::class)
