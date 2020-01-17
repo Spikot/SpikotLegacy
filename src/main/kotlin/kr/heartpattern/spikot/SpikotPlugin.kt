@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * class PluginMain: SpikotPlugin()
  */
 abstract class SpikotPlugin : JavaPlugin(), CoroutineScope by MainScope() {
-    val logger = KotlinLogging.logger("plugin-${name}")
+    val logger by lazy { KotlinLogging.logger("plugin-${name}") }
     companion object {
         fun getPlugin(name: String): Plugin {
             return Bukkit.getPluginManager().getPlugin(name)
