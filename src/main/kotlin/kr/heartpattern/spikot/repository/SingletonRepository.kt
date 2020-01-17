@@ -18,7 +18,7 @@ abstract class SingletonRepository<V : Any>(
     storageFactory: StorageFactory,
     serializer: KSerializer<V>,
     protected val default: () -> V,
-    namespace: String?
+    namespace: String? = null
 ) : Repository<Unit, V>(
     storageFactory,
     UnitSerializer,
