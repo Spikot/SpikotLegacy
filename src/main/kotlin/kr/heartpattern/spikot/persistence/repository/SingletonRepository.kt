@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.persistence
+package kr.heartpattern.spikot.persistence.repository
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
@@ -21,7 +21,7 @@ abstract class SingletonRepository<V>(
     protected val serializer: KSerializer<V>,
     protected val default: () -> V,
     protected val namespace: String? = null
-) : AbstractModule() {
+) : AbstractModule(), Repository {
     protected lateinit var persistenceManager: SingletonStorage<V>
     protected var value: Option<V> = None
     override fun onEnable() {

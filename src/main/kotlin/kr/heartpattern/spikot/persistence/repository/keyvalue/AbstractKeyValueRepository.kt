@@ -1,8 +1,9 @@
-package kr.heartpattern.spikot.persistence
+package kr.heartpattern.spikot.persistence.repository.keyvalue
 
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.module.AbstractModule
+import kr.heartpattern.spikot.persistence.repository.Repository
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 

@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.persistence
+package kr.heartpattern.spikot.persistence.repository.keyvalue
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer

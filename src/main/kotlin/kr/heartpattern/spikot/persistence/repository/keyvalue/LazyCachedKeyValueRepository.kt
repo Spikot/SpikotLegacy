@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.persistence
+package kr.heartpattern.spikot.persistence.repository.keyvalue
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.RemovalCause

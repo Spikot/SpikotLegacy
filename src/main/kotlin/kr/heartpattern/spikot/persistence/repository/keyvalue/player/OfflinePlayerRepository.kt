@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.persistence
+package kr.heartpattern.spikot.persistence.repository.keyvalue.player
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.RemovalCause
@@ -13,6 +13,7 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.persistence.repository.keyvalue.AbstractKeyValueRepository
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
