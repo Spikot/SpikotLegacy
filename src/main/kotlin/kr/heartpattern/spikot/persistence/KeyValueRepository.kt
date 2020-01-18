@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.repository
+package kr.heartpattern.spikot.persistence
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
@@ -8,17 +8,17 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
-import kr.heartpattern.spikot.repository.persistence.StorageFactory
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
-abstract class KeyRepository<K : Any, V : Any>(
-    storageFactory: StorageFactory,
+abstract class KeyValueRepository<K : Any, V : Any>(
+    storageFactory: KeyValueStorageFactory,
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     protected val storage: MutableMap<K, V> = HashMap(),
     namespace: String? = null
-) : Repository<K, V>(
+) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,

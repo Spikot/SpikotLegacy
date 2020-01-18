@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.repository
+package kr.heartpattern.spikot.persistence
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -8,7 +8,7 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
-import kr.heartpattern.spikot.repository.persistence.StorageFactory
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -23,12 +23,12 @@ import kotlin.reflect.KProperty
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class PlayerRepository<V : Any>(
-    storageFactory: StorageFactory,
+    storageFactory: KeyValueStorageFactory,
     valueSerializer: KSerializer<V>,
     protected val default: (Player) -> V,
     protected val storage: MutableMap<UUID, V> = HashMap(),
     namespace: String? = null
-) : Repository<UUID, V>(
+) : AbstractKeyValueRepository<UUID, V>(
     storageFactory,
     UUIDSerializer,
     valueSerializer,

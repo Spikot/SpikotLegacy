@@ -1,4 +1,4 @@
-package kr.heartpattern.spikot.repository
+package kr.heartpattern.spikot.persistence
 
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.RemovalCause
@@ -11,18 +11,18 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
-import kr.heartpattern.spikot.repository.persistence.StorageFactory
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import java.util.concurrent.TimeUnit
 
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
-class LazyCachedKeyRepository<K, V : Any>(
-    storageFactory: StorageFactory,
+class LazyCachedKeyValueRepository<K, V : Any>(
+    storageFactory: KeyValueStorageFactory,
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
     namespace: String?
-) : Repository<K, V>(
+) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,

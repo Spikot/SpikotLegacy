@@ -1,16 +1,16 @@
-package kr.heartpattern.spikot.repository.persistence
+package kr.heartpattern.spikot.persistence.storage
 
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
-import kr.heartpattern.spikot.repository.Repository
+import org.bukkit.plugin.Plugin
 
 /**
- * Persistence delegate. This class manage in which way key-value data is persist.
+ * Persistence delegate. This class do actual key-value data persist.
  * @param K Key type
  * @param V Value type
  */
-interface Storage<K, V> {
+interface KeyValueStorage<K, V> : Storage {
     /**
      * All keys
      * @return Collection of all key
@@ -65,11 +65,11 @@ interface Storage<K, V> {
     }
 }
 
-interface StorageFactory {
-    fun <K, V> createPersistenceManager(
+interface KeyValueStorageFactory : StorageFactory {
+    fun <K, V> createKeyValueStorage(
+        plugin: Plugin,
         namespace: String,
-        enclosure: Repository<K, V>,
         keySerializer: KSerializer<K>,
         valueSerializer: KSerializer<V>
-    ): Storage<K, V>
+    ): KeyValueStorage<K, V>
 }
