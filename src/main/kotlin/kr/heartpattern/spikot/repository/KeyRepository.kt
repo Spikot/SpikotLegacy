@@ -2,6 +2,7 @@ package kr.heartpattern.spikot.repository
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
+import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
@@ -36,10 +37,13 @@ abstract class KeyRepository<K : Any, V : Any>(
 
     override fun onDisable() {
         runBlocking {
-            persistenceManager.clear()
+            val new = storage.keys
+            val old = persistenceManager.getAllKeys()
             persistenceManager.saveAll(
                 storage.mapValues { it.value.option }
             )
+
+            persistenceManager.saveAll((old - new).map { it to None }.toMap())
         }
     }
 }
