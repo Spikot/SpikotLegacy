@@ -13,7 +13,6 @@ import java.util.*
 import java.util.jar.JarFile
 import kotlin.collections.HashSet
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
 
 /**
  * Manage all spikot plugin
@@ -35,7 +34,7 @@ object SpikotPluginManager : IBootstrap {
                     val jarFile = JarFile(file)
                     val wrapper = PluginWrapper(p as SpikotPlugin)
                     jarFile.entries().iterator().forEach entryIterate@{ entry ->
-                        if (!entry.name.startsWith("spikot"))
+                        if (!entry.name.startsWith("spikot") || !entry.name.endsWith(".json"))
                             return@entryIterate
                         val json = JsonParser().parse(jarFile.getInputStream(entry).bufferedReader()).asJsonObject
                         json.forEach { key, value ->
