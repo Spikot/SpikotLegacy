@@ -12,7 +12,7 @@ import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.getInstance
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 @FindAnnotation(impl = [SerialModule::class])
 annotation class SerializationModule
 
@@ -30,12 +30,17 @@ object SerializationModuleRegistry : AbstractModule() {
         private set
 
     override fun onEnable() {
+        println("OnEnable")
         serializationModule = SerializersModule {
+            println("Module")
             SpikotPluginManager.forEachAnnotation<SerializationModule> { (type, _, _) ->
+                println(type.qualifiedName)
                 include(type.getInstance() as SerialModule)
             }
+            println("End")
         }
-
+        println("Module End")
         jsonSerializer = Json(JsonConfiguration.Stable, serializationModule)
+        println("Complete")
     }
 }
