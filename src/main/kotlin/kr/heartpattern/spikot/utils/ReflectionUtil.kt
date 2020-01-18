@@ -17,20 +17,20 @@ import kotlin.reflect.jvm.isAccessible
  */
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> KClass<T>.getInstance(): T? {
-    if (this.visibility != KVisibility.PUBLIC) { //Do dirty stuff
+    return if (this.visibility != KVisibility.PUBLIC) { //Do dirty stuff
         try {
             val instanceField = this.java.getDeclaredField("INSTANCE")
             instanceField.isAccessible = true
-            return instanceField.get(null) as T
+            instanceField.get(null) as T
         } catch (e: Throwable) {
             constructors
                 .singleOrNull { it.parameters.all(KParameter::isOptional) }
                 ?.apply { isAccessible = true }
                 ?.callBy(emptyMap())
         }
-
+    } else {
+        this.objectInstance ?: createInstance()
     }
-    return this.objectInstance ?: createInstance()
 }
 
 /**
