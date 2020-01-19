@@ -49,6 +49,7 @@ object LocationSerializer : KSerializer<Location> {
                     5 -> yaw = decodeFloatElement(descriptor, i)
                 }
             }
+            endStructure(descriptor)
             return Location(
                 world ?: throw MissingFieldException("world"),
                 x ?: throw MissingFieldException("x"),
