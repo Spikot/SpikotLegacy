@@ -51,6 +51,7 @@ dependencies {
     compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
     compile 'net.swiftzer.semver:semver:1.1.1'
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
+    compile "com.charleskorn.kaml:kaml:0.15.0"
 
     // Compile only dependencies
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc6'
@@ -94,38 +95,4 @@ task createDokkaArchive(type: Zip){
     destinationDirectory = file("./build/libs/")
 
     from "./build/kdoc"
-}
-
-dokka{
-    outputFormat = 'html'
-    outputDirectory = './build/kdoc/'
-    configuration{
-        externalDocumentationLink{
-            url = new URL("https://hub.spigotmc.org/javadocs/spigot/")
-            packageListUrl = new URL("https://hub.spigotmc.org/javadocs/spigot/package-list")
-        }
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId 'Spikot'
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            credentials {
-                username "${nexusUser}"
-                password "${nexusPassword}"
-            }
-
-            if (version.endsWith('SNAPSHOT')) {
-                url 'https://maven.heartpattern.kr/repository/maven-public-snapshots/'
-            } else {
-                url 'https://maven.heartpattern.kr/repository/maven-public-releases/'
-            }
-        }
-    }
 }

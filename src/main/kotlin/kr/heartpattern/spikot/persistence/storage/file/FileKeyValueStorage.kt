@@ -8,13 +8,14 @@ import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.just
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
-import kr.heartpattern.spikot.serialization.jsonSerializer
+import kr.heartpattern.spikot.serialization.SerializeType
 import java.io.File
 
 class FileKeyValueStorage<K, V>(
     private val directory: File,
     private val keySerializer: KSerializer<K>,
-    private val valueSerializer: KSerializer<V>
+    private val valueSerializer: KSerializer<V>,
+    private val serializeType: SerializeType
 ) : KeyValueStorage<K, V> {
 
     init {
@@ -33,10 +34,10 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun save(key: K, value: Option<V>) {
         withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".json")
+            val file = File(directory, serialize(keySerializer, key) + ".${serializeType.fileExtensionName}")
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(jsonSerializer.stringify(valueSerializer, value.value))
+                file.writeText(serializeType.serialize(valueSerializer, value.value))
             } else {
                 file.delete()
             }
@@ -45,9 +46,9 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun load(key: K): Option<V> {
         return withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".json")
+            val file = File(directory, serialize(keySerializer, key) + ".${serializeType.fileExtensionName}")
             if (file.exists()) {
-                jsonSerializer.parse(valueSerializer, file.readText()).just
+                serializeType.deserialize(valueSerializer, file.readText()).just
             } else {
                 None
             }

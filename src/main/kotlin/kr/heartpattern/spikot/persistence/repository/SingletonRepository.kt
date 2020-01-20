@@ -11,6 +11,7 @@ import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
+import kr.heartpattern.spikot.serialization.SerializeType
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -20,15 +21,17 @@ abstract class SingletonRepository<V>(
     protected val storageFactory: SingletonStorageFactory,
     protected val serializer: KSerializer<V>,
     protected val default: () -> V,
-    protected val namespace: String? = null
-) : AbstractModule(), Repository {
+    protected val namespace: String? = null,
+    protected val serializeType: SerializeType = SerializeType.JSON
+) : AbstractModule() {
     protected lateinit var persistenceManager: SingletonStorage<V>
     protected var value: Option<V> = None
     override fun onEnable() {
         persistenceManager = storageFactory.createSingletonStorage(
             this.plugin,
             namespace ?: this::class.qualifiedName!!,
-            serializer
+            serializer,
+            serializeType
         )
         runBlocking {
             value = when (val result = persistenceManager.get()) {

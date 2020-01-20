@@ -2,6 +2,7 @@ package kr.heartpattern.spikot.persistence.storage
 
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.Option
+import kr.heartpattern.spikot.serialization.SerializeType
 import org.bukkit.plugin.Plugin
 
 /**
@@ -26,6 +27,7 @@ interface SingletonStorageFactory : StorageFactory {
     fun <V> createSingletonStorage(
         plugin: Plugin,
         namespace: String,
-        serializer: KSerializer<V>
+        serializer: KSerializer<V>,
+        serializeType: SerializeType
     ): SingletonStorage<V>
 }

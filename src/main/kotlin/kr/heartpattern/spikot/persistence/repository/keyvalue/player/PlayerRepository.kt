@@ -10,6 +10,7 @@ import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.repository.keyvalue.AbstractKeyValueRepository
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
+import kr.heartpattern.spikot.serialization.SerializeType
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -28,12 +29,14 @@ abstract class PlayerRepository<V : Any>(
     valueSerializer: KSerializer<V>,
     protected val default: (Player) -> V,
     protected val storage: MutableMap<UUID, V> = HashMap(),
-    namespace: String? = null
+    namespace: String? = null,
+    serializeType: SerializeType = SerializeType.JSON
 ) : AbstractKeyValueRepository<UUID, V>(
     storageFactory,
     UUIDSerializer,
     valueSerializer,
-    namespace
+    namespace,
+    serializeType
 ), Map<UUID, V> by storage, ReadWriteProperty<Player, V> {
     override fun onEnable() {
         runBlocking {

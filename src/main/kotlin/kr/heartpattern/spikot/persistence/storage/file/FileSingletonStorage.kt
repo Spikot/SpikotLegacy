@@ -7,12 +7,14 @@ import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
+import kr.heartpattern.spikot.serialization.SerializeType
 import kr.heartpattern.spikot.serialization.jsonSerializer
 import java.io.File
 
 class FileSingletonStorage<V>(
     val file: File,
-    val serializer: KSerializer<V>
+    val serializer: KSerializer<V>,
+    val serializeType: SerializeType
 ) : SingletonStorage<V> {
     override suspend fun get(): Option<V> {
         return if (file.exists()) {

@@ -12,6 +12,7 @@ import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
+import kr.heartpattern.spikot.serialization.SerializeType
 import java.util.concurrent.TimeUnit
 
 @BaseModule
@@ -21,12 +22,14 @@ class LazyCachedKeyValueRepository<K, V : Any>(
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
-    namespace: String?
+    namespace: String?,
+    serializeType: SerializeType
 ) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,
-    namespace
+    namespace,
+    serializeType
 ) {
     protected val cache = cacheBuilder.removalListener { notification: RemovalNotification<K, Option<V>> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {

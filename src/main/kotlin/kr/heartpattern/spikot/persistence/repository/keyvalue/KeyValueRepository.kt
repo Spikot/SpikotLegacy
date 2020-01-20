@@ -9,6 +9,7 @@ import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
+import kr.heartpattern.spikot.serialization.SerializeType
 
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
@@ -17,12 +18,14 @@ abstract class KeyValueRepository<K : Any, V : Any>(
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     protected val storage: MutableMap<K, V> = HashMap(),
-    namespace: String? = null
+    namespace: String? = null,
+    serializeType: SerializeType = SerializeType.JSON
 ) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,
-    namespace
+    namespace,
+    serializeType
 ), MutableMap<K, V> by storage {
     override fun onEnable() {
         runBlocking {
