@@ -2,6 +2,7 @@
 
 package kr.heartpattern.spikot.module
 
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -29,15 +30,35 @@ abstract class AbstractPlayerModule : AbstractModule() {
  * @param T Controlled player module
  * @param type Type of player module
  */
-@Module(priority = ModulePriority.LOWEST)
 @BaseModule
 open class PlayerModuleController<T : AbstractPlayerModule>(
     private val type: KClass<T>
 ) : AbstractModule() {
     private val table = HashMap<UUID, ModuleHandler>()
 
+    override fun onEnable() {
+        for (player in Bukkit.getOnlinePlayers()) {
+            join(player)
+        }
+    }
+
+    override fun onDisable() {
+        for (player in Bukkit.getOnlinePlayers()) {
+            quit(player)
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     fun PlayerJoinEvent.onJoin() {
+        join(player)
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun PlayerQuitEvent.onQuit() {
+        quit(player)
+    }
+
+    private fun join(player: Player) {
         val moduleHandler = ModuleManager.createModule(type, plugin)
         (moduleHandler.module as AbstractPlayerModule).player = player
         moduleHandler.load()
@@ -45,8 +66,7 @@ open class PlayerModuleController<T : AbstractPlayerModule>(
             table[player.uniqueId] = moduleHandler
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun PlayerQuitEvent.onQuit() {
+    private fun quit(player: Player) {
         val module = table.remove(player.uniqueId)!!
         module.disable()
     }
