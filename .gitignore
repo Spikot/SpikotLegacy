@@ -53,3 +53,6 @@ fabric.properties
 
 # Donot track local gradle file
 /local.gradle
+
+build/
+.gradle/

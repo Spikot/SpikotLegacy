@@ -87,7 +87,6 @@ task createPlugin(type: Jar) {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    destinationDirectory = file("C:\\Users\\Administrator\\Documents\\게임\\마인크래프트\\버킷들\\스피갓\\plugins")
     with jar
 }
 
