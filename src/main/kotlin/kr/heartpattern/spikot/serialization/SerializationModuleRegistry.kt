@@ -1,6 +1,7 @@
 package kr.heartpattern.spikot.serialization
 
 import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerialModule
@@ -42,6 +43,6 @@ object SerializationModuleRegistry : AbstractModule() {
             }
         }
         jsonSerializer = Json(JsonConfiguration.Stable, serializationModule)
-        yamlSerializer = Yaml.default
+        yamlSerializer = Yaml(serializationModule)
     }
 }
