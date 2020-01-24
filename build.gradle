@@ -48,11 +48,15 @@ dependencies {
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
 
     // Compile dependencies
-    compile "io.github.microutils:kotlin-logging:1.5.4"
+    compile "io.github.microutils:kotlin-logging:1.7.8"
     compile "com.esotericsoftware.yamlbeans:yamlbeans:1.13"
     compile 'net.swiftzer.semver:semver:1.1.1'
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
     compile "com.charleskorn.kaml:kaml:0.15.0"
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+    compile 'org.slf4j:slf4j-jdk14:1.7.25'
 
     // Compile only dependencies
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc6'
