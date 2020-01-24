@@ -30,7 +30,13 @@ fun <T> Option<T>.getOrNull(): T? = (this as? Just<T>)?.value
  * @param default Default value supplier
  * @receiver Value of option or default value
  */
-fun <T> Option<T>.getOrElse(default: () -> T): T = (this as? Just<T>)?.value ?: default()
+inline fun <T> Option<T>.getOrElse(default: () -> T): T {
+    return if (this is Just) {
+        value
+    } else {
+        default()
+    }
+}
 
 /**
  * Create Option from nullable value
