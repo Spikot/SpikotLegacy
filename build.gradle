@@ -68,8 +68,8 @@ dependencies {
     // KAPT
     kapt 'com.google.auto.service:auto-service:1.0-rc6'
     kapt 'org.spigotmc:plugin-annotations:1.1.0-SNAPSHOT'
-    kapt "kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT"
     kapt "kr.heartpattern:SpikotAnnotationProcessor:4.0.0-SNAPSHOT"
+    kapt "kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT"
 }
 
 test {
