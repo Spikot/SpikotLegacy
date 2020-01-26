@@ -2,8 +2,8 @@ package kr.heartpattern.spikot.serialization.serializer
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.StringDescriptor
-import kr.heartpattern.spikot.adapters.ItemStackAdapter
-import kr.heartpattern.spikot.adapters.NBTAdapter
+import kr.heartpattern.spikot.item.decodeItemStack
+import kr.heartpattern.spikot.item.encode
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -14,19 +14,15 @@ object ItemStackSerializer : KSerializer<ItemStack> {
     override fun serialize(encoder: Encoder, obj: ItemStack) {
         encoder.encodeString(
             Base64.getEncoder().encodeToString(
-                NBTAdapter.compressNBT(
-                    ItemStackAdapter.toNBTCompound(obj)
-                )
+                obj.encode()
             )
         )
     }
 
     override fun deserialize(decoder: Decoder): ItemStack {
-        return ItemStackAdapter.fromNBTCompound(
-            NBTAdapter.decompressNBT(
-                Base64.getDecoder().decode(
-                    decoder.decodeString()
-                )
+        return decodeItemStack(
+            Base64.getDecoder().decode(
+                decoder.decodeString()
             )
         )
     }
