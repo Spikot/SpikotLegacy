@@ -12,7 +12,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
-inline fun <reified E : Event> SpikotPlugin.listenEvent(
+inline fun <reified E : Event> listenEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
 ): ReceiveChannel<E> {
@@ -28,8 +28,19 @@ inline fun <reified E : Event> SpikotPlugin.listenEvent(
     return channel
 }
 
+@Deprecated(
+    "Use without receiver instead",
+    ReplaceWith("listenEvent(priority, ignoreCancelled)")
+)
+inline fun <reified E : Event> SpikotPlugin.listenEvent(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false
+): ReceiveChannel<E> {
+    return kr.heartpattern.spikot.event.coroutine.listenEvent(priority, ignoreCancelled)
+}
+
 @UseExperimental(ExperimentalCoroutinesApi::class)
-inline fun <reified E> SpikotPlugin.consumeEvent(
+inline fun <reified E> consumeEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
 ): Channel<E>
@@ -45,4 +56,16 @@ inline fun <reified E> SpikotPlugin.consumeEvent(
         listener.unregister()
     }
     return channel
+}
+
+@Deprecated(
+    "Use without receiver instaed",
+    ReplaceWith("listenEvent(priority, ignoreCancelled)")
+)
+inline fun <reified E> SpikotPlugin.consumeEvent(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false
+): Channel<E>
+    where E : Event, E : Cancellable {
+    return kr.heartpattern.spikot.event.coroutine.consumeEvent(priority, ignoreCancelled)
 }

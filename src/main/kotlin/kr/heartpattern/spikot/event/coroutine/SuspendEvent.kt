@@ -18,8 +18,8 @@ import kotlin.coroutines.suspendCoroutine
  * @param ignoreCancelled Whether ignore event cancellation
  * @param callback Callback to listen event and produce result
  */
-suspend inline fun <reified E : Event, R> SpikotPlugin.suspendListenEvent(
-    priority: EventPriority,
+suspend inline fun <reified E : Event, R> suspendListenEvent(
+    priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false,
     crossinline callback: (E) -> Option<R>
 ): R = suspendCoroutine { continuation ->
@@ -29,5 +29,19 @@ suspend inline fun <reified E : Event, R> SpikotPlugin.suspendListenEvent(
             self.unregister()
             continuation.resume(result.value)
         }
+    }
+}
+
+@Deprecated(
+    "Use without receiver",
+    ReplaceWith("suspendListenEvent(priority, ignoreCancelled, callback)")
+)
+suspend inline fun <reified E : Event, R> SpikotPlugin.suspendListenEvent(
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false,
+    crossinline callback: (E) -> Option<R>
+): R {
+    return kr.heartpattern.spikot.event.coroutine.suspendListenEvent<E, R> {
+        callback(it)
     }
 }

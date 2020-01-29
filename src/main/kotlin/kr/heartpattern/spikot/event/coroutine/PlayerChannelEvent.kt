@@ -13,14 +13,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerEvent
 
 @UseExperimental(ExperimentalCoroutinesApi::class)
-inline fun <reified E : PlayerEvent> SpikotPlugin.listenPlayerEvent(
-    player: Player,
+inline fun <reified E : PlayerEvent> Player.listenPlayerEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
 ): ReceiveChannel<E> {
     val channel = Channel<E>()
     val listener = HotEventManager.register<E>(priority, ignoreCancelled) { event, _ ->
-        if (event.player == player) {
+        if (event.player == this) {
             spikot.launch {
                 channel.send(event)
             }
@@ -32,16 +31,27 @@ inline fun <reified E : PlayerEvent> SpikotPlugin.listenPlayerEvent(
     return channel
 }
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
-inline fun <reified E> SpikotPlugin.consumePlayerEvent(
+@Deprecated(
+    "Use without receiver",
+    ReplaceWith("listenPlayerEvent(player, priority, ignoreCancelled")
+)
+inline fun <reified E : PlayerEvent> SpikotPlugin.listenPlayerEvent(
     player: Player,
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false
+): ReceiveChannel<E> {
+    return player.listenPlayerEvent(priority, ignoreCancelled)
+}
+
+@UseExperimental(ExperimentalCoroutinesApi::class)
+inline fun <reified E> Player.consumePlayerEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
 ): ReceiveChannel<E>
     where E : PlayerEvent, E : Cancellable {
     val channel = Channel<E>()
     val listener = HotEventManager.register<E>(priority, ignoreCancelled) { event, _ ->
-        if (event.player == player) {
+        if (event.player == this) {
             event.isCancelled = true
             spikot.launch {
                 channel.send(event)
@@ -52,4 +62,17 @@ inline fun <reified E> SpikotPlugin.consumePlayerEvent(
         listener.unregister()
     }
     return channel
+}
+
+@Deprecated(
+    "Use without receiver",
+    ReplaceWith("player.consumePlayerEvent(priority, ignoreCancelled")
+)
+inline fun <reified E> SpikotPlugin.consumePlayerEvent(
+    player: Player,
+    priority: EventPriority = EventPriority.NORMAL,
+    ignoreCancelled: Boolean = false
+): ReceiveChannel<E>
+    where E : PlayerEvent, E : Cancellable {
+    return player.consumePlayerEvent(priority, ignoreCancelled)
 }
