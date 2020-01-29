@@ -19,7 +19,17 @@ class SlotBuilder(val slot: SlotPosition) {
     /**
      * Item that display in slot
      */
-    var item: ItemStack = ItemStack(Material.AIR)
+    var display: ItemStack = ItemStack(Material.AIR)
+
+    @Deprecated(
+        "item is deprecated for duplicated name with item builder",
+        ReplaceWith("display")
+    )
+    var item: ItemStack
+        get() = display
+        set(value) {
+            display = value
+        }
     internal val eventHandlers = HashSet<ClickHandler>()
 
     /**

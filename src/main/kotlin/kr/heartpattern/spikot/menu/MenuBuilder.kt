@@ -120,7 +120,7 @@ class MenuBuilder {
     fun slot(point: SlotPosition, build: SlotBuilder.() -> Unit) {
         val builder = SlotBuilder(point)
         builder.build()
-        slot[point] = Slot(builder.item, builder.eventHandlers)
+        slot[point] = Slot(builder.display, builder.eventHandlers)
     }
 
     /**
