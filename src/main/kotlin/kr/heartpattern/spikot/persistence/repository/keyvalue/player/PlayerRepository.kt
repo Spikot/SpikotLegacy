@@ -3,6 +3,7 @@ package kr.heartpattern.spikot.persistence.repository.keyvalue.player
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.KSerializer
+import kr.heartpattern.spikot.coroutine.delayTick
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
@@ -21,6 +22,17 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Repository which store data per player.
+ * Data was loaded when player join, and saved when player quit.
+ * Reading offline player data does not support. For this functionality, use [OfflinePlayerRepository]
+ * @param V Type of value
+ * @param storageFactory KeyValueStorage factory
+ * @param valueSerializer KSerializer for value type
+ * @param default Default value provider if player data does not exists.
+ * @param storage Online player data cache storage
+ * @param namespace Namespace of data.
+ */
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class PlayerRepository<V : Any>(
@@ -63,6 +75,21 @@ abstract class PlayerRepository<V : Any>(
         plugin.launch {
             save(player)
             storage.remove(player.uniqueId)
+        }
+    }
+
+    /**
+     * Suspend while player data is completely loaded.
+     * In most case, you can just use [get] method. However, if you access data in PlayerJoinEvent, data cannot be loaded.
+     * In these case use this suspension method to suspend while data is loaded.
+     * @param player Player to get data.
+     * @return Data for [player]
+     */
+    suspend fun safeGet(player: Player): V {
+        while (true) { //TODO: Write a good logic
+            if (player.uniqueId in storage)
+                return storage[player.uniqueId]!!
+            delayTick(1)
         }
     }
 
