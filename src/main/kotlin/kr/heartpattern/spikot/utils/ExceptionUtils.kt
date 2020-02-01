@@ -1,6 +1,9 @@
 package kr.heartpattern.spikot.utils
 
 import org.slf4j.Logger
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Catch all error and log it to logger with [message]
@@ -9,7 +12,9 @@ import org.slf4j.Logger
  * @param run lambda that can be throw error
  * @return Result of lambda if no error, otherwise null
  */
+@UseExperimental(ExperimentalContracts::class)
 inline fun <R> Logger.catchAll(message: String, run: () -> R): R? {
+    contract { callsInPlace(run, InvocationKind.EXACTLY_ONCE) }
     return try {
         run()
     } catch (e: Throwable) {
@@ -23,7 +28,9 @@ inline fun <R> Logger.catchAll(message: String, run: () -> R): R? {
  * @param run lambda that can be throw error
  * @return Result of lambda if no error, otherwise null
  */
+@UseExperimental(ExperimentalContracts::class)
 inline fun <R> catchSilence(run: () -> R): R? {
+    contract { callsInPlace(run, InvocationKind.EXACTLY_ONCE) }
     return try {
         run()
     } catch (ignored: Throwable) {
