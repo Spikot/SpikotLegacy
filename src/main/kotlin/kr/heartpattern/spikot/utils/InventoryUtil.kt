@@ -86,3 +86,18 @@ fun Inventory.giveAll(item: Collection<ItemStack>): Boolean {
         false
     }
 }
+
+/**
+ * Count number of item in inventory.
+ * @receiver Inventory to check
+ * @param item ItemStack to check. Amount is ignored.
+ * @return Number of [item] in inventory
+ */
+fun Inventory.count(item: ItemStack): Int {
+    return contents.sumBy {
+        if (it.isSimilar(item))
+            it.amount
+        else
+            0
+    }
+}
