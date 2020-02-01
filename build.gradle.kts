@@ -54,6 +54,13 @@ dependencies {
     kapt("kr.heartpattern:SpikotClassLocator:4.0.0-SNAPSHOT")
 }
 
+configurations {
+    testCompile.configure {
+        extendsFrom(compileOnly.get())
+        extendsFrom(compile.get())
+    }
+}
+
 tasks {
     test {
         useJUnitPlatform()
