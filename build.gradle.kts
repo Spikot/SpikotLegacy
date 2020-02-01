@@ -102,7 +102,6 @@ tasks {
 
     create<Jar>("dokkaJar") {
         group = JavaBasePlugin.DOCUMENTATION_GROUP
-        archiveFileName.set("Spikot-kdoc.zip")
         archiveClassifier.set("javadoc")
         from(dokka)
     }
