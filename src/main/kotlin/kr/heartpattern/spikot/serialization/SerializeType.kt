@@ -23,6 +23,10 @@ sealed class SerializeType(val fileExtensionName: String) {
         }
     }
 
+    companion object {
+        val values
+            get() = listOf(JSON, YAML)
+    }
 
     abstract fun <T> serialize(serializer: KSerializer<T>, value: T): String
     abstract fun <T> deserialize(serializer: KSerializer<T>, text: String): T

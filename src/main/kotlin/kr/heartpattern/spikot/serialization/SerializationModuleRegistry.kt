@@ -39,6 +39,7 @@ object SerializationModuleRegistry : AbstractModule() {
     override fun onEnable() {
         serializationModule = SerializersModule {
             SpikotPluginManager.forEachAnnotation<SerializationModule> { (type, _, _) ->
+                println("loaded: ${type.qualifiedName}")
                 include(type.getInstance() as SerialModule)
             }
         }

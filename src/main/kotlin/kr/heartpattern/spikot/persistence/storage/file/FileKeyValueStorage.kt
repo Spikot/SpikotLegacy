@@ -25,9 +25,14 @@ class FileKeyValueStorage<K, V>(
     override suspend fun getAllKeys(): Collection<K> {
         return withContext(Dispatchers.IO) {
             directory
-                .listFiles { _, name -> name.endsWith(".json") }!!
+                .listFiles { path, name ->
+                    SerializeType.values.any {
+                        val target = File(path, name)
+                        target.extension == it.fileExtensionName
+                    }
+                }!!
                 .map {
-                    deserialize(keySerializer, it.name.substring(0 until it.name.length - 5))
+                    deserialize(keySerializer, it.nameWithoutExtension)
                 }
         }
     }
