@@ -47,6 +47,7 @@ inline fun <reified E : PlayerEvent> Player.listenPlayerEvent(
     return channel
 }
 
+@Suppress("unused")
 @Deprecated(
     "Use without receiver",
     ReplaceWith("listenPlayerEvent(player, priority, ignoreCancelled")
@@ -80,6 +81,7 @@ inline fun <reified E> Player.consumePlayerEvent(
     return channel
 }
 
+@Suppress("unused")
 @Deprecated(
     "Use without receiver",
     ReplaceWith("player.consumePlayerEvent(priority, ignoreCancelled")

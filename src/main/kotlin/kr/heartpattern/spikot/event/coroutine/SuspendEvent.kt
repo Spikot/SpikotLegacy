@@ -48,6 +48,7 @@ suspend inline fun <reified E : Event, R> suspendListenEvent(
     }
 }
 
+@Suppress("unused")
 @Deprecated(
     "Use without receiver",
     ReplaceWith("suspendListenEvent(priority, ignoreCancelled, callback)")
@@ -57,7 +58,7 @@ suspend inline fun <reified E : Event, R> SpikotPlugin.suspendListenEvent(
     ignoreCancelled: Boolean = false,
     crossinline callback: (E) -> Option<R>
 ): R {
-    return kr.heartpattern.spikot.event.coroutine.suspendListenEvent<E, R> {
+    return kr.heartpattern.spikot.event.coroutine.suspendListenEvent<E, R>(priority, ignoreCancelled) {
         callback(it)
     }
 }

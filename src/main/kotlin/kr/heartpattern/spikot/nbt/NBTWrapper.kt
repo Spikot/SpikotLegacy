@@ -189,7 +189,7 @@ fun <T : Any> WrapperNBTList<WrapperNBTBase<T>>.getValue(index: Int): T = get(in
 /**
  * Wrapper of NBTTagCompound
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "RedundantUnitReturnType")
 interface WrapperNBTCompound : WrapperNBTBase<MutableMap<String, WrapperNBTBase<*>>>, MutableMap<String, WrapperNBTBase<*>> {
     override val type: TagType<MutableMap<String, WrapperNBTBase<*>>>
         get() = TagType.COMPOUND as TagType<MutableMap<String, WrapperNBTBase<*>>>

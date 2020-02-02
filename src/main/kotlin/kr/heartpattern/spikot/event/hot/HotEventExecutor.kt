@@ -73,6 +73,8 @@ class HotEventExecutor<E : Event> : EventExecutor {
     private val logger = KotlinLogging.logger { }
     private val listeners = LinkedHashMap<UUID, HotEventListener<E>>()
     val removeQueue = LinkedBlockingQueue<UUID>()
+
+    @Suppress("UNCHECKED_CAST")
     override fun execute(listener: Listener?, event: Event) {
         var remove = removeQueue.poll()
         while (remove != null) {

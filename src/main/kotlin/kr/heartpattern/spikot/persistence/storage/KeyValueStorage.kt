@@ -59,7 +59,7 @@ interface KeyValueStorage<K, V> : Storage {
     }
 
     /**
-     * Load all value associate with given [key] from persistence storage.
+     * Load all value associate with given [keys] from persistence storage.
      * @param keys Collection of keys to load
      * @return Key-Value map. [kr.heartpattern.spikot.misc.Just] if key is exists,
      * [kr.heartpattern.spikot.misc.None] if key does not exists.

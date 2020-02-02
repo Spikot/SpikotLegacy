@@ -44,6 +44,7 @@ inline fun <reified E : Event> listenEvent(
     return channel
 }
 
+@Suppress("unused")
 @Deprecated(
     "Use without receiver instead",
     ReplaceWith("listenEvent(priority, ignoreCancelled)")
@@ -74,6 +75,7 @@ inline fun <reified E> consumeEvent(
     return channel
 }
 
+@Suppress("unused")
 @Deprecated(
     "Use without receiver instaed",
     ReplaceWith("listenEvent(priority, ignoreCancelled)")

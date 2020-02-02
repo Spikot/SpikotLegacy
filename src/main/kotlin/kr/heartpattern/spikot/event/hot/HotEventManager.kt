@@ -23,6 +23,7 @@ import kotlin.reflect.KClass
 object HotEventManager {
     private val registry = HashMap<Class<out Event>, HotEventExecutorGroup<*>>()
 
+    @Suppress("UNCHECKED_CAST")
     private fun <E : Event> getExecutorGroup(event: KClass<E>): HotEventExecutorGroup<E> {
         val registered = registry[event.java]
         if (registered != null) return registered as HotEventExecutorGroup<E>

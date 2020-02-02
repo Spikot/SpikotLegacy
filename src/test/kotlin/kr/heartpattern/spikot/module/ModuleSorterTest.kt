@@ -16,7 +16,6 @@
 
 package kr.heartpattern.spikot.module
 
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -87,24 +86,5 @@ class ModuleSorterTest {
         assertEquals(modules.subList(3, 5).toSet(), sorted.subList(3, 5).toSet())
         assertEquals(modules.subList(5, 8).toSet(), sorted.subList(5, 8).toSet())
         assertEquals(modules[8], sorted[8])
-    }
-
-    @Test
-    fun failTest() {
-        assertThrows(UninitializedPropertyAccessException::class.java) {
-            // Access to spikot(to show error message) produce this.
-            val sorted = sortModuleDependencies(listOf(
-                APIModule::class,
-                LowestModule::class,
-                LowModule::class,
-                NormalModule::class,
-                DefaultModule::class,
-                HighModule::class,
-                BeforeModule::class,
-                ImplementModule::class,
-                HighestModule::class,
-                ConflictModule::class
-            ).shuffled())
-        }
     }
 }
