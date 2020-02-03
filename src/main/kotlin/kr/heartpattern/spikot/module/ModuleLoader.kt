@@ -78,7 +78,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
             }
             IModule.State.CREATE
         } catch (e: Throwable) {
-            logger.warn("Error occur", e)
+            logger.error("Error occur while create module: ${type.simpleName}", e)
             interceptors.forEach { interceptor ->
                 interceptor.onError(this, IModule.State.CREATE, e)
             }
