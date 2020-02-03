@@ -8,8 +8,8 @@ plugins {
     id("maven-publish")
 }
 
-val kotlin_version = "1.3.60"
-val coroutine_version = "1.3.0-M2"
+val kotlin_version = "1.3.61"
+val coroutine_version = "1.3.3"
 val paper_version = "1.12.2-R0.1-SNAPSHOT"
 
 group = "kr.heartpattern"
@@ -33,6 +33,7 @@ dependencies {
     compile("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
     compile("net.swiftzer.semver:semver:1.1.1")
     compile("com.github.salomonbrys.kotson:kotson:2.5.0")
+    compile("org.slf4j:slf4j-jdk14:1.7.30")
 
     // compile(only dependencies)
     compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
