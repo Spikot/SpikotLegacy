@@ -15,8 +15,8 @@ def paper_version = '1.12.2-R0.1-SNAPSHOT'
 if (new File('local.gradle').exists())
     apply from: 'local.gradle'
 
-group 'kr.heartpattern'
-version '4.0.0-SNAPSHOT'
+group = 'kr.heartpattern'
+version = '4.0.0-SNAPSHOT'
 
 repositories {
     maven {
@@ -94,7 +94,7 @@ task createPlugin(type: Jar) {
     with jar
 }
 
-task createDokkaArchive(type: Zip){
+task createDokkaArchive(type: Zip) {
     dependsOn dokka
     archiveFileName = "Spikot-kdoc.zip"
     destinationDirectory = file("./build/libs/")
