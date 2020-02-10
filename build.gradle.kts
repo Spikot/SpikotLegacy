@@ -21,19 +21,20 @@ repositories {
 
 dependencies {
     // Kotlin family
-    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version")
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
 
     // compile(dependencies)
-    compile("io.github.microutils:kotlin-logging:1.5.4")
-    compile("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
-    compile("net.swiftzer.semver:semver:1.1.1")
-    compile("com.github.salomonbrys.kotson:kotson:2.5.0")
-    compile("org.slf4j:slf4j-jdk14:1.7.30")
+    implementation("io.github.microutils:kotlin-logging:1.5.4")
+    implementation("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
+    implementation("net.swiftzer.semver:semver:1.1.1")
+    implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
+    implementation("org.slf4j:slf4j-jdk14:1.7.30")
+    implementation("com.charleskorn.kaml:kaml:0.15.0")
 
     // compile(only dependencies)
     compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
@@ -44,9 +45,9 @@ dependencies {
     }
 
     // Test
-    testCompile("org.jetbrains.kotlin:kotlin-test:1.3.50")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.5.2")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.3.50")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 
     // KAPT
     kapt("com.google.auto.service:auto-service:1.0-rc6")
