@@ -36,11 +36,6 @@ pipeline{
                 sh './gradlew -PnexusUser=${MAVEN_CREDENTIAL_USR} -PnexusPassword=${MAVEN_CREDENTIAL_PSW} publish'
             }
         }
-        stage('dokka'){
-            steps{
-                sh './gradlew -PnexusUser=${MAVEN_CREDENTIAL_USR} -PnexusPassword=${MAVEN_CREDENTIAL_PSW} createDokkaArchive'
-            }
-        }
     }
     post{
         always{

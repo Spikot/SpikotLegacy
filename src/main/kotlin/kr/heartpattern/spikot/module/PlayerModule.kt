@@ -1,7 +1,25 @@
+/*
+ * Copyright 2020 HeartPattern
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 @file:Suppress("UNCHECKED_CAST")
 
 package kr.heartpattern.spikot.module
 
+import kr.heartpattern.spikot.misc.MutableProperty
+import kr.heartpattern.spikot.utils.nonnull
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -12,6 +30,8 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
+private object PlayerProperty : MutableProperty<Player>
+
 /**
  * Module which is created for each player
  */
@@ -21,8 +41,7 @@ abstract class AbstractPlayerModule : AbstractModule() {
     /**
      * Owner of this module
      */
-    lateinit var player: Player
-        internal set
+    val player: Player by contextDelegate(PlayerProperty).nonnull()
 }
 
 /**
@@ -60,7 +79,7 @@ open class PlayerModuleController<T : AbstractPlayerModule>(
 
     private fun join(player: Player) {
         val moduleHandler = ModuleManager.createModule(type, plugin)
-        (moduleHandler.module as AbstractPlayerModule).player = player
+        moduleHandler.context[PlayerProperty] = player
         moduleHandler.load()
         if (moduleHandler.enable())
             table[player.uniqueId] = moduleHandler

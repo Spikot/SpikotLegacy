@@ -52,7 +52,4 @@ fabric.properties
 .idea/httpRequests
 
 # Donot track local gradle file
-/local.gradle
-
-build/
-.gradle/
+/local.gradle.kts
