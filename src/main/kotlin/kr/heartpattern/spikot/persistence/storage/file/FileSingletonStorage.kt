@@ -35,7 +35,7 @@ class FileSingletonStorage<V>(
     override suspend fun get(): Option<V> {
         return if (file.exists()) {
             withContext(Dispatchers.IO) {
-                Just(jsonSerializer.parse(serializer, file.readText()))
+                Just(serializeType.deserialize(serializer, file.readText()))
             }
         } else {
             None
@@ -46,7 +46,7 @@ class FileSingletonStorage<V>(
         withContext(Dispatchers.IO) {
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(jsonSerializer.stringify(serializer, value.value))
+                file.writeText(serializeType.serialize(serializer, value.value))
             } else {
                 file.delete()
             }

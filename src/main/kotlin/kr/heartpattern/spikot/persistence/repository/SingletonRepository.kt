@@ -37,8 +37,7 @@ abstract class SingletonRepository<V>(
     protected val storageFactory: SingletonStorageFactory,
     protected val serializer: KSerializer<V>,
     protected val default: () -> V,
-    protected val namespace: String? = null,
-    protected val serializeType: SerializeType = SerializeType.JSON
+    protected val namespace: String? = null
 ) : AbstractModule() {
     protected lateinit var persistenceManager: SingletonStorage<V>
     protected var value: Option<V> = None
@@ -46,8 +45,7 @@ abstract class SingletonRepository<V>(
         persistenceManager = storageFactory.createSingletonStorage(
             this.plugin,
             namespace ?: this::class.qualifiedName!!,
-            serializer,
-            serializeType
+            serializer
         )
         runBlocking {
             value = when (val result = persistenceManager.get()) {

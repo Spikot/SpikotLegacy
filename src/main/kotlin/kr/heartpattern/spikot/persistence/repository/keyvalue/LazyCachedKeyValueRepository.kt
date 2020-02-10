@@ -38,14 +38,12 @@ class LazyCachedKeyValueRepository<K, V : Any>(
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
-    namespace: String?,
-    serializeType: SerializeType
+    namespace: String?
 ) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,
-    namespace,
-    serializeType
+    namespace
 ) {
     protected val cache = cacheBuilder.removalListener { notification: RemovalNotification<K, Option<V>> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {

@@ -57,14 +57,12 @@ abstract class PlayerRepository<V : Any>(
     valueSerializer: KSerializer<V>,
     protected val default: (Player) -> V,
     protected val storage: MutableMap<UUID, V> = HashMap(),
-    namespace: String? = null,
-    serializeType: SerializeType = SerializeType.JSON
+    namespace: String? = null
 ) : AbstractKeyValueRepository<UUID, V>(
     storageFactory,
     UUIDSerializer,
     valueSerializer,
-    namespace,
-    serializeType
+    namespace
 ), Map<UUID, V> by storage, ReadWriteProperty<Player, V> {
     override fun onEnable() {
         runBlocking {

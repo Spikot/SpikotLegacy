@@ -87,7 +87,6 @@ interface KeyValueStorageFactory : StorageFactory {
         plugin: Plugin,
         namespace: String,
         keySerializer: KSerializer<K>,
-        valueSerializer: KSerializer<V>,
-        serializeType: SerializeType
+        valueSerializer: KSerializer<V>
     ): KeyValueStorage<K, V>
 }

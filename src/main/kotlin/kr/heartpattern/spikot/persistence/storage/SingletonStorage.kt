@@ -43,7 +43,6 @@ interface SingletonStorageFactory : StorageFactory {
     fun <V> createSingletonStorage(
         plugin: Plugin,
         namespace: String,
-        serializer: KSerializer<V>,
-        serializeType: SerializeType
+        serializer: KSerializer<V>
     ): SingletonStorage<V>
 }

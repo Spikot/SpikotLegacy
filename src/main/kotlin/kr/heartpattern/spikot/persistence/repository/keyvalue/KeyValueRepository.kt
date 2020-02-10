@@ -34,14 +34,12 @@ abstract class KeyValueRepository<K : Any, V : Any>(
     keySerializer: KSerializer<K>,
     valueSerializer: KSerializer<V>,
     protected val storage: MutableMap<K, V> = HashMap(),
-    namespace: String? = null,
-    serializeType: SerializeType = SerializeType.JSON
+    namespace: String? = null
 ) : AbstractKeyValueRepository<K, V>(
     storageFactory,
     keySerializer,
     valueSerializer,
-    namespace,
-    serializeType
+    namespace
 ), MutableMap<K, V> by storage {
     override fun onEnable() {
         runBlocking {

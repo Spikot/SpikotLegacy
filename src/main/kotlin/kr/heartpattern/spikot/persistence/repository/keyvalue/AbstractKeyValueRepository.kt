@@ -27,8 +27,7 @@ abstract class AbstractKeyValueRepository<K, V>(
     protected val storageFactory: KeyValueStorageFactory,
     protected val keySerializer: KSerializer<K>,
     protected val valueSerializer: KSerializer<V>,
-    protected val namespace: String? = null,
-    protected val serializeType: SerializeType = SerializeType.JSON
+    protected val namespace: String? = null
 ) : AbstractModule() {
     protected lateinit var persistenceManager: KeyValueStorage<K, V>
     override fun onLoad(context: MutablePropertyMap) {
@@ -37,8 +36,7 @@ abstract class AbstractKeyValueRepository<K, V>(
             this.plugin,
             namespace ?: this::class.qualifiedName!!,
             keySerializer,
-            valueSerializer,
-            serializeType
+            valueSerializer
         )
     }
 }

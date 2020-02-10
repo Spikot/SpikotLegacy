@@ -52,14 +52,12 @@ abstract class OfflinePlayerRepository<V : Any>(
     protected val default: (UUID) -> V,
     protected val onlineStorage: MutableMap<UUID, V> = HashMap(),
     offlineCacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
-    namespace: String? = null,
-    serializeType: SerializeType = SerializeType.JSON
+    namespace: String? = null
 ) : AbstractKeyValueRepository<UUID, V>(
     storageFactory,
     UUIDSerializer,
     valueSerializer,
-    namespace,
-    serializeType
+    namespace
 ) {
     protected val offlineStorage: Cache<UUID, V> = offlineCacheBuilder.removalListener { notification: RemovalNotification<UUID, V> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {
