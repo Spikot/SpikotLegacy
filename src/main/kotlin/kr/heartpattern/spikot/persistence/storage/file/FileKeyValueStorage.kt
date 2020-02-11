@@ -24,14 +24,14 @@ import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.just
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
-import kr.heartpattern.spikot.serialization.SerializeType
+import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
 class FileKeyValueStorage<K, V>(
     private val directory: File,
     private val keySerializer: KSerializer<K>,
     private val valueSerializer: KSerializer<V>,
-    private val serializeType: SerializeType
+    private val stringSerializeFormat: StringSerializeFormat
 ) : KeyValueStorage<K, V> {
 
     init {
@@ -41,12 +41,10 @@ class FileKeyValueStorage<K, V>(
     override suspend fun getAllKeys(): Collection<K> {
         return withContext(Dispatchers.IO) {
             directory
-                .listFiles { path, name ->
-                    SerializeType.values.any {
-                        val target = File(path, name)
-                        target.extension == it.fileExtensionName
-                    }
-                }!!
+                .listFiles()!!
+                .filter {
+                    it.extension == stringSerializeFormat.fileExtensionName
+                }
                 .map {
                     deserialize(keySerializer, it.nameWithoutExtension)
                 }
@@ -55,10 +53,10 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun save(key: K, value: Option<V>) {
         withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".${serializeType.fileExtensionName}")
+            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(serializeType.serialize(valueSerializer, value.value))
+                file.writeText(stringSerializeFormat.serializer.stringify(valueSerializer, value.value))
             } else {
                 file.delete()
             }
@@ -67,9 +65,9 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun load(key: K): Option<V> {
         return withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".${serializeType.fileExtensionName}")
+            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
             if (file.exists()) {
-                serializeType.deserialize(valueSerializer, file.readText()).just
+                stringSerializeFormat.serializer.parse(valueSerializer, file.readText()).just
             } else {
                 None
             }

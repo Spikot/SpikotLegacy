@@ -17,18 +17,31 @@
 package kr.heartpattern.spikot.persistence.storage.file
 
 import kotlinx.serialization.KSerializer
-import kr.heartpattern.spikot.persistence.storage.*
-import kr.heartpattern.spikot.serialization.SerializeType
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
+import kr.heartpattern.spikot.persistence.storage.SingletonStorage
+import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
+import kr.heartpattern.spikot.serialization.JsonStringSerializeFormat
+import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import org.bukkit.plugin.Plugin
 import java.io.File
 
-class FileStorageFactory(val serializeType: SerializeType) : KeyValueStorageFactory, SingletonStorageFactory {
+open class FileStorageFactory(val stringSerializeFormat: StringSerializeFormat) : KeyValueStorageFactory, SingletonStorageFactory {
+    @Deprecated("Specify file format explicitly",
+        ReplaceWith(
+            "FileStorageFactory(StringSerializeFormat.JSON)",
+            "kr.heartpattern.spikot.serialization.StringSerializerFormat"
+        )
+    )
+    companion object : FileStorageFactory(JsonStringSerializeFormat)
+
     override fun <K, V> createKeyValueStorage(
         plugin: Plugin,
         namespace: String,
         keySerializer: KSerializer<K>,
-        valueSerializer: KSerializer<V>): KeyValueStorage<K, V> {
-        return FileKeyValueStorage(File(plugin.dataFolder, namespace), keySerializer, valueSerializer, serializeType)
+        valueSerializer: KSerializer<V>
+    ): KeyValueStorage<K, V> {
+        return FileKeyValueStorage(File(plugin.dataFolder, namespace), keySerializer, valueSerializer, stringSerializeFormat)
     }
 
     override fun <V> createSingletonStorage(
@@ -36,7 +49,7 @@ class FileStorageFactory(val serializeType: SerializeType) : KeyValueStorageFact
         namespace: String,
         serializer: KSerializer<V>
     ): SingletonStorage<V> {
-        return FileSingletonStorage(File(plugin.dataFolder, "${namespace}.${serializeType.fileExtensionName}"), serializer, serializeType)
+        return FileSingletonStorage(File(plugin.dataFolder, "${namespace}.${stringSerializeFormat.fileExtensionName}"), serializer, stringSerializeFormat)
     }
 }
 

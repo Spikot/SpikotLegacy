@@ -19,7 +19,6 @@ package kr.heartpattern.spikot.persistence.storage
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
-import kr.heartpattern.spikot.serialization.SerializeType
 import org.bukkit.plugin.Plugin
 
 /**
