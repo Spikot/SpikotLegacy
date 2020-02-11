@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt") version "1.3.60"
     id("org.jetbrains.dokka") version "0.10.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.3.60"
-    id("maven-publish")
+    id("maven")
 }
 
 val kotlin_version = "1.3.61"
@@ -117,29 +117,3 @@ tasks {
 // Load local.gradle.kts if exists
 if (File("local.gradle.kts").exists())
     apply("local.gradle.kts")
-
-if ("deployment" in properties) {
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                artifactId = "Spikot"
-                from(components["java"])
-                artifact(tasks["dokkaJar"])
-                artifact(tasks["sourcesJar"])
-            }
-        }
-        repositories {
-            maven(
-                if (version.toString().endsWith("SNAPSHOT"))
-                    "https://maven.heartpattern.kr/repository/maven-public-snapshots/"
-                else
-                    "https://maven.heartpattern.kr/repository/maven-public-releases/"
-            ) {
-                credentials {
-                    username = properties["nexusUser"] as String
-                    password = properties["nexusPassword"] as String
-                }
-            }
-        }
-    }
-}
