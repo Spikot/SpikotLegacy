@@ -21,17 +21,27 @@ import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
+import kr.heartpattern.spikot.serialization.JsonStringSerializeFormat
+import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import org.bukkit.plugin.Plugin
 import java.io.File
 
-object FileStorageFactory : KeyValueStorageFactory, SingletonStorageFactory {
+open class FileStorageFactory(val stringSerializeFormat: StringSerializeFormat) : KeyValueStorageFactory, SingletonStorageFactory {
+    @Deprecated("Specify file format explicitly",
+        ReplaceWith(
+            "FileStorageFactory(StringSerializeFormat.JSON)",
+            "kr.heartpattern.spikot.serialization.StringSerializerFormat"
+        )
+    )
+    companion object : FileStorageFactory(JsonStringSerializeFormat)
+
     override fun <K, V> createKeyValueStorage(
         plugin: Plugin,
         namespace: String,
         keySerializer: KSerializer<K>,
         valueSerializer: KSerializer<V>
     ): KeyValueStorage<K, V> {
-        return FileKeyValueStorage(File(plugin.dataFolder, namespace), keySerializer, valueSerializer)
+        return FileKeyValueStorage(File(plugin.dataFolder, namespace), keySerializer, valueSerializer, stringSerializeFormat)
     }
 
     override fun <V> createSingletonStorage(
@@ -39,6 +49,7 @@ object FileStorageFactory : KeyValueStorageFactory, SingletonStorageFactory {
         namespace: String,
         serializer: KSerializer<V>
     ): SingletonStorage<V> {
-        return FileSingletonStorage(File(plugin.dataFolder, "${namespace}.json"), serializer)
+        return FileSingletonStorage(File(plugin.dataFolder, "${namespace}.${stringSerializeFormat.fileExtensionName}"), serializer, stringSerializeFormat)
     }
 }
+

@@ -24,13 +24,14 @@ import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.just
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
-import kr.heartpattern.spikot.serialization.jsonSerializer
+import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
 class FileKeyValueStorage<K, V>(
     private val directory: File,
     private val keySerializer: KSerializer<K>,
-    private val valueSerializer: KSerializer<V>
+    private val valueSerializer: KSerializer<V>,
+    private val stringSerializeFormat: StringSerializeFormat
 ) : KeyValueStorage<K, V> {
 
     init {
@@ -40,19 +41,22 @@ class FileKeyValueStorage<K, V>(
     override suspend fun getAllKeys(): Collection<K> {
         return withContext(Dispatchers.IO) {
             directory
-                .listFiles { _, name -> name.endsWith(".json") }!!
+                .listFiles()!!
+                .filter {
+                    it.extension == stringSerializeFormat.fileExtensionName
+                }
                 .map {
-                    deserialize(keySerializer, it.name.substring(0 until it.name.length - 5))
+                    deserialize(keySerializer, it.nameWithoutExtension)
                 }
         }
     }
 
     override suspend fun save(key: K, value: Option<V>) {
         withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".json")
+            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(jsonSerializer.stringify(valueSerializer, value.value))
+                file.writeText(stringSerializeFormat.serializer.stringify(valueSerializer, value.value))
             } else {
                 file.delete()
             }
@@ -61,9 +65,9 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun load(key: K): Option<V> {
         return withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".json")
+            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
             if (file.exists()) {
-                jsonSerializer.parse(valueSerializer, file.readText()).just
+                stringSerializeFormat.serializer.parse(valueSerializer, file.readText()).just
             } else {
                 None
             }

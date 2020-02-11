@@ -23,17 +23,18 @@ import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
-import kr.heartpattern.spikot.serialization.jsonSerializer
+import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
 class FileSingletonStorage<V>(
     val file: File,
-    val serializer: KSerializer<V>
+    val serializer: KSerializer<V>,
+    val stringSerializeFormat: StringSerializeFormat
 ) : SingletonStorage<V> {
     override suspend fun get(): Option<V> {
         return if (file.exists()) {
             withContext(Dispatchers.IO) {
-                Just(jsonSerializer.parse(serializer, file.readText()))
+                Just(stringSerializeFormat.serializer.parse(serializer, file.readText()))
             }
         } else {
             None
@@ -44,7 +45,7 @@ class FileSingletonStorage<V>(
         withContext(Dispatchers.IO) {
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(jsonSerializer.stringify(serializer, value.value))
+                file.writeText(stringSerializeFormat.serializer.stringify(serializer, value.value))
             } else {
                 file.delete()
             }

@@ -16,6 +16,7 @@
 
 package kr.heartpattern.spikot.persistence.repository.keyvalue.player
 
+import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.RemovalCause
 import com.google.common.cache.RemovalNotification
@@ -57,7 +58,7 @@ abstract class OfflinePlayerRepository<V : Any>(
     valueSerializer,
     namespace
 ) {
-    protected val offlineStorage = offlineCacheBuilder.removalListener { notification: RemovalNotification<UUID, V> ->
+    protected val offlineStorage: Cache<UUID, V> = offlineCacheBuilder.removalListener { notification: RemovalNotification<UUID, V> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {
             plugin.launch {
                 save(notification.key, notification.value)

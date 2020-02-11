@@ -37,7 +37,7 @@ abstract class SingletonRepository<V>(
     protected val serializer: KSerializer<V>,
     protected val default: () -> V,
     protected val namespace: String? = null
-) : AbstractModule(), Repository {
+) : AbstractModule() {
     protected lateinit var persistenceManager: SingletonStorage<V>
     protected var value: Option<V> = None
     override fun onEnable() {

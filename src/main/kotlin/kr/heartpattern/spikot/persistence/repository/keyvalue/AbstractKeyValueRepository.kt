@@ -19,7 +19,6 @@ package kr.heartpattern.spikot.persistence.repository.keyvalue
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.module.AbstractModule
-import kr.heartpattern.spikot.persistence.repository.Repository
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 
@@ -28,7 +27,7 @@ abstract class AbstractKeyValueRepository<K, V>(
     protected val keySerializer: KSerializer<K>,
     protected val valueSerializer: KSerializer<V>,
     protected val namespace: String? = null
-) : AbstractModule(), Repository {
+) : AbstractModule() {
     protected lateinit var persistenceManager: KeyValueStorage<K, V>
     override fun onLoad(context: MutablePropertyMap) {
         super.onLoad(context)

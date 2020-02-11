@@ -16,6 +16,8 @@
 
 package kr.heartpattern.spikot.serialization
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerialModule
@@ -38,11 +40,16 @@ val serializationModule: SerialModule
 val jsonSerializer: Json
     get() = SerializationModuleRegistry.jsonSerializer
 
+val yamlSerializer: Yaml
+    get() = SerializationModuleRegistry.yamlSerializer
+
 @Module(priority = ModulePriority.SYSTEM)
 object SerializationModuleRegistry : AbstractModule() {
     lateinit var serializationModule: SerialModule
         private set
     lateinit var jsonSerializer: Json
+        private set
+    lateinit var yamlSerializer: Yaml
         private set
 
     override fun onEnable() {
@@ -52,5 +59,6 @@ object SerializationModuleRegistry : AbstractModule() {
             }
         }
         jsonSerializer = Json(JsonConfiguration.Stable, serializationModule)
+        yamlSerializer = Yaml(serializationModule)
     }
 }
