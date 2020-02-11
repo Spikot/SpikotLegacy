@@ -118,17 +118,17 @@ tasks {
 if (File("local.gradle.kts").exists())
     apply("local.gradle.kts")
 
-if ("deployment" in properties) {
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                artifactId = "Spikot"
-                from(components["java"])
-                artifact(tasks["dokkaJar"])
-                artifact(tasks["sourcesJar"])
-            }
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "Spikot"
+            from(components["java"])
+            artifact(tasks["dokkaJar"])
+            artifact(tasks["sourcesJar"])
         }
-        repositories {
+    }
+    repositories {
+        if ("nexusUser" in properties && "nexusPassword" in properties) {
             maven(
                 if (version.toString().endsWith("SNAPSHOT"))
                     "https://maven.heartpattern.kr/repository/maven-public-snapshots/"
