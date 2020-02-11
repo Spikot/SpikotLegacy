@@ -21,7 +21,6 @@ import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.module.AbstractModule
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
-import kr.heartpattern.spikot.serialization.SerializeType
 
 abstract class AbstractKeyValueRepository<K, V>(
     protected val storageFactory: KeyValueStorageFactory,

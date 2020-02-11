@@ -28,7 +28,6 @@ import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
-import kr.heartpattern.spikot.serialization.SerializeType
 import java.util.concurrent.TimeUnit
 
 @BaseModule

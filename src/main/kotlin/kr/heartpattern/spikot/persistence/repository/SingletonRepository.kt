@@ -27,7 +27,6 @@ import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
-import kr.heartpattern.spikot.serialization.SerializeType
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

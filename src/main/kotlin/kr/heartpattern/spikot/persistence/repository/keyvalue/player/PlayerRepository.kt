@@ -27,7 +27,6 @@ import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
 import kr.heartpattern.spikot.persistence.repository.keyvalue.AbstractKeyValueRepository
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
-import kr.heartpattern.spikot.serialization.SerializeType
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
