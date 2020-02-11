@@ -1,0 +1,8 @@
+- HeartPattern
+  - Email: jun2620354@kaist.ac.kr
+  - Github Account: HeartPattern
+  - Website: https://heartpattern.kr/
+- PeraSite
+  - Email: pretocki3@gmail.com
+  - Github Account: PeraSite
+  - Website: https://github.com/Perasite
