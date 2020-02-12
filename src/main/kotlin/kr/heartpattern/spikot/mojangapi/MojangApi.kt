@@ -75,7 +75,7 @@ internal val uuidPlayerProfileCache: LoadingCache<UUID, CompletableFuture<Player
     )
 
 @Suppress("SpellCheckingInspection")
-suspend fun resolve(key: String): PlayerProfile {
+internal suspend fun resolve(key: String): PlayerProfile {
     return withContext(Dispatchers.IO) {
         val url = URL("https://api.ashcon.app/mojang/v2/user/$key")
         val connection = url.openConnection()
