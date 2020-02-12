@@ -27,12 +27,12 @@ val StringSerializeFormat.Companion.JSON
     get() = JsonStringSerializeFormat
 
 object JsonStringSerializeFormat : StringSerializeFormat("json") {
-    override val serializer: StringFormat = jsonSerializer
+    override val serializer by lazy { SerializationModuleRegistry.jsonSerializer }
 }
 
 val StringSerializeFormat.Companion.YAML
     get() = YamlStringSerializeFormat
 
 object YamlStringSerializeFormat : StringSerializeFormat("yml") {
-    override val serializer: StringFormat = yamlSerializer
+    override val serializer: StringFormat by lazy { SerializationModuleRegistry.yamlSerializer }
 }
