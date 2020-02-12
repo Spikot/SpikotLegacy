@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt") version "1.3.60"
     id("org.jetbrains.dokka") version "0.10.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.3.60"
-    id("maven")
+    id("maven-publish")
 }
 
 val kotlin_version = "1.3.61"
@@ -21,20 +21,20 @@ repositories {
 
 dependencies {
     // Kotlin family
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version")
+    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
 
     // compile(dependencies)
-    implementation("io.github.microutils:kotlin-logging:1.5.4")
-    implementation("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
-    implementation("net.swiftzer.semver:semver:1.1.1")
-    implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
-    implementation("org.slf4j:slf4j-jdk14:1.7.30")
-    implementation("com.charleskorn.kaml:kaml:0.15.0")
+    compile("io.github.microutils:kotlin-logging:1.5.4")
+    compile("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
+    compile("net.swiftzer.semver:semver:1.1.1")
+    compile("com.github.salomonbrys.kotson:kotson:2.5.0")
+    compile("org.slf4j:slf4j-jdk14:1.7.30")
+    compile("com.charleskorn.kaml:kaml:0.15.0")
 
     // compile(only dependencies)
     compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
@@ -45,8 +45,8 @@ dependencies {
     }
 
     // Test
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.3.50")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+    testCompile("org.jetbrains.kotlin:kotlin-test:1.3.50")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.5.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 
     // KAPT
@@ -117,3 +117,29 @@ tasks {
 // Load local.gradle.kts if exists
 if (File("local.gradle.kts").exists())
     apply("local.gradle.kts")
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "Spikot"
+            from(components["java"])
+            artifact(tasks["dokkaJar"])
+            artifact(tasks["sourcesJar"])
+        }
+    }
+    repositories {
+        if ("nexusUser" in properties && "nexusPassword" in properties) {
+            maven(
+                if (version.toString().endsWith("SNAPSHOT"))
+                    "https://maven.heartpattern.kr/repository/maven-public-snapshots/"
+                else
+                    "https://maven.heartpattern.kr/repository/maven-public-releases/"
+            ) {
+                credentials {
+                    username = properties["nexusUser"] as String
+                    password = properties["nexusPassword"] as String
+                }
+            }
+        }
+    }
+}
