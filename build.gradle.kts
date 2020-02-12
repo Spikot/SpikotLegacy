@@ -32,7 +32,6 @@ dependencies {
     compile("io.github.microutils:kotlin-logging:1.5.4")
     compile("com.esotericsoftware.yamlbeans:yamlbeans:1.13")
     compile("net.swiftzer.semver:semver:1.1.1")
-    compile("com.github.salomonbrys.kotson:kotson:2.5.0")
     compile("org.slf4j:slf4j-jdk14:1.7.30")
     compile("com.charleskorn.kaml:kaml:0.15.0")
 
