@@ -23,18 +23,42 @@ import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.just
+import kr.heartpattern.spikot.module.AbstractModule
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
-class FileKeyValueStorage<K, V>(
-    private val directory: File,
+class FileKeyValueStorage<K, V> private constructor(
     private val keySerializer: KSerializer<K>,
     private val valueSerializer: KSerializer<V>,
-    private val stringSerializeFormat: StringSerializeFormat
-) : KeyValueStorage<K, V> {
+    private val format: StringSerializeFormat
+) : AbstractModule(), KeyValueStorage<K, V> {
+    constructor(
+        keySerializer: KSerializer<K>,
+        valueSerializer: KSerializer<V>,
+        format: StringSerializeFormat,
+        namespace: String
+    ) : this(keySerializer, valueSerializer, format) {
+        this.namespace = namespace
+    }
 
-    init {
+    constructor(
+        keySerializer: KSerializer<K>,
+        valueSerializer: KSerializer<V>,
+        format: StringSerializeFormat,
+        directory: File
+    ) : this(keySerializer, valueSerializer, format) {
+        this.directory = directory
+    }
+
+
+    private lateinit var directory: File
+    private var namespace: String? = null
+
+    override fun onLoad() {
+        if (namespace != null)
+            directory = file(namespace!!)
+
         directory.mkdirs()
     }
 
@@ -43,7 +67,7 @@ class FileKeyValueStorage<K, V>(
             directory
                 .listFiles()!!
                 .filter {
-                    it.extension == stringSerializeFormat.fileExtensionName
+                    it.extension == format.fileExtensionName
                 }
                 .map {
                     deserialize(keySerializer, it.nameWithoutExtension)
@@ -53,10 +77,10 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun save(key: K, value: Option<V>) {
         withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
+            val file = File(directory, serialize(keySerializer, key) + ".${format.fileExtensionName}")
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(stringSerializeFormat.serializer.stringify(valueSerializer, value.value))
+                file.writeText(format.serializer.stringify(valueSerializer, value.value))
             } else {
                 file.delete()
             }
@@ -65,9 +89,9 @@ class FileKeyValueStorage<K, V>(
 
     override suspend fun load(key: K): Option<V> {
         return withContext(Dispatchers.IO) {
-            val file = File(directory, serialize(keySerializer, key) + ".${stringSerializeFormat.fileExtensionName}")
+            val file = File(directory, serialize(keySerializer, key) + ".${format.fileExtensionName}")
             if (file.exists()) {
-                stringSerializeFormat.serializer.parse(valueSerializer, file.readText()).just
+                format.serializer.parse(valueSerializer, file.readText()).just
             } else {
                 None
             }

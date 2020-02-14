@@ -19,7 +19,6 @@ package kr.heartpattern.spikot.persistence.storage
 import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
-import org.bukkit.plugin.Plugin
 
 /**
  * Persistence delegate. This class do actual key-value data persist.
@@ -81,9 +80,9 @@ interface KeyValueStorage<K, V> : Storage {
     }
 }
 
+@Deprecated("Create storage directly")
 interface KeyValueStorageFactory : StorageFactory {
     fun <K, V> createKeyValueStorage(
-        plugin: Plugin,
         namespace: String,
         keySerializer: KSerializer<K>,
         valueSerializer: KSerializer<V>

@@ -16,9 +16,26 @@
 
 package kr.heartpattern.spikot.persistence.repository
 
-import kr.heartpattern.spikot.module.IModule
+import kr.heartpattern.spikot.module.*
+import kr.heartpattern.spikot.persistence.storage.Storage
 
 /**
  * Represent data repository
  */
-interface Repository : IModule
+interface Repository<S : Storage> : IModule
+
+abstract class AbstractRepository<S : Storage> : AbstractModule(), Repository<S> {
+    abstract val storage: S
+    override fun onLoad() {
+        storage.create(plugin)
+        storage.load()
+    }
+
+    override fun onEnable() {
+        storage.enable()
+    }
+
+    override fun onDisable() {
+        storage.disable()
+    }
+}

@@ -27,32 +27,46 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.persistence.repository.AbstractRepository
+import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import java.util.concurrent.TimeUnit
 
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
-class LazyCachedKeyValueRepository<K, V : Any>(
-    storageFactory: KeyValueStorageFactory,
-    keySerializer: KSerializer<K>,
-    valueSerializer: KSerializer<V>,
-    cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
-    namespace: String?
-) : AbstractKeyValueRepository<K, V>(
-    storageFactory,
-    keySerializer,
-    valueSerializer,
-    namespace
-) {
+abstract class LazyCachedKeyValueRepository<K, V : Any>(
+    storage: KeyValueStorage<K, V>,
+    cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+) : AbstractRepository<KeyValueStorage<K, V>>() {
+    final override var storage: KeyValueStorage<K, V> = storage
+        private set
+
     protected val cache = cacheBuilder.removalListener { notification: RemovalNotification<K, Option<V>> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {
             plugin.launch {
-                persistenceManager.save(notification.key, notification.value)
+                storage.save(notification.key, notification.value)
             }
         }
     }.build<K, Option<V>>()
 
+    @Deprecated("Create storage directly")
+    constructor(
+        storageFactory: KeyValueStorageFactory,
+        keySerializer: KSerializer<K>,
+        valueSerializer: KSerializer<V>,
+        cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
+        namespace: String?
+    ) : this(emptyKeyValueStorage(), cacheBuilder) {
+        this.storage = storageFactory.createKeyValueStorage(
+            namespace ?: this::class.qualifiedName!!,
+            keySerializer,
+            valueSerializer
+        )
+    }
+
     override fun onDisable() {
+        super.onDisable()
         cache.invalidateAll()
     }
 
@@ -61,7 +75,7 @@ class LazyCachedKeyValueRepository<K, V : Any>(
         return if (cached != null) {
             cached.getOrNull()
         } else {
-            val loaded = persistenceManager.load(key).getOrNull()
+            val loaded = storage.load(key).getOrNull()
             if (loaded != null) {
                 cache.put(key, loaded.option)
             }

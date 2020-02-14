@@ -30,7 +30,9 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
-import kr.heartpattern.spikot.persistence.repository.keyvalue.AbstractKeyValueRepository
+import kr.heartpattern.spikot.persistence.repository.AbstractRepository
+import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
@@ -46,18 +48,30 @@ import java.util.concurrent.TimeUnit
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class OfflinePlayerRepository<V : Any>(
-    storageFactory: KeyValueStorageFactory,
-    valueSerializer: KSerializer<V>,
+    storage: KeyValueStorage<UUID, V>,
     protected val default: (UUID) -> V,
     protected val onlineStorage: MutableMap<UUID, V> = HashMap(),
-    offlineCacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
-    namespace: String? = null
-) : AbstractKeyValueRepository<UUID, V>(
-    storageFactory,
-    UUIDSerializer,
-    valueSerializer,
-    namespace
-) {
+    offlineCacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+) : AbstractRepository<KeyValueStorage<UUID, V>>() {
+    final override var storage: KeyValueStorage<UUID, V> = storage
+        private set
+
+    @Deprecated("Create storage directly")
+    constructor(
+        storageFactory: KeyValueStorageFactory,
+        valueSerializer: KSerializer<V>,
+        default: (UUID) -> V,
+        onlineStorage: MutableMap<UUID, V> = HashMap(),
+        offlineCacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES),
+        namespace: String? = null
+    ) : this(emptyKeyValueStorage(), default, onlineStorage, offlineCacheBuilder) {
+        this.storage = storageFactory.createKeyValueStorage(
+            namespace ?: this::class.qualifiedName!!,
+            UUIDSerializer,
+            valueSerializer
+        )
+    }
+
     protected val offlineStorage: Cache<UUID, V> = offlineCacheBuilder.removalListener { notification: RemovalNotification<UUID, V> ->
         if (notification.key != null && notification.value != null && notification.cause != RemovalCause.REPLACED) {
             plugin.launch {
@@ -67,6 +81,7 @@ abstract class OfflinePlayerRepository<V : Any>(
     }.build<UUID, V>()
 
     override fun onEnable() {
+        super.onEnable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 onlineStorage[player.uniqueId] = load(player.uniqueId)
@@ -75,6 +90,7 @@ abstract class OfflinePlayerRepository<V : Any>(
     }
 
     override fun onDisable() {
+        super.onDisable()
         offlineStorage.invalidateAll()
     }
 
@@ -131,10 +147,10 @@ abstract class OfflinePlayerRepository<V : Any>(
     }
 
     private suspend inline fun load(uuid: UUID): V {
-        return persistenceManager.load(uuid).getOrElse { default(uuid) }
+        return storage.load(uuid).getOrElse { default(uuid) }
     }
 
     private suspend inline fun save(uuid: UUID, value: V) {
-        persistenceManager.save(uuid, value.option)
+        storage.save(uuid, value.option)
     }
 }

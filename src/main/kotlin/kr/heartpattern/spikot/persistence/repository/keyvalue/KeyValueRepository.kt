@@ -24,26 +24,41 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.persistence.repository.AbstractRepository
+import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class KeyValueRepository<K : Any, V : Any>(
-    storageFactory: KeyValueStorageFactory,
-    keySerializer: KSerializer<K>,
-    valueSerializer: KSerializer<V>,
-    protected val storage: MutableMap<K, V> = HashMap(),
-    namespace: String? = null
-) : AbstractKeyValueRepository<K, V>(
-    storageFactory,
-    keySerializer,
-    valueSerializer,
-    namespace
-), MutableMap<K, V> by storage {
+    storage: KeyValueStorage<K, V>,
+    protected val holder: MutableMap<K, V> = HashMap()
+) : AbstractRepository<KeyValueStorage<K, V>>(), MutableMap<K, V> by holder {
+    final override var storage: KeyValueStorage<K, V> = storage
+        private set
+
+    @Deprecated("Create storage directly")
+    constructor(
+        storageFactory: KeyValueStorageFactory,
+        keySerializer: KSerializer<K>,
+        valueSerializer: KSerializer<V>,
+        holder: MutableMap<K, V> = HashMap(),
+        namespace: String? = null
+    ) : this(emptyKeyValueStorage(), holder) {
+        this.storage = storageFactory.createKeyValueStorage(
+            namespace ?: this::class.qualifiedName!!,
+            keySerializer,
+            valueSerializer
+        )
+    }
+
+
     override fun onEnable() {
+        super.onEnable()
         runBlocking {
-            storage.putAll(
-                persistenceManager.loadAll(persistenceManager.getAllKeys())
+            putAll(
+                storage.loadAll(storage.getAllKeys())
                     .map { (key, value) ->
                         key to value.getOrNull()!!
                     }
@@ -52,14 +67,15 @@ abstract class KeyValueRepository<K : Any, V : Any>(
     }
 
     override fun onDisable() {
+        super.onDisable()
         runBlocking {
-            val new = storage.keys
-            val old = persistenceManager.getAllKeys()
-            persistenceManager.saveAll(
-                storage.mapValues { it.value.option }
+            val new = keys
+            val old = storage.getAllKeys()
+            storage.saveAll(
+                mapValues { it.value.option }
             )
 
-            persistenceManager.saveAll((old - new).map { it to None }.toMap())
+            storage.saveAll((old - new).map { it to None }.toMap())
         }
     }
 }

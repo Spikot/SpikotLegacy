@@ -16,12 +16,15 @@
 
 package kr.heartpattern.spikot.persistence.storage
 
+import kr.heartpattern.spikot.module.IModule
+
 /**
  * Persistence delegate. Implementation of this class manage some data in some ways
  */
-interface Storage
+interface Storage : IModule
 
 /**
  * Represent factory which create Storage
  */
+@Deprecated("Create storage directly")
 interface StorageFactory

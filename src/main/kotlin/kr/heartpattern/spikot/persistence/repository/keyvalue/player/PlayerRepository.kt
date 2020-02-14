@@ -25,7 +25,9 @@ import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
-import kr.heartpattern.spikot.persistence.repository.keyvalue.AbstractKeyValueRepository
+import kr.heartpattern.spikot.persistence.repository.AbstractRepository
+import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
+import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import org.bukkit.Bukkit
@@ -46,24 +48,36 @@ import kotlin.reflect.KProperty
  * @param storageFactory KeyValueStorage factory
  * @param valueSerializer KSerializer for value type
  * @param default Default value provider if player data does not exists.
- * @param storage Online player data cache storage
+ * @param holder Online player data cache storage
  * @param namespace Namespace of data.
  */
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class PlayerRepository<V : Any>(
-    storageFactory: KeyValueStorageFactory,
-    valueSerializer: KSerializer<V>,
+    storage: KeyValueStorage<UUID, V>,
     protected val default: (Player) -> V,
-    protected val storage: MutableMap<UUID, V> = HashMap(),
-    namespace: String? = null
-) : AbstractKeyValueRepository<UUID, V>(
-    storageFactory,
-    UUIDSerializer,
-    valueSerializer,
-    namespace
-), Map<UUID, V> by storage, ReadWriteProperty<Player, V> {
+    protected val holder: MutableMap<UUID, V> = HashMap()
+) : AbstractRepository<KeyValueStorage<UUID, V>>(), Map<UUID, V> by holder, ReadWriteProperty<Player, V> {
+    final override var storage: KeyValueStorage<UUID, V> = storage
+        private set
+
+    @Deprecated("Create storage directly")
+    constructor(
+        storageFactory: KeyValueStorageFactory,
+        valueSerializer: KSerializer<V>,
+        default: (Player) -> V,
+        holder: MutableMap<UUID, V> = HashMap(),
+        namespace: String? = null
+    ) : this(emptyKeyValueStorage(), default, holder) {
+        this.storage = storageFactory.createKeyValueStorage(
+            namespace ?: this::class.qualifiedName!!,
+            UUIDSerializer,
+            valueSerializer
+        )
+    }
+
     override fun onEnable() {
+        super.onEnable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 load(player)
@@ -72,6 +86,7 @@ abstract class PlayerRepository<V : Any>(
     }
 
     override fun onDisable() {
+        super.onDisable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 save(player)
@@ -90,7 +105,7 @@ abstract class PlayerRepository<V : Any>(
     fun PlayerQuitEvent.onQuit() {
         plugin.launch {
             save(player)
-            storage.remove(player.uniqueId)
+            holder.remove(player.uniqueId)
         }
     }
 
@@ -103,8 +118,8 @@ abstract class PlayerRepository<V : Any>(
      */
     suspend fun safeGet(player: Player): V {
         while (true) { //TODO: Write a good logic
-            if (player.uniqueId in storage)
-                return storage[player.uniqueId]!!
+            if (player.uniqueId in holder)
+                return holder[player.uniqueId]!!
             delayTick(1)
         }
     }
@@ -114,12 +129,12 @@ abstract class PlayerRepository<V : Any>(
     }
 
     operator fun set(uuid: UUID, value: V) {
-        if (uuid !in storage) throw IllegalArgumentException("Cannot set offline player's data")
-        storage[uuid] = value
+        if (uuid !in holder) throw IllegalArgumentException("Cannot set offline player's data")
+        holder[uuid] = value
     }
 
     operator fun set(player: Player, value: V) {
-        storage[player.uniqueId] = value
+        holder[player.uniqueId] = value
     }
 
     override fun getValue(thisRef: Player, property: KProperty<*>): V {
@@ -131,10 +146,10 @@ abstract class PlayerRepository<V : Any>(
     }
 
     private suspend inline fun load(player: Player) {
-        storage[player.uniqueId] = persistenceManager.load(player.uniqueId).getOrElse { default(player) }
+        holder[player.uniqueId] = storage.load(player.uniqueId).getOrElse { default(player) }
     }
 
     private suspend inline fun save(player: Player) {
-        persistenceManager.save(player.uniqueId, storage[player.uniqueId].option)
+        storage.save(player.uniqueId, holder[player.uniqueId].option)
     }
 }

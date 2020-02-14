@@ -22,19 +22,43 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
+import kr.heartpattern.spikot.module.AbstractModule
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
-class FileSingletonStorage<V>(
-    val file: File,
+class FileSingletonStorage<V> private constructor(
     val serializer: KSerializer<V>,
-    val stringSerializeFormat: StringSerializeFormat
-) : SingletonStorage<V> {
+    val format: StringSerializeFormat
+) : AbstractModule(), SingletonStorage<V> {
+    constructor(
+        serializer: KSerializer<V>,
+        format: StringSerializeFormat,
+        namespace: String
+    ) : this(serializer, format) {
+        this.namespace = namespace
+    }
+
+    constructor(
+        serializer: KSerializer<V>,
+        format: StringSerializeFormat,
+        file: File
+    ) : this(serializer, format) {
+        this.file = file
+    }
+
+    private lateinit var file: File
+    private var namespace: String? = null
+
+    override fun onLoad() {
+        if (namespace != null)
+            file = file("${namespace!!}.${format.fileExtensionName}")
+    }
+
     override suspend fun get(): Option<V> {
         return if (file.exists()) {
             withContext(Dispatchers.IO) {
-                Just(stringSerializeFormat.serializer.parse(serializer, file.readText()))
+                Just(format.serializer.parse(serializer, file.readText()))
             }
         } else {
             None
@@ -45,7 +69,7 @@ class FileSingletonStorage<V>(
         withContext(Dispatchers.IO) {
             if (value is Just) {
                 file.createNewFile()
-                file.writeText(stringSerializeFormat.serializer.stringify(serializer, value.value))
+                file.writeText(format.serializer.stringify(serializer, value.value))
             } else {
                 file.delete()
             }

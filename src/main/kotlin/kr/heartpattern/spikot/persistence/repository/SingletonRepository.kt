@@ -21,7 +21,6 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
-import kr.heartpattern.spikot.module.AbstractModule
 import kr.heartpattern.spikot.module.BaseModule
 import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
@@ -33,21 +32,28 @@ import kotlin.reflect.KProperty
 @BaseModule
 @Module(priority = ModulePriority.LOWEST)
 abstract class SingletonRepository<V>(
-    protected val storageFactory: SingletonStorageFactory,
-    protected val serializer: KSerializer<V>,
-    protected val default: () -> V,
-    protected val namespace: String? = null
-) : AbstractModule() {
-    protected lateinit var persistenceManager: SingletonStorage<V>
+    storage: SingletonStorage<V>,
+    protected val default: () -> V
+) : AbstractRepository<SingletonStorage<V>>() {
+    final override var storage: SingletonStorage<V> = storage
+        private set
+
     protected var value: Option<V> = None
+
+    @Deprecated("Create storage directly")
+    constructor(
+        storageFactory: SingletonStorageFactory,
+        serializer: KSerializer<V>,
+        default: () -> V,
+        namespace: String? = null
+    ) : this(emptySingletonStorage(), default) {
+        this.storage = storageFactory.createSingletonStorage(namespace ?: this::class.qualifiedName!!, serializer)
+    }
+
     override fun onEnable() {
-        persistenceManager = storageFactory.createSingletonStorage(
-            this.plugin,
-            namespace ?: this::class.qualifiedName!!,
-            serializer
-        )
+        super.onEnable()
         runBlocking {
-            value = when (val result = persistenceManager.get()) {
+            value = when (val result = storage.get()) {
                 is Just -> result
                 is None -> Just(default())
             }
@@ -55,8 +61,9 @@ abstract class SingletonRepository<V>(
     }
 
     override fun onDisable() {
+        super.onDisable()
         runBlocking {
-            persistenceManager.set(value)
+            storage.set(value)
         }
     }
 

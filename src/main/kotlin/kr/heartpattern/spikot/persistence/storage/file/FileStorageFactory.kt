@@ -23,9 +23,8 @@ import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
 import kr.heartpattern.spikot.serialization.JsonStringSerializeFormat
 import kr.heartpattern.spikot.serialization.StringSerializeFormat
-import org.bukkit.plugin.Plugin
-import java.io.File
 
+@Deprecated("Create storage directly")
 open class FileStorageFactory(val stringSerializeFormat: StringSerializeFormat) : KeyValueStorageFactory, SingletonStorageFactory {
     @Deprecated("Specify file format explicitly",
         ReplaceWith(
@@ -36,20 +35,18 @@ open class FileStorageFactory(val stringSerializeFormat: StringSerializeFormat) 
     companion object : FileStorageFactory(JsonStringSerializeFormat)
 
     override fun <K, V> createKeyValueStorage(
-        plugin: Plugin,
         namespace: String,
         keySerializer: KSerializer<K>,
         valueSerializer: KSerializer<V>
     ): KeyValueStorage<K, V> {
-        return FileKeyValueStorage(File(plugin.dataFolder, namespace), keySerializer, valueSerializer, stringSerializeFormat)
+        return FileKeyValueStorage(keySerializer, valueSerializer, stringSerializeFormat, namespace)
     }
 
     override fun <V> createSingletonStorage(
-        plugin: Plugin,
         namespace: String,
         serializer: KSerializer<V>
     ): SingletonStorage<V> {
-        return FileSingletonStorage(File(plugin.dataFolder, "${namespace}.${stringSerializeFormat.fileExtensionName}"), serializer, stringSerializeFormat)
+        return FileSingletonStorage(serializer, stringSerializeFormat, namespace)
     }
 }
 
