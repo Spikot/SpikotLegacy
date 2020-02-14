@@ -18,32 +18,21 @@ package kr.heartpattern.spikot.module
 
 import kr.heartpattern.spikot.SpikotPlugin
 import kr.heartpattern.spikot.misc.AbstractMutableProperty
-import kr.heartpattern.spikot.misc.MutablePropertyMap
-import kr.heartpattern.spikot.plugin.FindAnnotation
 import kr.heartpattern.spikot.utils.getInstance
-import kr.heartpattern.spikot.utils.nonnull
 import mu.KotlinLogging
 import kotlin.reflect.KClass
-
-/**
- * Annotate module processor.
- */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-@FindAnnotation
-annotation class ModuleInterceptor(
-    val targetClass: KClass<*> = Any::class
-)
 
 /**
  * Handle module's whole lifecycle
  */
 class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModule? = null) {
+    constructor(owner: SpikotPlugin, created: IModule) : this(created::class, owner, created)
     companion object{
         @JvmStatic
         private val logger = KotlinLogging.logger{}
     }
 
+    internal object MutableModuleHandlerProperty : AbstractMutableProperty<ModuleHandler>(IModule.ModuleHandlerProperty)
     internal object MutableStateProperty : AbstractMutableProperty<IModule.State>(IModule.StateProperty)
     private object MutablePluginProperty: AbstractMutableProperty<SpikotPlugin>(IModule.PluginProperty)
 
@@ -54,35 +43,30 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
     var module: IModule? = null
         private set
 
-    /**
-     * Property map that store module's data used in module interceptor
-     */
-    val context: MutablePropertyMap = MutablePropertyMap()
-
-    /**
-     * Module's state
-     */
-    var state: IModule.State by context.mutableDelegate(MutableStateProperty).nonnull()
-        private set
-
     init {
         logger.debug { "Create module: ${type.simpleName}" }
 
-        state = try {
-            context[MutablePluginProperty] = owner
+        try {
+            if (created != null && created.context[IModule.StateProperty] != null)
+                throw IllegalStateException("Module is already loaded")
+
             module = created ?: type.getInstance() as IModule
-            if(created == null){
+            module!!.context[MutablePluginProperty] = owner
+            module!!.context[MutableModuleHandlerProperty] = this
+
+            if (created == null) {
                 interceptors.forEach { interceptor ->
                     interceptor.onCreate(this)
                 }
             }
-            IModule.State.CREATE
+
+            module!!.context[MutableStateProperty] = IModule.State.CREATE
         } catch (e: Throwable) {
             logger.error("Error occur while create module: ${type.simpleName}", e)
             interceptors.forEach { interceptor ->
                 interceptor.onError(this, IModule.State.CREATE, e)
             }
-            IModule.State.ERROR
+            module?.context?.set(MutableStateProperty, IModule.State.ERROR)
         }
     }
 
@@ -91,7 +75,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      * @return true if load successfully
      */
     fun load(): Boolean {
-        return performStep(IModule.State.CREATE, IModule.State.LOAD, { onLoad(this@ModuleHandler.context) }, IModuleInterceptor::onLoad)
+        return performStep(IModule.State.CREATE, IModule.State.LOAD, IModule::onLoad, IModuleInterceptor::onLoad)
     }
 
     /**
@@ -108,6 +92,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      */
     fun disable(): Boolean {
         val result = performStep(IModule.State.ENABLE, IModule.State.DISABLE, IModule::onDisable, IModuleInterceptor::onDisable)
+        module!!.context[MutableModuleHandlerProperty] = null
         module = null // Perform GC
         return result
     }
@@ -121,9 +106,10 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      * @return Whether step is success
      */
     private inline fun performStep(previous: IModule.State, next: IModule.State, task: IModule.() -> Unit, intercept: IModuleInterceptor.(ModuleHandler) -> Unit): Boolean {
+        val state = module?.context?.get(IModule.StateProperty)
         check(state == previous) { "Module should be $previous, but $state" }
-        state = try {
-            logger.debug{"${next.readable} module: ${module!!.javaClass.simpleName}"}
+        val newState = try {
+            logger.debug { "${next.readable} module: ${module!!.javaClass.simpleName}" }
             module!!.task()
 
             interceptors.forEach { interceptor ->
@@ -137,6 +123,23 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
             }
             IModule.State.ERROR
         }
+        module?.context?.set(MutableStateProperty, newState)
         return state != IModule.State.ERROR
     }
+}
+
+fun IModule.create(plugin: SpikotPlugin) {
+    ModuleHandler(plugin, this)
+}
+
+fun IModule.load() {
+    context[IModule.ModuleHandlerProperty]!!.load()
+}
+
+fun IModule.enable() {
+    context[IModule.ModuleHandlerProperty]!!.enable()
+}
+
+fun IModule.disable() {
+    context[IModule.ModuleHandlerProperty]!!.disable()
 }

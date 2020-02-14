@@ -53,7 +53,7 @@ object ModuleManager : IBootstrap {
      */
     override fun onShutdown() {
         for (handler in shutdown)
-            if (handler.state == IModule.State.ENABLE)
+            if (handler.module?.context?.get(IModule.StateProperty) == IModule.State.ENABLE)
                 handler.disable()
     }
 
@@ -90,5 +90,13 @@ object ModuleManager : IBootstrap {
      */
     fun disableOnShutdown(handler: ModuleHandler) {
         shutdown.add(handler)
+    }
+
+    /**
+     * Set module to disable on shutdown
+     */
+    fun disableOnShutdown(module: IModule) {
+        shutdown.add(module.context[IModule.ModuleHandlerProperty]
+            ?: throw IllegalArgumentException("Module $module does not loaded"))
     }
 }

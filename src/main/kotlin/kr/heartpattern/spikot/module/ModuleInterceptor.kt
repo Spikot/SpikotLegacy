@@ -16,6 +16,20 @@
 
 package kr.heartpattern.spikot.module
 
+import kr.heartpattern.spikot.plugin.FindAnnotation
+import kotlin.reflect.KClass
+
+/**
+ * Annotate module processor.
+ */
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+@FindAnnotation
+annotation class ModuleInterceptor(
+    val targetClass: KClass<*> = Any::class
+)
+
+
 /**
  * Module interceptor which intercept each step of module lifecycle.
  */

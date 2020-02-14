@@ -35,6 +35,7 @@ import kotlin.reflect.KProperty
 interface IModule : Listener {
     object StateProperty : Property<State>
     object PluginProperty : Property<SpikotPlugin>
+    object ModuleHandlerProperty : Property<ModuleHandler>
 
     enum class State(val readable: String) {
         CREATE("create"),
@@ -52,7 +53,16 @@ interface IModule : Listener {
     /**
      * Invoke when module is in load state to set context
      */
-    fun onLoad(context: MutablePropertyMap)
+    @Deprecated("Use onLoad() instead")
+    fun onLoad(context: MutablePropertyMap) {
+    }
+
+    /**
+     * Invoke when module is in load state
+     */
+    fun onLoad() {
+        onLoad(MutablePropertyMap())
+    }
 
     /**
      * Invoke when module is on enable state
@@ -69,7 +79,7 @@ interface IModule : Listener {
  * Partially implemented IModule with useful methods
  */
 abstract class AbstractModule : IModule {
-    final override lateinit var context: MutablePropertyMap
+    final override val context: MutablePropertyMap = MutablePropertyMap()
 
     /**
      * Delegate module context property lazily
@@ -140,9 +150,5 @@ abstract class AbstractModule : IModule {
      */
     protected fun file(name: String): File {
         return File(plugin.dataFolder, name)
-    }
-
-    override fun onLoad(context: MutablePropertyMap) {
-        this.context = context
     }
 }
