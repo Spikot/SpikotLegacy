@@ -23,8 +23,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import kr.heartpattern.spikot.serialization.serializer.ZonedDateTimeSerializer
-import java.time.Instant
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -45,7 +43,7 @@ data class PlayerProfile(
 @Serializable
 data class UsernameHistory(
     val username: String,
-    @SerialName("changed_at") val changedAt: ZonedDateTime = ZonedDateTime.ofInstant(Instant.MIN, ZoneId.systemDefault())
+    @SerialName("changed_at") val changedAt: ZonedDateTime? = null
 )
 
 /**
