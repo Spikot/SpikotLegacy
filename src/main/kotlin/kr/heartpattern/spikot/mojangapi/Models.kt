@@ -54,7 +54,7 @@ data class Texture(
     val custom: Boolean,
     val slim: Boolean,
     val skin: MojangImage,
-    val cape: MojangImage?,
+    val cape: MojangImage? = null,
     val raw: RawSkin
 )
 
