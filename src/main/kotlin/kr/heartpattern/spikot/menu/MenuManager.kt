@@ -75,7 +75,6 @@ fun Player.safeCloseInventory() {
 fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
     val handler = ModuleManager.createModule(menuProvider, plugin)
     val builder = MenuBuilder()
-    menuProvider.context = handler.context
     handler.context[MenuIdProperty] = MenuManager.id
     handler.context[MenuPlayerProperty] = this
     handler.context[MenuBuilderProperty] = builder

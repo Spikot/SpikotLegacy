@@ -18,6 +18,7 @@ package kr.heartpattern.spikot.module
 
 import kr.heartpattern.spikot.SpikotPlugin
 import kr.heartpattern.spikot.misc.AbstractMutableProperty
+import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.utils.getInstance
 import mu.KotlinLogging
 import kotlin.reflect.KClass
@@ -34,13 +35,20 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
 
     internal object MutableModuleHandlerProperty : AbstractMutableProperty<ModuleHandler>(IModule.ModuleHandlerProperty)
     internal object MutableStateProperty : AbstractMutableProperty<IModule.State>(IModule.StateProperty)
-    private object MutablePluginProperty: AbstractMutableProperty<SpikotPlugin>(IModule.PluginProperty)
+    private object MutablePluginProperty : AbstractMutableProperty<SpikotPlugin>(IModule.PluginProperty)
 
     private val interceptors = ModuleManager.findInterceptor(type)
+
     /**
      * Handled module
      */
     var module: IModule? = null
+        private set
+
+    /**
+     * Module context
+     */
+    lateinit var context: MutablePropertyMap
         private set
 
     init {
@@ -51,8 +59,9 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
                 throw IllegalStateException("Module is already loaded")
 
             module = created ?: type.getInstance() as IModule
-            module!!.context[MutablePluginProperty] = owner
-            module!!.context[MutableModuleHandlerProperty] = this
+            context = module!!.context
+            context[MutablePluginProperty] = owner
+            context[MutableModuleHandlerProperty] = this
 
             if (created == null) {
                 interceptors.forEach { interceptor ->
@@ -92,7 +101,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      */
     fun disable(): Boolean {
         val result = performStep(IModule.State.ENABLE, IModule.State.DISABLE, IModule::onDisable, IModuleInterceptor::onDisable)
-        module!!.context[MutableModuleHandlerProperty] = null
+        context[MutableModuleHandlerProperty] = null
         module = null // Perform GC
         return result
     }
@@ -123,7 +132,7 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
             }
             IModule.State.ERROR
         }
-        module?.context?.set(MutableStateProperty, newState)
+        context[MutableStateProperty] = newState
         return state != IModule.State.ERROR
     }
 }

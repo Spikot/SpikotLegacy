@@ -59,17 +59,17 @@ internal object SingletonModuleManager : IBootstrap {
         }
 
         for (element in instances)
-            if (element.state != IModule.State.ERROR)
+            if (element.context[ModuleHandler.MutableStateProperty] != IModule.State.ERROR)
                 element.load()
 
         for (element in instances)
-            if (element.state != IModule.State.ERROR)
+            if (element.context[ModuleHandler.MutableStateProperty] != IModule.State.ERROR)
                 element.enable()
     }
 
     override fun onShutdown() {
         for (element in instances.reversed())
-            if (element.state != IModule.State.ERROR)
+            if (element.context[ModuleHandler.MutableStateProperty] != IModule.State.ERROR)
                 element.disable()
     }
 }
