@@ -56,7 +56,7 @@ class Paginator<E>(
                 value < 0 -> {
                     0
                 }
-                value > pageCount -> {
+                value >= pageCount -> {
                     pageCount - 1
                 }
                 else -> {
