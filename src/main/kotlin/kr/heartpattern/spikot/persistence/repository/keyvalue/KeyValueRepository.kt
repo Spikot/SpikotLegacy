@@ -55,7 +55,6 @@ abstract class KeyValueRepository<K : Any, V : Any>(
 
 
     override fun onEnable() {
-        super.onEnable()
         runBlocking {
             putAll(
                 storage.loadAll(storage.getAllKeys())
@@ -64,10 +63,10 @@ abstract class KeyValueRepository<K : Any, V : Any>(
                     }
             )
         }
+        super.onEnable()
     }
 
     override fun onDisable() {
-        super.onDisable()
         runBlocking {
             val new = keys
             val old = storage.getAllKeys()
@@ -77,5 +76,6 @@ abstract class KeyValueRepository<K : Any, V : Any>(
 
             storage.saveAll((old - new).map { it to None }.toMap())
         }
+        super.onDisable()
     }
 }

@@ -66,8 +66,8 @@ abstract class LazyCachedKeyValueRepository<K, V : Any>(
     }
 
     override fun onDisable() {
-        super.onDisable()
         cache.invalidateAll()
+        super.onDisable()
     }
 
     suspend fun get(key: K): V? {

@@ -77,21 +77,21 @@ abstract class PlayerRepository<V : Any>(
     }
 
     override fun onEnable() {
-        super.onEnable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 load(player)
             }
         }
+        super.onEnable()
     }
 
     override fun onDisable() {
-        super.onDisable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 save(player)
             }
         }
+        super.onDisable()
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

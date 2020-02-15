@@ -51,20 +51,20 @@ abstract class SingletonRepository<V>(
     }
 
     override fun onEnable() {
-        super.onEnable()
         runBlocking {
             value = when (val result = storage.get()) {
                 is Just -> result
                 is None -> Just(default())
             }
         }
+        super.onEnable()
     }
 
     override fun onDisable() {
-        super.onDisable()
         runBlocking {
             storage.set(value)
         }
+        super.onDisable()
     }
 
     fun get(): V {

@@ -81,12 +81,12 @@ abstract class OfflinePlayerRepository<V : Any>(
     }.build<UUID, V>()
 
     override fun onEnable() {
-        super.onEnable()
         runBlocking {
             for (player in Bukkit.getOnlinePlayers()) {
                 onlineStorage[player.uniqueId] = load(player.uniqueId)
             }
         }
+        super.onEnable()
     }
 
     override fun onDisable() {
