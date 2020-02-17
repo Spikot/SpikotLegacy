@@ -18,7 +18,8 @@
 
 package kr.heartpattern.spikot.module
 
-import kr.heartpattern.spikot.misc.MutableProperty
+import kr.heartpattern.spikot.misc.AbstractMutableProperty
+import kr.heartpattern.spikot.misc.Property
 import kr.heartpattern.spikot.utils.nonnull
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -30,14 +31,13 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 
-private object PlayerProperty : MutableProperty<Player>
-
 /**
  * Module which is created for each player
  */
 @Module(priority = ModulePriority.LOWEST)
 @BaseModule
 abstract class AbstractPlayerModule : AbstractModule() {
+    object PlayerProperty : Property<Player>
     /**
      * Owner of this module
      */
@@ -53,6 +53,8 @@ abstract class AbstractPlayerModule : AbstractModule() {
 open class PlayerModuleController<T : AbstractPlayerModule>(
     private val type: KClass<T>
 ) : AbstractModule() {
+    object MutablePlayerProperty : AbstractMutableProperty<Player>(AbstractPlayerModule.PlayerProperty)
+
     private val table = HashMap<UUID, ModuleHandler>()
 
     override fun onEnable() {
@@ -79,7 +81,7 @@ open class PlayerModuleController<T : AbstractPlayerModule>(
 
     private fun join(player: Player) {
         val moduleHandler = ModuleManager.createModule(type, plugin)
-        moduleHandler.context[PlayerProperty] = player
+        moduleHandler.context[MutablePlayerProperty] = player
         moduleHandler.load()
         if (moduleHandler.enable())
             table[player.uniqueId] = moduleHandler

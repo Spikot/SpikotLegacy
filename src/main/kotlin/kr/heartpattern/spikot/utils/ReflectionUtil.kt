@@ -17,6 +17,7 @@
 package kr.heartpattern.spikot.utils
 
 import java.lang.reflect.AccessibleObject
+import java.lang.reflect.Method
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -71,4 +72,8 @@ inline fun <T : AccessibleObject> T.withAccessible(block: (T) -> Unit) {
     isAccessible = true
     block(this)
     isAccessible = originalAccessibility
+}
+
+inline fun <reified T : Annotation> KClass<*>.getMethodsAnnotatedWith(): List<Method> {
+    return java.declaredMethods.filter { it.isAnnotationPresent(T::class.java) }
 }

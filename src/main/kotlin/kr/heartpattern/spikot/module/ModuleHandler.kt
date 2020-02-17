@@ -28,9 +28,10 @@ import kotlin.reflect.KClass
  */
 class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModule? = null) {
     constructor(owner: SpikotPlugin, created: IModule) : this(created::class, owner, created)
-    companion object{
+
+    companion object {
         @JvmStatic
-        private val logger = KotlinLogging.logger{}
+        private val logger = KotlinLogging.logger {}
     }
 
     internal object MutableModuleHandlerProperty : AbstractMutableProperty<ModuleHandler>(IModule.ModuleHandlerProperty)
@@ -50,6 +51,9 @@ class ModuleHandler(val type: KClass<*>, val owner: SpikotPlugin, created: IModu
      */
     lateinit var context: MutablePropertyMap
         private set
+
+    val state: IModule.State
+        get() = context[IModule.StateProperty] ?: IModule.State.ERROR
 
     init {
         logger.debug { "Create module: ${type.simpleName}" }
