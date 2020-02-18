@@ -14,15 +14,17 @@
  *  limitations under the License.
  */
 
-@file:UseSerializers(UUIDSerializer::class, ZonedDateTimeSerializer::class)
+@file:UseSerializers(UUIDSerializer::class, ZonedDateTimeSerializer::class, LocalDateSerializer::class)
 
 package kr.heartpattern.spikot.mojangapi
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
+import kr.heartpattern.spikot.serialization.serializer.LocalDateSerializer
 import kr.heartpattern.spikot.serialization.serializer.UUIDSerializer
 import kr.heartpattern.spikot.serialization.serializer.ZonedDateTimeSerializer
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -34,7 +36,8 @@ data class PlayerProfile(
     val uuid: UUID,
     val username: String,
     @SerialName("username_history") val usernameHistory: List<UsernameHistory>,
-    val textures: Texture
+    val textures: Texture,
+    @SerialName("created_at") val createdAt: LocalDate? = null
 )
 
 /**
