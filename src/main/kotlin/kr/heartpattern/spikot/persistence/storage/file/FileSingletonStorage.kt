@@ -53,6 +53,7 @@ class FileSingletonStorage<V> private constructor(
     override fun onLoad() {
         if (namespace != null)
             file = file("${namespace!!}.${format.fileExtensionName}")
+        file.parentFile.mkdirs()
     }
 
     override suspend fun get(): Option<V> {
