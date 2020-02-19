@@ -27,7 +27,7 @@ import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
-class FileSingletonStorage<V> private constructor(
+open class FileSingletonStorage<V> private constructor(
     val serializer: KSerializer<V>,
     val format: StringSerializeFormat
 ) : AbstractModule(), SingletonStorage<V> {

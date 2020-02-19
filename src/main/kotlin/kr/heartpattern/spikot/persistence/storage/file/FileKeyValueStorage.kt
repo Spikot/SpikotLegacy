@@ -28,7 +28,7 @@ import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.serialization.StringSerializeFormat
 import java.io.File
 
-class FileKeyValueStorage<K, V> private constructor(
+open class FileKeyValueStorage<K, V> private constructor(
     private val keySerializer: KSerializer<K>,
     private val valueSerializer: KSerializer<V>,
     private val format: StringSerializeFormat
