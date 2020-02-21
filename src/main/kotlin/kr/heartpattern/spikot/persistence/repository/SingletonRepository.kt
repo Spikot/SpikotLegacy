@@ -22,15 +22,15 @@ import kr.heartpattern.spikot.misc.Just
 import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.module.BaseModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.persistence.storage.SingletonStorage
 import kr.heartpattern.spikot.persistence.storage.SingletonStorageFactory
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @BaseModule
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 abstract class SingletonRepository<V>(
     storage: SingletonStorage<V>,
     protected val default: () -> V

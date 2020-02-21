@@ -18,8 +18,8 @@ package kr.heartpattern.spikot.adapter
 
 import kr.heartpattern.spikot.misc.Interval
 import kr.heartpattern.spikot.module.BaseModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.utils.NMSSemVer
 import kr.heartpattern.spikot.utils.bukkitSemVer
 import kr.heartpattern.spikot.utils.minecraftSemVer
@@ -58,7 +58,7 @@ enum class VersionType {
  * @param version Type of version
  */
 @BaseModule
-@Module(priority = ModulePriority.SYSTEM)
+@ServerModule(priority = ModulePriority.SYSTEM)
 abstract class VersionAdapterResolver<T : IAdapter>(type: KClass<T>, version: VersionType) : AdapterResolver<T>(type) {
     private val currentVersion: SemVer = when (version) {
         VersionType.MINECRAFT -> Bukkit.getServer().minecraftSemVer

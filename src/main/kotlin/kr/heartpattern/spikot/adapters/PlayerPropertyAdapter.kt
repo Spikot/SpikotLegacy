@@ -21,7 +21,7 @@ import kr.heartpattern.spikot.adapter.VersionAdapterResolver
 import kr.heartpattern.spikot.adapter.VersionType
 import kr.heartpattern.spikot.misc.MutableProperty
 import kr.heartpattern.spikot.misc.Property
-import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ServerModule
 import org.bukkit.entity.Player
 
 /**
@@ -62,7 +62,7 @@ interface PlayerPropertyAdapter : IAdapter {
      */
     fun <T> remove(player: Player, property: MutableProperty<T>): T?
 
-    @Module
+    @ServerModule
     object Resolver : VersionAdapterResolver<PlayerPropertyAdapter>(PlayerPropertyAdapter::class, VersionType.BUKKIT)
 
     companion object : PlayerPropertyAdapter by Resolver.default

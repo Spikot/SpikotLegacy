@@ -33,7 +33,7 @@ import kotlin.reflect.KClass
  * @param type Type of controlled module
  */
 @BaseModule
-@Module(ModulePriority.LOWEST)
+@ServerModule(ModulePriority.LOWEST)
 abstract class InventoryModuleController<T : AbstractInventoryModule>(val type: KClass<T>) : AbstractModule() {
     object MutableInventoryProperty : AbstractMutableProperty<Inventory>(AbstractInventoryModule.InventoryProperty)
 

@@ -19,42 +19,42 @@ package kr.heartpattern.spikot.module
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-@Module
+@ServerModule
 private class DefaultModule : AbstractModule()
 
-@Module(priority = ModulePriority.SYSTEM)
+@ServerModule(priority = ModulePriority.SYSTEM)
 private class SystemModule : AbstractModule()
 
-@Module(priority = ModulePriority.API)
+@ServerModule(priority = ModulePriority.API)
 private class APIModule : AbstractModule()
 
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 private class LowestModule : AbstractModule()
 
-@Module(priority = ModulePriority.LOW)
+@ServerModule(priority = ModulePriority.LOW)
 private class LowModule : AbstractModule()
 
-@Module(priority = ModulePriority.NORMAL)
+@ServerModule(priority = ModulePriority.NORMAL)
 private class NormalModule : AbstractModule()
 
-@Module(priority = ModulePriority.HIGH)
+@ServerModule(priority = ModulePriority.HIGH)
 private class HighModule : AbstractModule()
 
-@Module(priority = ModulePriority.HIGHEST)
+@ServerModule(priority = ModulePriority.HIGHEST)
 private class HighestModule : AbstractModule()
 
 @BaseModule
-@Module(priority = ModulePriority.HIGH, dependOn = [HighModule::class])
+@ServerModule(priority = ModulePriority.HIGH, dependOn = [HighModule::class])
 private open class BaselineModule : AbstractModule()
 
-@Module
+@ServerModule
 private class ImplementModule : BaselineModule()
 
-@Module(priority = ModulePriority.HIGH)
+@ServerModule(priority = ModulePriority.HIGH)
 @LoadBefore([ImplementModule::class])
 class BeforeModule : AbstractModule()
 
-@Module(priority = ModulePriority.NORMAL, dependOn = [HighestModule::class])
+@ServerModule(priority = ModulePriority.NORMAL, dependOn = [HighestModule::class])
 class ConflictModule : AbstractModule()
 
 class ModuleSorterTest {

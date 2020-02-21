@@ -28,8 +28,8 @@ import kotlinx.serialization.KSerializer
 import kr.heartpattern.spikot.misc.getOrElse
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.persistence.repository.AbstractRepository
 import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
@@ -46,7 +46,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @BaseModule
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 abstract class OfflinePlayerRepository<V : Any>(
     storage: KeyValueStorage<UUID, V>,
     protected val default: (UUID) -> V,

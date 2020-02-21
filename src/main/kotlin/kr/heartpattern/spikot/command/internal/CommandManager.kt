@@ -19,8 +19,8 @@ package kr.heartpattern.spikot.command.internal
 import kr.heartpattern.spikot.command.AbstractCommand
 import kr.heartpattern.spikot.command.Root
 import kr.heartpattern.spikot.module.AbstractModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.module.canLoad
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.catchAll
@@ -32,7 +32,7 @@ import org.bukkit.plugin.Plugin
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
 
-@Module(priority = ModulePriority.API)
+@ServerModule(priority = ModulePriority.API)
 object CommandManager : AbstractModule() {
     private val commandMap: CommandMap
     private val pluginCommandConstructor: Constructor<PluginCommand>
@@ -64,10 +64,10 @@ object CommandManager : AbstractModule() {
                 command.usage = tabExecutor.root.handler.usage()
 
                 val helpExecutor = SpikotTabExecutor(CommandNode(type), plugin)
-                val help = pluginCommandConstructor.newInstance("?"+helpExecutor.root.handler.names.first(), plugin)
+                val help = pluginCommandConstructor.newInstance("?" + helpExecutor.root.handler.names.first(), plugin)
                 help.executor = helpExecutor
                 help.tabCompleter = helpExecutor
-                help.aliases = helpExecutor.root.handler.names.map{"?$it"}
+                help.aliases = helpExecutor.root.handler.names.map { "?$it" }
 
                 commandMap.register(plugin.name, command)
                 commandMap.register(plugin.name, help)

@@ -41,6 +41,14 @@ internal object SingletonModuleManager : IBootstrap {
         val modules = LinkedList<KClass<*>>()
         val modulePlugin = HashMap<KClass<*>, SpikotPlugin>()
 
+        for ((module, plugin) in SpikotPluginManager.annotationIterator<ServerModule>()) {
+            if (module.findAnnotation<BaseModule>() != null)
+                continue
+            logger.debug("Find module: ${module.simpleName}")
+            modulePlugin[module] = plugin
+            modules += module
+        }
+
         for ((module, plugin) in SpikotPluginManager.annotationIterator<Module>()) {
             if (module.findAnnotation<BaseModule>() != null)
                 continue
@@ -52,7 +60,7 @@ internal object SingletonModuleManager : IBootstrap {
         val sorted = sortModuleDependencies(modules)
         val disabled = HashSet<KClass<*>>()
         for (element in sorted) {
-            if (!element.canLoad() || element.findAnnotation<Module>()!!.dependOn.any { it in disabled })
+            if (!element.canLoad() || element.getModuleInfo()!!.dependOn.any { it in disabled })
                 disabled += element
             else
                 instances += ModuleManager.createModule(element, modulePlugin[element]!!)
@@ -71,5 +79,17 @@ internal object SingletonModuleManager : IBootstrap {
         for (element in instances.reversed())
             if (element.context[ModuleHandler.MutableStateProperty] != IModule.State.ERROR)
                 element.disable()
+    }
+}
+
+internal data class ModuleInfo(val priority: ModulePriority, val dependOn: Array<KClass<*>>)
+
+internal fun KClass<*>.getModuleInfo(): ModuleInfo? {
+    val module = findAnnotation<Module>()
+    val serverModule = findAnnotation<ServerModule>()
+    return when {
+        serverModule != null -> ModuleInfo(serverModule.priority, serverModule.dependOn)
+        module != null -> ModuleInfo(module.priority, module.dependOn)
+        else -> null
     }
 }

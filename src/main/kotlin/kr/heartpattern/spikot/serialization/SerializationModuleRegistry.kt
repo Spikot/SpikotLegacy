@@ -17,14 +17,13 @@
 package kr.heartpattern.spikot.serialization
 
 import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.modules.SerialModule
 import kotlinx.serialization.modules.SerializersModule
 import kr.heartpattern.spikot.module.AbstractModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.plugin.FindAnnotation
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kr.heartpattern.spikot.utils.getInstance
@@ -43,7 +42,7 @@ val jsonSerializer: Json
 val yamlSerializer: Yaml
     get() = SerializationModuleRegistry.yamlSerializer
 
-@Module(priority = ModulePriority.SYSTEM)
+@ServerModule(priority = ModulePriority.SYSTEM)
 object SerializationModuleRegistry : AbstractModule() {
     lateinit var serializationModule: SerialModule
         private set

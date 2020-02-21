@@ -26,7 +26,7 @@ import kotlin.reflect.full.isSubclassOf
  * Adapter resolver that select which adapter to be used by default
  */
 @BaseModule
-@Module(priority = ModulePriority.API)
+@ServerModule(priority = ModulePriority.API)
 abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractModule() {
     private lateinit var handler: ModuleHandler
 

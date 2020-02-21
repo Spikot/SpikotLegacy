@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
 /**
  * Module which is created for each player
  */
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 @BaseModule
 abstract class AbstractPlayerModule : AbstractModule() {
     object PlayerProperty : Property<Player>

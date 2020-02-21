@@ -19,7 +19,7 @@ package kr.heartpattern.spikot.adapters
 import kr.heartpattern.spikot.adapter.IAdapter
 import kr.heartpattern.spikot.adapter.VersionAdapterResolver
 import kr.heartpattern.spikot.adapter.VersionType
-import kr.heartpattern.spikot.module.Module
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.nbt.*
 import kr.heartpattern.spikot.nbt.TagType.*
 
@@ -280,7 +280,7 @@ interface NBTAdapter : IAdapter {
         } as WrapperNBTBase<T>
     }
 
-    @Module
+    @ServerModule
     object Resolver : VersionAdapterResolver<NBTAdapter>(NBTAdapter::class, VersionType.BUKKIT)
 
     companion object : NBTAdapter by Resolver.default

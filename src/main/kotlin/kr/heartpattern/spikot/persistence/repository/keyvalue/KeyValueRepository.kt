@@ -22,15 +22,15 @@ import kr.heartpattern.spikot.misc.None
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.persistence.repository.AbstractRepository
 import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 
 @BaseModule
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 abstract class KeyValueRepository<K : Any, V : Any>(
     storage: KeyValueStorage<K, V>,
     protected val holder: MutableMap<K, V> = HashMap()

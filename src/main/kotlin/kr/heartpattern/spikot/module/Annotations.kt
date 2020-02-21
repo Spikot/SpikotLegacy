@@ -28,7 +28,19 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @FindAnnotation(impl = [IModule::class])
+@Deprecated("Use @ServerModule instead for clarity.", ReplaceWith("ServerModule(priority, dependOn)"))
 annotation class Module(val priority: ModulePriority = ModulePriority.DEFAULT, val dependOn: Array<KClass<*>> = [])
+
+/**
+ * Annotate server module. Should annotated class which implement [kr.heartpattern.spikot.module.IModule]
+ * It is not recommended to set both priority and dependOn.
+ * @param priority Load priority of module
+ * @param dependOn Array of module which is required for this module
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+@FindAnnotation(impl = [IModule::class])
+annotation class ServerModule(val priority: ModulePriority = ModulePriority.DEFAULT, val dependOn: Array<KClass<*>> = [])
 
 /**
  * Annotate module should load before given modules

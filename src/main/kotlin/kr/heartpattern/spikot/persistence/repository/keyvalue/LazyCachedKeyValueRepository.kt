@@ -25,8 +25,8 @@ import kr.heartpattern.spikot.misc.Option
 import kr.heartpattern.spikot.misc.getOrNull
 import kr.heartpattern.spikot.misc.option
 import kr.heartpattern.spikot.module.BaseModule
-import kr.heartpattern.spikot.module.Module
 import kr.heartpattern.spikot.module.ModulePriority
+import kr.heartpattern.spikot.module.ServerModule
 import kr.heartpattern.spikot.persistence.repository.AbstractRepository
 import kr.heartpattern.spikot.persistence.repository.emptyKeyValueStorage
 import kr.heartpattern.spikot.persistence.storage.KeyValueStorage
@@ -34,7 +34,7 @@ import kr.heartpattern.spikot.persistence.storage.KeyValueStorageFactory
 import java.util.concurrent.TimeUnit
 
 @BaseModule
-@Module(priority = ModulePriority.LOWEST)
+@ServerModule(priority = ModulePriority.LOWEST)
 abstract class LazyCachedKeyValueRepository<K, V : Any>(
     storage: KeyValueStorage<K, V>,
     cacheBuilder: CacheBuilder<Any, Any> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)

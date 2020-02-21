@@ -62,14 +62,14 @@ internal fun sortModuleDependencies(modules: List<KClass<*>>): List<KClass<*>> {
 
     for (module in modules) {
         counting.computeIfAbsent(module) { LongAdder() }
-        val priority = module.findAnnotation<Module>()!!.priority
-        val before = module
-            .findAnnotation<Module>()!!
-            .dependOn
+        val moduleInfo = module.getModuleInfo()!!
+        val priority = moduleInfo.priority
+
+        val before = moduleInfo.dependOn
             .toSet() + module
             .allSuperclasses
             .flatMap {
-                it.findAnnotation<Module>()?.dependOn?.asIterable() ?: listOf()
+                it.getModuleInfo()?.dependOn?.asIterable() ?: listOf()
             }
             .toSet()
 
@@ -108,11 +108,11 @@ internal fun sortModuleDependencies(modules: List<KClass<*>>): List<KClass<*>> {
         when (priority) {
             DEFAULT -> {
                 if (after.isEmpty()) {
-                    val inherit = module.superclasses.asSequence().map { it.findAnnotation<Module>() }.firstOrNull { it != null }
+                    val inherit = module.superclasses.asSequence().map { it.getModuleInfo()?.priority }.firstOrNull { it != null }
                     if (inherit == null) {
                         update(LowMarkerModule::class, null)
                     } else {
-                        when (inherit.priority) {
+                        when (inherit) {
                             SYSTEM -> {
                                 update(null, SystemMarkerModule::class)
                             }
