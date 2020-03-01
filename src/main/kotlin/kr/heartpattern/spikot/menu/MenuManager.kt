@@ -67,12 +67,14 @@ fun Player.safeCloseInventory() {
 }
 
 /**
- * Open inventory with given menu provider
+ * Open inventory with given menu provider and inventory
  * @receiver Player to open inventory
  * @param plugin Plugin to handle menu
  * @param menuProvider MenuProvider which handle menu
+ * @param inventory Inventory to use for displaying menu
  */
-fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
+@JvmOverloads
+fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider, inventory: Inventory? = null) {
     val handler = ModuleManager.createModule(menuProvider, plugin)
     val builder = MenuBuilder()
     handler.context[MenuIdProperty] = MenuManager.id
@@ -83,15 +85,17 @@ fun Player.openInventory(plugin: SpikotPlugin, menuProvider: MenuProvider) {
     handler.load()
     handler.enable()
 
-    val inventory = Bukkit.createInventory(null, builder.size, builder.title.attachInvisible(menuProvider.id))
-    handler.context[MenuInventoryProperty] = inventory
+    val inv = inventory
+        ?: Bukkit.createInventory(null, builder.size, builder.title.attachInvisible(menuProvider.id))
+
+    handler.context[MenuInventoryProperty] = inv
     val contents = Array(builder.size) { ItemStack(Material.AIR) }
     builder.slot.forEach { (point, item) ->
         contents[point.x + point.y * 9] = item.itemStack
     }
-    inventory.contents = contents
+    inv.contents = contents
     handler.context[MenuOpenProperty] = true
-    player.safeOpenInventory(inventory)
+    player.safeOpenInventory(inv)
 }
 
 /**
