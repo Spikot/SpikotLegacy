@@ -57,8 +57,12 @@ abstract class MenuProvider : AbstractModule() {
     private fun updateInventory() {
         for (index in 0 until player.openInventory.topInventory.size) {
             val item = menu.slot[SlotPosition(index)]
-            player.openInventory.topInventory.setItem(index, item?.itemStack)
+            if (item != null)
+                player.openInventory.topInventory.setItem(index, item.itemStack)
+            else if (menu.clear)
+                player.openInventory.topInventory.setItem(index, null)
         }
+        menu.clear = false
         player.updateInventory()
     }
 

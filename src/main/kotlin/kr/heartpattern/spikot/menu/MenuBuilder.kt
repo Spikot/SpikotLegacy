@@ -61,6 +61,7 @@ data class SlotPosition(val x: Int, val y: Int) {
 @MenuDsl
 class MenuBuilder {
     internal val slot: MutableMap<SlotPosition, Slot> = HashMap()
+    internal var clear: Boolean = false
     /**
      * Title of menu
      */
@@ -143,6 +144,6 @@ class MenuBuilder {
      * Clear slots
      */
     fun clear() {
-        slot.clear()
+        clear = true
     }
 }
