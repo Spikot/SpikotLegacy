@@ -16,7 +16,6 @@
 
 package kr.heartpattern.spikot.adapter
 
-import kr.heartpattern.spikot.misc.MutablePropertyMap
 import kr.heartpattern.spikot.module.*
 import kr.heartpattern.spikot.plugin.SpikotPluginManager
 import kotlin.reflect.KClass
@@ -38,8 +37,7 @@ abstract class AdapterResolver<T : IAdapter>(val target: KClass<T>) : AbstractMo
         get() = handler.module as T
 
     @Suppress("UNCHECKED_CAST")
-    override fun onLoad(context: MutablePropertyMap) {
-        super.onLoad(context)
+    override fun onLoad() {
         handler = SpikotPluginManager
             .annotationIterator<Adapter>()
             .asSequence()

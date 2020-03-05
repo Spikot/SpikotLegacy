@@ -44,12 +44,6 @@ import kotlin.reflect.KProperty
  * Repository which store data per player.
  * Data was loaded when player join, and saved when player quit.
  * Reading offline player data does not support. For this functionality, use [OfflinePlayerRepository]
- * @param V Type of value
- * @param storageFactory KeyValueStorage factory
- * @param valueSerializer KSerializer for value type
- * @param default Default value provider if player data does not exists.
- * @param holder Online player data cache storage
- * @param namespace Namespace of data.
  */
 @BaseModule
 @ServerModule(priority = ModulePriority.LOWEST)

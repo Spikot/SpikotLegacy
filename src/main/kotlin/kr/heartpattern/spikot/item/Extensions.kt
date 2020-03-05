@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-@file:UseExperimental(ExperimentalContracts::class)
+@file:OptIn(ExperimentalContracts::class)
 
 package kr.heartpattern.spikot.item
 

@@ -27,7 +27,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified E : Event> listenEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
@@ -56,7 +56,7 @@ inline fun <reified E : Event> SpikotPlugin.listenEvent(
     return kr.heartpattern.spikot.event.coroutine.listenEvent(priority, ignoreCancelled)
 }
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified E> consumeEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false

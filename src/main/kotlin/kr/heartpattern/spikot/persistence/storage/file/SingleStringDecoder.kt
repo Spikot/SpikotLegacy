@@ -36,7 +36,7 @@ class SingleStringDecoder(
     override val updateMode: UpdateMode
         get() = UpdateMode.BANNED
 
-    override fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): CompositeDecoder {
+    override fun beginStructure(descriptor: SerialDescriptor, vararg typeParams: KSerializer<*>): CompositeDecoder {
         throw UnsupportedOperationException("Cannot use structure in single string decoder")
     }
 
@@ -56,7 +56,7 @@ class SingleStringDecoder(
         return value.toDouble()
     }
 
-    override fun decodeEnum(enumDescription: SerialDescriptor): Int {
+    override fun decodeEnum(enumDescriptor: SerialDescriptor): Int {
         return value.toInt()
     }
 

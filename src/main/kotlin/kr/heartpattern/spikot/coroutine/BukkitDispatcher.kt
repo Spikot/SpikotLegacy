@@ -24,7 +24,7 @@ import org.bukkit.Bukkit
 import kotlin.coroutines.CoroutineContext
 
 @Suppress("unused")
-@UseExperimental(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
 val Dispatchers.Bukkit: DispatcherBukkit
     get() = BukkitDispatcher
 

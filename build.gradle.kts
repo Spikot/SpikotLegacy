@@ -1,19 +1,20 @@
 import java.net.URL
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.60"
-    id("org.jetbrains.kotlin.kapt") version "1.3.60"
+    id("org.jetbrains.kotlin.jvm") version "1.3.70"
+    id("org.jetbrains.kotlin.kapt") version "1.3.70"
     id("org.jetbrains.dokka") version "0.10.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.3.60"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.3.70"
     id("maven-publish")
 }
 
-val kotlin_version = "1.3.61"
+val kotlin_version = "1.3.70"
 val coroutine_version = "1.3.3"
 val paper_version = "1.12.2-R0.1-SNAPSHOT"
+val serialization_version = "0.20.0"
 
 group = "kr.heartpattern"
-version = "4.0.0-SNAPSHOT"
+version = "4.0.1-SNAPSHOT"
 
 repositories {
     maven("https://maven.heartpattern.kr/repository/maven-public/")
@@ -26,7 +27,7 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutine_version")
-    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    compile("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
 
     // compile(dependencies)
     compile("io.github.microutils:kotlin-logging:1.5.4")

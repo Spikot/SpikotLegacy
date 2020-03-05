@@ -28,7 +28,7 @@ import kotlin.contracts.contract
  * @param run lambda that can be throw error
  * @return Result of lambda if no error, otherwise null
  */
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun <R> Logger.catchAll(message: String, run: () -> R): R? {
     contract { callsInPlace(run, InvocationKind.EXACTLY_ONCE) }
     return try {
@@ -44,7 +44,7 @@ inline fun <R> Logger.catchAll(message: String, run: () -> R): R? {
  * @param run lambda that can be throw error
  * @return Result of lambda if no error, otherwise null
  */
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun <R> catchSilence(run: () -> R): R? {
     contract { callsInPlace(run, InvocationKind.EXACTLY_ONCE) }
     return try {

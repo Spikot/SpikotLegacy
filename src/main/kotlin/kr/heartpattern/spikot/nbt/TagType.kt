@@ -81,11 +81,17 @@ sealed class TagType<T : Any>(val id: Int, val type: KClass<T>) {
     object LONG : TagType<Long>(4, Long::class)
     object FLOAT : TagType<Float>(5, Float::class)
     object DOUBLE : TagType<Double>(6, Double::class)
+
+    @Suppress("ClassName")
     object BYTE_ARRAY : TagType<ByteArray>(7, ByteArray::class)
     object STRING : TagType<String>(8, String::class)
     object LIST : TagType<MutableList<*>>(9, MutableList::class)
     object COMPOUND : TagType<MutableMap<*, *>>(10, MutableMap::class)
+
+    @Suppress("ClassName")
     object INT_ARRAY : TagType<IntArray>(11, IntArray::class)
+
+    @Suppress("ClassName")
     object LONG_ARRAY : TagType<LongArray>(12, LongArray::class)
     object MISC : TagType<Any>(99, Any::class)
 }

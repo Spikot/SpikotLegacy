@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta
 /**
  * Configure flag of ItemStack
  */
+@Suppress("PropertyName")
 @ItemDslMarker
 class ItemFlagBuilder(private val itemMeta: ItemMeta) {
     val HIDE_ENCHANT: Unit

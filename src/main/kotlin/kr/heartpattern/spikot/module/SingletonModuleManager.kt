@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "DEPRECATED")
 
 package kr.heartpattern.spikot.module
 
@@ -82,7 +82,7 @@ internal object SingletonModuleManager : IBootstrap {
     }
 }
 
-internal data class ModuleInfo(val priority: ModulePriority, val dependOn: Array<KClass<*>>)
+internal class ModuleInfo(val priority: ModulePriority, val dependOn: Array<KClass<*>>)
 
 internal fun KClass<*>.getModuleInfo(): ModuleInfo? {
     val module = findAnnotation<Module>()

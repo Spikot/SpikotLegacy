@@ -62,7 +62,7 @@ class SuspendCommandProperty<T>(val pos: Int, val value: suspend TransformerCont
     }
 
     override fun <R> transform(transformer: TransformerContext.(T) -> R): SuspendCommandProperty<R> {
-        val child = SuspendCommandProperty<R>(pos) { transformer((cache as Just<T>).value) }
+        val child = SuspendCommandProperty(pos) { transformer((cache as Just<T>).value) }
         childs += child
         return child
     }
@@ -73,7 +73,7 @@ class SuspendCommandProperty<T>(val pos: Int, val value: suspend TransformerCont
     }
 
     override fun <R> suspendTransform(transformer: suspend TransformerContext.(T) -> R): SuspendCommandProperty<R> {
-        val child = SuspendCommandProperty<R>(pos) { transformer((cache as Just<T>).value) }
+        val child = SuspendCommandProperty(pos) { transformer((cache as Just<T>).value) }
         childs += child
         return child
     }

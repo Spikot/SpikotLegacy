@@ -77,7 +77,7 @@ private fun createSkull0(base64: String): ItemStack {
  * @return Created skull item
  */
 fun createSkull(profile: PlayerProfile): ItemStack {
-    return createSkull(profile.textures.skin.url.toString())
+    return createSkull(profile.textures.skin.url)
 }
 
 /**

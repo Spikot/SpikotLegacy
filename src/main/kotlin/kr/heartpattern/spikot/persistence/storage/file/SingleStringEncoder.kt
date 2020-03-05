@@ -41,7 +41,7 @@ class SingleStringEncoder : Encoder {
     override val context: SerialModule
         get() = EmptyModule
 
-    override fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): CompositeEncoder {
+    override fun beginStructure(descriptor: SerialDescriptor, vararg typeSerializers: KSerializer<*>): CompositeEncoder {
         throw UnsupportedOperationException("Cannot use structure in single string encoder")
     }
 
@@ -61,8 +61,8 @@ class SingleStringEncoder : Encoder {
         encoded = value.toString()
     }
 
-    override fun encodeEnum(enumDescription: SerialDescriptor, ordinal: Int) {
-        encoded = ordinal.toString()
+    override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) {
+        encoded = index.toString()
     }
 
     override fun encodeFloat(value: Float) {

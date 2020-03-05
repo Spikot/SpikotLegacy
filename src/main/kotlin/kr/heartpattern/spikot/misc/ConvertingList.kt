@@ -91,5 +91,5 @@ open class ConvertingList<B, F>(
         override fun previousIndex(): Int = iterator.previousIndex()
     }
 
-    override fun subList(fromIndex: Int, toIndex: Int): List<F> = ConvertingList<B, F>(backingList.subList(fromIndex, toIndex), converter)
+    override fun subList(fromIndex: Int, toIndex: Int): List<F> = ConvertingList(backingList.subList(fromIndex, toIndex), converter)
 }

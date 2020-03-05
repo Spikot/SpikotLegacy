@@ -17,15 +17,14 @@
 package kr.heartpattern.spikot.serialization.serializer
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
 import java.time.ZonedDateTime
 
 @Serializer(forClass = ZonedDateTime::class)
 class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
-    override val descriptor: SerialDescriptor = StringDescriptor.withName("ZonedDateTime")
+    override val descriptor: SerialDescriptor = PrimitiveDescriptor("ZonedDateTime", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, obj: ZonedDateTime) {
-        encoder.encodeString(obj.toString())
+    override fun serialize(encoder: Encoder, value: ZonedDateTime) {
+        encoder.encodeString(value.toString())
     }
 
     override fun deserialize(decoder: Decoder): ZonedDateTime {

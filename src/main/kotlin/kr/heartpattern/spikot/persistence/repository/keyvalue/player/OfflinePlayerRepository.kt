@@ -78,7 +78,7 @@ abstract class OfflinePlayerRepository<V : Any>(
                 save(notification.key, notification.value)
             }
         }
-    }.build<UUID, V>()
+    }.build()
 
     override fun onEnable() {
         runBlocking {

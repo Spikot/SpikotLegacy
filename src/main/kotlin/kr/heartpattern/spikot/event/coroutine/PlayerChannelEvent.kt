@@ -28,7 +28,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerEvent
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified E : PlayerEvent> Player.listenPlayerEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false
@@ -60,7 +60,7 @@ inline fun <reified E : PlayerEvent> SpikotPlugin.listenPlayerEvent(
     return player.listenPlayerEvent(priority, ignoreCancelled)
 }
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 inline fun <reified E> Player.consumePlayerEvent(
     priority: EventPriority = EventPriority.NORMAL,
     ignoreCancelled: Boolean = false

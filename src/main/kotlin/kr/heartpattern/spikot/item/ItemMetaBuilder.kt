@@ -30,6 +30,7 @@ open class ItemMetaBuilder<T : ItemMeta>(internal val itemMeta: T) {
     /**
      * Add unbreakable attribute to item
      */
+    @Suppress("PropertyName")
     val UnBreakable: Unit
         get() {
             itemMeta.isUnbreakable = true

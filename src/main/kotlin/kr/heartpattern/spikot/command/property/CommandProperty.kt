@@ -56,7 +56,7 @@ class CommandProperty<T> internal constructor(val pos: Int, val value: Transform
     }
 
     override fun <R> transform(transformer: TransformerContext.(T) -> R): CommandProperty<R> {
-        val child = CommandProperty<R>(pos) { transformer((cache as Just<T>).value) }
+        val child = CommandProperty(pos) { transformer((cache as Just<T>).value) }
         childs += child
         return child
     }

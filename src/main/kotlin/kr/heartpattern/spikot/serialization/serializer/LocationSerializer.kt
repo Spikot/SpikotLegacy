@@ -17,31 +17,29 @@
 package kr.heartpattern.spikot.serialization.serializer
 
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.SerialClassDescImpl
+import kotlinx.serialization.builtins.serializer
 import org.bukkit.Location
 import org.bukkit.World
 
 @Serializer(forClass = Location::class)
 object LocationSerializer : KSerializer<Location> {
-    override val descriptor: SerialDescriptor = object : SerialClassDescImpl("Location") {
-        init {
-            addElement("world")
-            addElement("x")
-            addElement("y")
-            addElement("z")
-            addElement("pitch")
-            addElement("yaw")
-        }
+    override val descriptor: SerialDescriptor = SerialDescriptor("Location") {
+        element("world", String.serializer().descriptor)
+        element("x", Double.serializer().descriptor)
+        element("y", Double.serializer().descriptor)
+        element("z", Double.serializer().descriptor)
+        element("pitch", Double.serializer().descriptor)
+        element("yaw", Double.serializer().descriptor)
     }
 
-    override fun serialize(encoder: Encoder, obj: Location) {
+    override fun serialize(encoder: Encoder, value: Location) {
         with(encoder.beginStructure(descriptor)) {
-            encodeSerializableElement(descriptor, 0, WorldSerializer, obj.world)
-            encodeDoubleElement(descriptor, 1, obj.x)
-            encodeDoubleElement(descriptor, 2, obj.y)
-            encodeDoubleElement(descriptor, 3, obj.z)
-            encodeFloatElement(descriptor, 4, obj.pitch)
-            encodeFloatElement(descriptor, 5, obj.yaw)
+            encodeSerializableElement(descriptor, 0, WorldSerializer, value.world)
+            encodeDoubleElement(descriptor, 1, value.x)
+            encodeDoubleElement(descriptor, 2, value.y)
+            encodeDoubleElement(descriptor, 3, value.z)
+            encodeFloatElement(descriptor, 4, value.pitch)
+            encodeFloatElement(descriptor, 5, value.yaw)
             endStructure(descriptor)
         }
     }

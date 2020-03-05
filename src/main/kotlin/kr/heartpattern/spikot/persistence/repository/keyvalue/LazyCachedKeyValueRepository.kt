@@ -48,7 +48,7 @@ abstract class LazyCachedKeyValueRepository<K, V : Any>(
                 storage.save(notification.key, notification.value)
             }
         }
-    }.build<K, Option<V>>()
+    }.build<K, Option<V>>()!!
 
     @Deprecated("Create storage directly")
     constructor(

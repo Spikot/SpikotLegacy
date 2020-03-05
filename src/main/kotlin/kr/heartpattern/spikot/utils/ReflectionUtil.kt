@@ -65,7 +65,7 @@ inline fun <reified T : Annotation> KClass<*>.findAnnotations(): List<T> {
  * @receiver AccessibleObject to get access
  * @param block lambda to run with access
  */
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun <T : AccessibleObject> T.withAccessible(block: (T) -> Unit) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     val originalAccessibility = isAccessible
