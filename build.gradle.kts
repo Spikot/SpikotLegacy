@@ -35,7 +35,7 @@ dependencies {
     compile("net.swiftzer.semver:semver:1.1.1")
     compile("com.github.salomonbrys.kotson:kotson:2.5.0")
     compile("org.slf4j:slf4j-jdk14:1.7.30")
-    compile("com.charleskorn.kaml:kaml:0.15.0")
+    compile("com.charleskorn.kaml:kaml:0.16.1")
 
     // compile(only dependencies)
     compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
