@@ -40,7 +40,7 @@ internal lateinit var spikot: Spikot
  * @since 1.0.0
  * @author ReadyMadeProgrammer
  */
-@Plugin(name = "Spikot", version = "4.0.0-SNAPSHOT")
+@Plugin(name = "Spikot", version = "4.0.1-SNAPSHOT")
 @Dependency(plugin = "ProtocolLib")
 class Spikot : SpikotPlugin() {
     val spikotLogger = KotlinLogging.logger{}
