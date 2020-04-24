@@ -33,7 +33,7 @@ class TagDelegate<T : Any>(
     val setter: WrapperNBTCompound.(String, T) -> Unit
 ) : ReadWriteProperty<NBTAccessor, T?> {
     override fun getValue(thisRef: NBTAccessor, property: KProperty<*>): T? {
-        if (!thisRef.tag.check(property.name)) {
+        if (thisRef.tag.check(property.name)) {
             return thisRef.tag.getter(property.name)
         }
         return null
